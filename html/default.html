@@ -1,21 +1,22 @@
 <!--Calendar Start-->
-<table width=100% border=1 class=calendar_main>
-	<tr><td class="calendar_title">[[TITLE]]</td></tr>
-	<tr><td class="calendar_header">[[HEADER]]</td></tr>
-	<tr><td class=day_cell_main>[[WEEKS]]</td></tr>
+<form>
+<table class=calendar_main>
+	<tr><td>[[HEADER]]</td></tr>
+	<tr><td class=day_cell_main>[[BODY]]</td></tr>
 	<tr><td>[[FOOTER]]</td></tr>
 </table>
+</form>
 <!--Calendar End-->
 
-<!--Title Start-->
+<!--Nav Start-->
 <table width=100%>
 	<tr>
-		<td>[[MONTH_DATA]]</td>
-		<td>[[TITLE_DATA]]</td>
-		<td>[[YEAR_DATA]]</td>
+		<td width=33% class="month_control">[[MONTH_CONTROL]]</td>
+		<td width=33% class="calendar_title">[[CALENDAR_NAME]]</td>
+		<td width=33% class="year_control">[[YEAR_CONTROL]]</td>
 	</tr>
 </table>
-<!--Title End-->
+<!--Nav End-->
 
 <!--AddEvent Start-->
 <form name="CalenderFull" method="post">
