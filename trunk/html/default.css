@@ -1,0 +1,54 @@
+<style type="text/css">
+	.calendar_day_table{
+		width:100%;
+		border:0px solid #808080;
+	}
+	
+	.day_cell_main{
+		border-collapse:collapse;
+		vertical-align:top;	
+		border:1px solid #808080;
+	}
+	
+	.calendar_weekday{	
+		width:100%;
+	}	
+	
+	.calendar_weekend{	
+		width:100%;		
+		background-color:#EEEEEE;
+	}		
+	
+	.calendar_empty{
+		border-collapse:collapse;
+		border:1px solid #808080;		
+		width:0%;
+		background-color:#EEEEEE;
+	}	
+	
+	.calendar_day {
+		white-space:nowrap;
+		border:1px solid #CCCCCC;
+		background-color:#E0E0E0;	  
+		width:20%;
+		text-align: center;
+		font-size: 12px;
+		height:12;
+	}
+	
+	.calendar_week_table{
+		border-collapse:collapse;		
+		width:100%;
+		border:1px solid #808080;
+	}
+	
+	.add_event_dialog{
+		border:1px solid #CCCCCC;
+	}
+	
+	.calendar_events{
+		border:0px solid #808080;
+		height:70px;
+		vertical-align:top;
+	}
+</style>

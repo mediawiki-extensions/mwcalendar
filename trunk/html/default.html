@@ -1,0 +1,66 @@
+<!--Calendar Start-->
+<table width=100% border=1 class=calendar_main>
+	<tr><td class="calendar_title">[[TITLE]]</td></tr>
+	<tr><td class="calendar_header">[[HEADER]]</td></tr>
+	<tr><td class=day_cell_main>[[WEEKS]]</td></tr>
+	<tr><td>[[FOOTER]]</td></tr>
+</table>
+<!--Calendar End-->
+
+<!--Title Start-->
+<table width=100%>
+	<tr>
+		<td>[[MONTH_DATA]]</td>
+		<td>[[TITLE_DATA]]</td>
+		<td>[[YEAR_DATA]]</td>
+	</tr>
+</table>
+<!--Title End-->
+
+<!--AddEvent Start-->
+<form name="CalenderFull" method="post">
+	<table border=1>
+		<tr>
+			<td>
+				<input type=submit name=new value="New Event" />
+			</td>
+		</tr>
+	</table>
+</form>
+<!--AddEvent End-->
+
+<!--Weekday Start-->
+<td class=day_cell_main>
+	<table class="calendar_weekday">
+		<tr>
+			<td class=calendar_day>[[Day]]</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td class=calendar_events colspan="2">[[EventList]]</td>
+		</tr>
+	</table>
+</td>
+<!--Weekday End-->
+
+<!--Weekend Start-->
+<td class=day_cell_main>
+	<table class="calendar_weekend">
+		<tr>
+			<td class=calendar_day>[[Day]]</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td class=calendar_events colspan="2">[[EventList]]</td>
+		</tr>
+	</table>
+</td>
+<!--Weekend End-->
+
+<!--Empty Start-->
+<td class="calendar_empty"></td>
+<!--Empty End-->
+
+<!--Week Start-->
+<table class="calendar_week_table">[[WEEKS]]</table>
+<!--Week End-->
