@@ -22,8 +22,8 @@ class mwCalendar{
 	public function mwCalendar(){
 		global $wgOut;	
 		
-		$events = new EventHandler();	
-		$events->CheckForEvents();		
+		//$events = new EventHandler();	
+		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
 
@@ -53,15 +53,36 @@ class mwCalendar{
 		//return $arr[0]['subject'];
 	
 		// determine what we need to display
-		$arrUrl = split( '&', $_SERVER['REQUEST_URI'] );
+		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
+		$param = explode( '=', $arrUrl[1] );
 		
-		switch( $arrUrl[1] ){
+		switch( $param[0] ){
 		case 'AddEvent':
 			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
 			
 			// update the 'hidden' input field so we retain the calendar name for the db update
 			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+			$html = str_replace('[[EventID]]', null, $html);
 			
+			break;
+			
+		case 'EditEvent':
+			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			
+			$event = $this->db->getEvent( $param[1] );
+			$start = date('n/j/Y', $event['start']);
+			$end = date('n/j/Y', $event['end']);
+				
+			// update the 'hidden' input field so we retain the calendar name for the db update
+			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+			$html = str_replace('[[EventID]]', $event['id'], $html);	
+			$html = str_replace('[[Subject]]', $event['subject'], $html);	
+			$html = str_replace('[[Location]]', $event['location'], $html);			
+			$html = str_replace('[[Invites]]', $event['invites'], $html);	
+			$html = str_replace('[[Start]]', $start, $html);	
+			$html = str_replace('[[End]]', $end, $html);				
+			$html = str_replace('[[Text]]', $event['text'], $html);		
+		
 			break;
 			
 		default:
@@ -138,13 +159,21 @@ class mwCalendar{
 		//$date2 = mktime(23,59,59,$month,$day,$year);
 		
 		foreach($arrEvents as $event){
-		$i++;
+
 			if( ($date >= $event['start']) && ($date <= $event['end']) ){
-				$links .= $event['subject'] . '<br>';
+				$links .= $this->buildLink($event);
 			}
 		}
 
 		return $links;
+	}
+	
+	private function buildLink($event){
+		$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+		
+		$url = $_SERVER['REQUEST_URI'] . '&EditEvent=' . $event['id'];
+		$link = '<a href="' . $url . '">' . $event['subject'] . '</a> <br>';
+		return $link;
 	}
 		
     function searchHTML($html, $beginString, $endString) {

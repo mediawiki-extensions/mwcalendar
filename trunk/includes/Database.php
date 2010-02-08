@@ -24,6 +24,8 @@ class CalendarDatabase{
 		$end = $arrEvent['end'];
 		$allday = $arrEvent['allday'];
 		$text = $arrEvent['text'];
+		$createdby = $arrEvent['createdby'];
+		$invites = $arrEvent['invites'];
 		
 		$calendarid = $this->getCalendarID($calendar);
 
@@ -34,10 +36,46 @@ class CalendarDatabase{
 			'start'        		=> $start,
 			'end'        		=> $end,
 			'allday'        	=> $allday,
-			'text'        		=> $text ) 
-		);
-	
+			'text'        		=> $text,
+			'createdby'        	=> $createdby,
+			'invites'        	=> $invites 
+		));
 	}
+	
+	public function updateEvent($arrEvent, $eventid){
+		
+		$dbw = wfGetDB( DB_MASTER );
+		$dbr = wfGetDB( DB_SLAVE );	
+			
+		$calendar = $arrEvent['calendar'];	
+		$subject = $arrEvent['subject'];
+		$location = $arrEvent['location'];
+		$start = $arrEvent['start'];
+		$end = $arrEvent['end'];
+		$allday = $arrEvent['allday'];
+		$text = $arrEvent['text'];
+		$createdby = $arrEvent['createdby'];
+		$invites = $arrEvent['invites'];
+		
+		$calendarid = $this->getCalendarID($calendar);
+
+		$dbw->update( $wgDBprefix.'mwcalendar_events', 
+			array(
+				'calendarid' 		=> $calendarid,
+				'subject'        	=> $subject,
+				'location'        	=> $location,
+				'start'        		=> $start,
+				'end'        		=> $end,
+				'allday'        	=> $allday,
+				'text'        		=> $text,
+				'createdby'        	=> $createdby,
+				'invites'        	=> $invites
+			),
+			array(
+				'id' => $eventid
+			)
+		);
+	}	
 	
 	public function getEvents($calendar, $timestamp1, $timestamp2){
 		global $wgDBprefix;
@@ -48,13 +86,14 @@ class CalendarDatabase{
 		
 		$calendarid = $this->getCalendarID($calendar);
 		
-		$sql = "SELECT calendarid, subject, location, start, end, allday, text
+		$sql = "SELECT *
 					FROM $eventtable
 					WHERE start >= $timestamp1 AND end <= $timestamp2
 					AND calendarid = $calendarid";// LIMIT 0,25";
 
 		$res = $dbr->query($sql);    
 		while ($r = $dbr->fetchObject( $res )) {
+			$arrEvent['id'] = $r->id;
 			$arrEvent['calendarid'] = $r->calendarid;	
 			$arrEvent['subject'] = $r->subject;
 			$arrEvent['location'] = $r->location;
@@ -62,14 +101,48 @@ class CalendarDatabase{
 			$arrEvent['end'] = $r->end;
 			$arrEvent['allday'] = $r->allday;
 			$arrEvent['text'] = $r->text;
+			$arrEvent['createdby'] = $r->createdby;
+			$arrEvent['text'] = $r->text;
+			$arrEvent['invites'] = $r->invites;
 
 			$arrEvents[] = $arrEvent;
-		
-			//$ret .=$r->subject . "\n";
 		}
 		
 		return $arrEvents;
 	}
+	
+	public function getEvent($eventid){
+		global $wgDBprefix;
+
+		$eventtable = $wgDBprefix . 'mwcalendar_events';
+		
+		$dbr = wfGetDB( DB_SLAVE );	
+		
+		//$calendarid = $this->getCalendarID($calendar);
+		
+		$sql = "SELECT *
+					FROM $eventtable
+					WHERE id = $eventid";// LIMIT 0,25";
+
+		$res = $dbr->query($sql);    
+		if ($r = $dbr->fetchObject( $res )) {
+			$arrEvent['id'] = $r->id;
+			$arrEvent['calendarid'] = $r->calendarid;	
+			$arrEvent['subject'] = $r->subject;
+			$arrEvent['location'] = $r->location;
+			$arrEvent['start'] = $r->start;
+			$arrEvent['end'] = $r->end;
+			$arrEvent['allday'] = $r->allday;
+			$arrEvent['text'] = $r->text;
+			$arrEvent['createdby'] = $r->createdby;
+			$arrEvent['text'] = $r->text;
+			$arrEvent['invites'] = $r->invites;
+
+			//$arrEvents[] = $arrEvent;
+		}
+		
+		return $arrEvent;
+	}	
 	
 	public function checkTables(){
 		global $wgDBprefix;
@@ -94,6 +167,8 @@ class CalendarDatabase{
 				`end` double NOT NULL default '0',
 				`allday` boolean NOT NULL default false,
 				`text` longtext default '',
+				`createdby` varchar(255) NOT NULL default '',
+				`invites` mediumtext default '',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";			
 		
