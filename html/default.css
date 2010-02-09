@@ -5,7 +5,7 @@
 	}
 	.add_event{
 		text-align:right;
-		font-size: 9px;
+		font-size: 10px;
 		vertical-align:top;		
 	}
 	.calendar_title{
@@ -65,7 +65,7 @@
 		border:0px solid #808080;
 		height:70px;
 		vertical-align:top;
-		font-size: 10px;
+		font-size: 11px;
 	}
 	
 	.month_control{

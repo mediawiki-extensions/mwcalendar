@@ -1,4 +1,3 @@
-[[CalendarName]]
 <table class=add_event_dialog><td>
 <form name='NewEvent' method="post">
 	<table border=0 width=1> <!-- width=1 is set to ensure the table is compacted -->
@@ -9,7 +8,7 @@
 			<td>Location:&nbsp;</td><td width=100%><input type="text" name="location" value="[[Location]]" size=50/></td>
 		</tr>	
 		<tr>
-			<td>Invite(s):&nbsp;</td><td width=100%><input type="text" name="invites" value="[[Invites]]" size=50/></td>
+			<td>Invite(s):&nbsp;</td><td width=100%><input title='comma seperated SSO'type="text" name="invites" value="[[Invites]]" size=50/></td>
 		</tr>			
 		<tr>
 			<td colspan=2><hr></td>
@@ -41,7 +40,7 @@
 			</td>				
 		</tr>
 	</table>
-	<input type=text name=calendar value="[[CalendarName]]" />
-	<input type=text name=eventid value="[[EventID]]" />
+	<input type=hidden name=calendar value="[[CalendarName]]" />
+	<input type=hidden name=eventid value="[[EventID]]" />
 </form>
 </td></table>
