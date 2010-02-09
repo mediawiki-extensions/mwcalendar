@@ -19,8 +19,6 @@ $wgExtensionCredits['parserhook'][] = array(
     'version'=> kenyu73_mwcalendar
 );
 
-
-
 $wgExtensionFunctions[] = "mwCalendar";
 
 function mwCalendar() {
@@ -35,12 +33,6 @@ function launchCalendar($paramstring, $params = array()) {
 	if( !isset($params["name"]) ) $params["name"] = "Public";
 	$name = $params["name"];
 	
-	global $wgUser;
-	//$wgUser->sendMail('calendar test', 'body');
-	//mail( 'eric.fortin@ge.com', 'Test sub', '', '' );
-	//return $wgUser->getName();
-	//return date('D n/j/Y H:i:s', 1266771599) . '<br>' . date('D n/j/Y H:i:s', 1266814800);
-	//	return mktime(date_parse('2/6/2010 11:59 PM'));
 	return $calendar->begin($name);
 }
 

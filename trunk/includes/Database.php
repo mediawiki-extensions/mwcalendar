@@ -185,6 +185,8 @@ class CalendarDatabase{
 	}
 	
 	private function getCalendarID($calendar){
+		global $wgDBprefix;
+		
 		$id = 0;
 		$table = $wgDBprefix . 'mwcalendar_calendars';
 		$dbr = wfGetDB( DB_SLAVE );	

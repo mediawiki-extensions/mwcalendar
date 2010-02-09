@@ -17,17 +17,6 @@ class EventHandler{
 		
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 		$url = $arr[0]; //clear any previous parameters
-		
-		if( isset($arr[1]) ){
-			$paramArray = explode($arr[1]);
-			$trigger = $paramArray[0];
-			
-			if( isset($paramArray[1]) ) {
-				$id = $paramArray[1];
-			}
-		}
-		
-		$param = $arr[1]; //clear any previous parameters
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) ){
@@ -49,8 +38,7 @@ class EventHandler{
 								'createdby' => 		$createdby,
 								'invites' => 		$_POST["invites"] 
 						);
-			
-			
+						
 			$db = new CalendarDatabase();
 			
 			// are we updating or creating new?
@@ -65,8 +53,10 @@ class EventHandler{
 			}
 			
 			// need to call new URL to clear POST events
-			header("Location: " . $url . "&AddEvent");
-		}
+			// return to calendar
+			header("Location: " . $url);
+			
+		} ## END SAVE ##
 		
 		if ( isset($_POST["delete"]) ){
 			
@@ -79,11 +69,22 @@ class EventHandler{
 			// return to main calendar page
 			header("Location: " . $url);
 		}
-
-		if ( isset($_POST["new"]) ){
+		
+		// timestamp will be populated if any nav butten is clicked
+		if ( isset($_POST["timestamp"]) ){
+			$month = $_POST['monthSelect'];
+			$year = $_POST['yearSelect'];
+			$today = getdate( time() );
+		
+			if( isset($_POST['monthForward']))	{$month +=1;}
+			if( isset($_POST['monthBack']))		{$month -=1;}		
+			if( isset($_POST['yearForward']))	{$year +=1;}	
+			if( isset($_POST['yearBack']))		{$year -=1;}			
 			
-			// display add event page
-			header("Location: " . $url . "&AddEvent");
-		}
+			$timestamp = mktime(0,0,0,$month,1,$year);
+			setcookie($_POST['name'], $timestamp);
+			
+			header("Location: " . $url);
+		}		
 	}
 }
