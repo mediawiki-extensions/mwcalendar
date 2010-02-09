@@ -33,6 +33,8 @@ function launchCalendar($paramstring, $params = array()) {
 	if( !isset($params["name"]) ) $params["name"] = "Public";
 	$name = $params["name"];
 	
+	//return $this->test();
+	
 	return $calendar->begin($name);
 }
 
