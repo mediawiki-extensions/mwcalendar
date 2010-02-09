@@ -74,14 +74,17 @@ class EventHandler{
 		if ( isset($_POST["timestamp"]) ){
 			$month = $_POST['monthSelect'];
 			$year = $_POST['yearSelect'];
-			$today = getdate( time() );
 		
 			if( isset($_POST['monthForward']))	{$month +=1;}
 			if( isset($_POST['monthBack']))		{$month -=1;}		
 			if( isset($_POST['yearForward']))	{$year +=1;}	
 			if( isset($_POST['yearBack']))		{$year -=1;}			
 			
-			$timestamp = mktime(0,0,0,$month,1,$year);
+			if($_POST['today']){
+				$timestamp = time(); //now
+			}else{
+				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
+			}
 			setcookie($_POST['name'], $timestamp);
 			
 			header("Location: " . $url);

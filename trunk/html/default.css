@@ -11,7 +11,7 @@
 	.calendar_title{
 		font-size:18px;
 		text-align:center;
-		font-weight:bold;	
+		font-weight:;	
 	}
 	.calendar_day_table{
 		width:100%;
@@ -70,10 +70,12 @@
 	
 	.month_control{
 		text-align:left;
+		vertical-align:bottom;
 	}
 	
 	.year_control{
 		text-align:right;
+		vertical-align:bottom;
 	}
 	
 	.bullets{ }

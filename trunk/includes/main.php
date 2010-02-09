@@ -222,10 +222,15 @@ class mwCalendar{
 	}
 	
 	private function buildNavControls(){
+		global $wgLang;
+		
+		$date = $wgLang->getMonthName($this->month) . ', ' . $this->year;
+		$title = "$this->calendarName<br><font size='-1'>$date</font>";
+	
 		$navHTML = $this->searchHTML($this->htmlData, 		'<!--Nav Start-->', '<!--Nav End-->');
 		$navHTML = str_replace('[[MONTH_CONTROL]]', $this->buildMonthSelect(), $navHTML);
 		$navHTML = str_replace('[[YEAR_CONTROL]]', $this->buildYearSelect(), $navHTML);
-		$navHTML = str_replace('[[CALENDAR_NAME]]', $this->calendarName, $navHTML);
+		$navHTML = str_replace('[[CALENDAR_NAME]]', $title, $navHTML);
 	
 		return $navHTML;
 	}
