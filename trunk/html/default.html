@@ -2,7 +2,7 @@
 <form method=post name="navigate">
 <table class=calendar_main>
 	<tr><td>[[HEADER]]</td></tr>
-	<tr><td class=day_cell_main>[[BODY]]</td></tr>
+	<tr><td class=month_body>[[BODY]]</td></tr>
 	<tr><td>[[FOOTER]]</td></tr>
 </table>
 </form>
@@ -19,8 +19,8 @@
 <!--Nav End-->
 
 <!--Weekday Start-->
-<td class=day_cell_main>
-	<table class="calendar_weekday">
+<td class="day_cell_main calendar_weekday">
+	<table class="day_cell_child">
 		<tr>
 			<td class=calendar_day>[[Day]]</td>
 			<td></td>
@@ -34,8 +34,8 @@
 <!--Weekday End-->
 
 <!--Weekend Start-->
-<td class=day_cell_main>
-	<table class="calendar_weekend">
+<td class="day_cell_main calendar_weekend_empty">
+	<table class="day_cell_child">
 		<tr>
 			<td class=calendar_day>[[Day]]</td>
 			<td></td>
@@ -49,7 +49,7 @@
 <!--Weekend End-->
 
 <!--Empty Start-->
-<td class="calendar_empty"></td>
+<td class="day_cell_main calendar_weekend_empty">&nbsp;</td>
 <!--Empty End-->
 
 <!--Week Start-->

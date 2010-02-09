@@ -327,8 +327,10 @@ class mwCalendar{
 	
 	private function buildLink($event){
 		
+		$subject = substr($event['subject'], 0, 20) . "..."; //plaintext
+		
 		$url = $this->cleanLink($this->title) . '&EditEvent=' . $event['id'];
-		$link = '<a href="' . $url . '">' . $event['subject'] . '</a>';
+		$link = '<a href="' . $url . '">' . $subject . '</a>';
 		
 		return $link;
 	}
