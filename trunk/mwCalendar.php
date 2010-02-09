@@ -29,27 +29,13 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
-	global $wgScriptPath, $wgScript;
 	
-	//return mwcalendar_base_path;
-	//return $wgScriptPath; //    	/mediawiki 
-	//return $wgScript; //			/mediawiki/index.php 
-	//return __FILE__; // 			C:\Inetpub\wwwroot\mediawiki\extensions\mwcalendar\mwCalendar.php 
-	//return dirname(__FILE__); //	C:\Inetpub\wwwroot\mediawiki\extensions\mwcalendar 	
-	
-	$calendar = new mwCalendar;
-	
-	if( !isset($params["name"]) ) $params["name"] = "Public";
-	$name = $params["name"];
+	$calendar = new mwCalendar($params);
 
-	return $calendar->begin($name);
+	//return $date = mktime(0,0,0,2,28,2010);
+	
+	return $calendar->begin();
 }
-
-function test(){
-
-
-}
-
 
 
 
