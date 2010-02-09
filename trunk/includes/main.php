@@ -5,8 +5,8 @@ if (!defined('MEDIAWIKI')) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
 
-require_once('C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\includes\EventHandler.php');
-require_once('C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\includes\Database.php');
+require_once( mwcalendar_base_path . '/includes/EventHandler.php');
+require_once( mwcalendar_base_path . '/includes/Database.php');
 
 class mwCalendar{
 	
@@ -18,11 +18,14 @@ class mwCalendar{
 	var $db;
 	
 	var $calendarName;
+	var $addEventHtml = '';
 	
 	public function mwCalendar(){
 		global $wgOut;	
 		// set the calendar's initial date
 		$now = getdate();
+		
+		$this->addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");
 		
 		$this->month = $now['mon'];
 		$this->year = $now['year'];
@@ -36,10 +39,10 @@ class mwCalendar{
 		$wgOut->addScriptFile( '/mediawiki/extensions/mwCalendar/html/DatePicker.js');	
 		$wgOut->addStyle( '/mediawiki/extensions/mwCalendar/html/DatePicker.css', 'screen');
 		
-		$style = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\default.css");
+		$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
 		$wgOut->addHtml($style . chr(13));	
 		
-		$this->htmlData = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\default.html");
+		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
 	}
 	
 	public function begin($name){
@@ -58,7 +61,7 @@ class mwCalendar{
 		
 		switch( $urlEvent[0] ){
 		case 'AddEvent':
-			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			$html = $this->addEventHtml;
 			
 			if( isset($urlEvent[1]) ){
 				$startDate = date('n/j/Y', $urlEvent[1]);
@@ -78,7 +81,7 @@ class mwCalendar{
 			break;
 			
 		case 'EditEvent':
-			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			$html = $this->addEventHtml;
 			
 			$event = $this->db->getEvent( $urlEvent[1] );
 			$start = date('n/j/Y', $event['start']);
@@ -97,7 +100,7 @@ class mwCalendar{
 			break;
 /*		
 		case 'EditEvent':
-			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			$html = $this->addEventHtml;
 			$event = $this->db->getEvent( $urlEvent[1] );
 			
 			
@@ -335,12 +338,6 @@ class mwCalendar{
 		$arr = explode('&', $url);
 		
 		return $arr[0];
-	}
-	
-	private function urlParse(){
-		
-		//$arrURL = explode
-	
 	}
 }
 

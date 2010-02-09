@@ -29,7 +29,7 @@ class CalendarDatabase{
 		
 		$calendarid = $this->getCalendarID($calendar);
 
-		$dbw->insert( $wgDBprefix.'mwcalendar_events', array(
+		$dbw->insert( 'mwcalendar_events', array(
 			'calendarid' 		=> $calendarid,
 			'subject'        	=> $subject,
 			'location'        	=> $location,
@@ -42,12 +42,10 @@ class CalendarDatabase{
 		));
 	}
 
-	public function deleteEvent($eventid){
-		global $wgDBprefix;
-		
+	public function deleteEvent($eventid){	
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$eventtable = $wgDBprefix . 'mwcalendar_events';
+		$eventtable = 'mwcalendar_events';
 			
 		$sql = "DELETE FROM $eventtable
 					WHERE id = $eventid";// LIMIT 0,25";	
@@ -72,7 +70,7 @@ class CalendarDatabase{
 		
 		$calendarid = $this->getCalendarID($calendar);
 
-		$dbw->update( $wgDBprefix.'mwcalendar_events', 
+		$dbw->update( 'mwcalendar_events', 
 			array(
 				'calendarid' 		=> $calendarid,
 				'subject'        	=> $subject,
@@ -91,9 +89,8 @@ class CalendarDatabase{
 	}	
 	
 	public function getEvents($calendar, $timestamp1, $timestamp2){
-		global $wgDBprefix;
 
-		$eventtable = $wgDBprefix . 'mwcalendar_events';
+		$eventtable = 'mwcalendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -125,9 +122,8 @@ class CalendarDatabase{
 	}
 	
 	public function getEvent($eventid){
-		global $wgDBprefix;
 
-		$eventtable = $wgDBprefix . 'mwcalendar_events';
+		$eventtable = 'mwcalendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -158,20 +154,19 @@ class CalendarDatabase{
 	}	
 	
 	public function checkTables(){
-		global $wgDBprefix;
 		$dbw = wfGetDB( DB_MASTER );
 		$dbr = wfGetDB( DB_SLAVE );		
 		
-		$sql[$wgDBprefix.'mwcalendar_calendars'] = 
-			"CREATE TABLE `" . $wgDBprefix . "mwcalendar_calendars` (
+		$sql['mwcalendar_calendars'] = 
+			"CREATE TABLE `mwcalendar_calendars` (
 				`id` integer NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL default '',
 				`description` varchar(255) default '',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";
 			
-		$sql[$wgDBprefix.'mwcalendar_events'] = 
-			"CREATE TABLE `" . $wgDBprefix . "mwcalendar_events` (
+		$sql['mwcalendar_events'] = 
+			"CREATE TABLE `mwcalendar_events` (
 				`id` integer NOT NULL auto_increment,
 				`calendarid` integer NOT NULL default '0',
 				`subject` varchar(255) default '',
@@ -198,10 +193,9 @@ class CalendarDatabase{
 	}
 	
 	private function getCalendarID($calendar){
-		global $wgDBprefix;
-		
+	
 		$id = 0;
-		$table = $wgDBprefix . 'mwcalendar_calendars';
+		$table = 'mwcalendar_calendars';
 		$dbr = wfGetDB( DB_SLAVE );	
 		$sql = "SELECT id FROM $table WHERE name = '$calendar'";		
 					
@@ -217,10 +211,9 @@ class CalendarDatabase{
 	
 	// we're auto creating calendars as needed in the database
 	private function createCalendar($name, $description){
-		global $wgDBprefix;
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$dbw->insert( $wgDBprefix.'mwcalendar_calendars', array(
+		$dbw->insert( 'mwcalendar_calendars', array(
 			'name' 		=> $name,
 			'description'        	=> $description) 
 		);	

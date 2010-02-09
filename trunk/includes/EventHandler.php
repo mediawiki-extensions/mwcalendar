@@ -5,8 +5,8 @@ if (!defined('MEDIAWIKI')) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
 
-require_once('C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\includes\Database.php');
-require_once('C:\Inetpub\wwwroot\mediawiki\extensions\mwcalendar\includes\email.php');
+require_once( mwcalendar_base_path . '/includes/Database.php');
+require_once( mwcalendar_base_path . '/includes/email.php');
 
 class EventHandler{
 
