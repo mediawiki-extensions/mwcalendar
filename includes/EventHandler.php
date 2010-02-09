@@ -15,6 +15,8 @@ class EventHandler{
 	public static function CheckForEvents(){
 		global $wgUser;
 		
+		$db = new CalendarDatabase();
+		
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 		$url = $arr[0]; //clear any previous parameters
 
@@ -39,7 +41,7 @@ class EventHandler{
 								'invites' => 		$_POST["invites"] 
 						);
 						
-			$db = new CalendarDatabase();
+			
 			
 			// are we updating or creating new?
 			if($_POST['eventid']){
@@ -59,8 +61,7 @@ class EventHandler{
 		} ## END SAVE ##
 		
 		if ( isset($_POST["delete"]) ){
-			
-			// return to main calendar page
+			$db->deleteEvent($_POST['eventid']);
 			header("Location: " . $url . "&DeleteEvent");
 		}		
 

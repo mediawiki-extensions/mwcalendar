@@ -41,6 +41,19 @@ class CalendarDatabase{
 			'invites'        	=> $invites 
 		));
 	}
+
+	public function deleteEvent($eventid){
+		global $wgDBprefix;
+		
+		$dbw = wfGetDB( DB_MASTER );
+		
+		$eventtable = $wgDBprefix . 'mwcalendar_events';
+			
+		$sql = "DELETE FROM $eventtable
+					WHERE id = $eventid";// LIMIT 0,25";	
+		
+		$dbw->query($sql);
+	}	
 	
 	public function updateEvent($arrEvent, $eventid){
 		
