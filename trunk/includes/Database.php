@@ -23,34 +23,27 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );	
 			
 		$calendar = $arrEvent['calendar'];	
-		$subject = $arrEvent['subject'];
-		$location = $arrEvent['location'];
-		$start = $arrEvent['start'];
-		$end = $arrEvent['end'];
-		$allday = $arrEvent['allday'];
-		$text = $arrEvent['text'];
-		$createdby = $arrEvent['createdby'];
-		$invites = $arrEvent['invites'];
-		
-		$calendarid = $this->getCalendarID($calendar);
 
-		$dbw->insert('mwcalendar_events', array(
-			'calendarid' 		=> $calendarid,
-			'subject'        	=> $subject,
-			'location'        	=> $location,
-			'start'        		=> $start,
-			'end'        		=> $end,
-			'allday'        	=> $allday,
-			'text'        		=> $text,
-			'createdby'        	=> $createdby,
-			'invites'        	=> $invites 
+		$dbw->insert('calendar_events', array(
+			'calendarid' 		=> $this->getCalendarID($calendar),
+			'subject'        	=> $arrEvent['subject'],
+			'location'        	=> $arrEvent['location'],
+			'start'        		=> $arrEvent['start'],
+			'end'        		=> $arrEvent['end'],
+			'allday'        	=> $arrEvent['allday'],
+			'text'        		=> $arrEvent['text'],
+			'createdby'        	=> $arrEvent['createdby'],
+			'createddate'       => time(),
+			'invites'        	=> $arrEvent['invites'],
+			'editedby'       	=> '',
+			'editeddate'       	=> null
 		));
 	}
 
 	public function deleteEvent($eventid){	
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$eventtable = $this->dbPrefix . 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'calendar_events';
 			
 		$sql = "DELETE FROM $eventtable
 					WHERE id = $eventid";// LIMIT 0,25";	
@@ -64,28 +57,21 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );	
 			
 		$calendar = $arrEvent['calendar'];	
-		$subject = $arrEvent['subject'];
-		$location = $arrEvent['location'];
-		$start = $arrEvent['start'];
-		$end = $arrEvent['end'];
-		$allday = $arrEvent['allday'];
-		$text = $arrEvent['text'];
-		$createdby = $arrEvent['createdby'];
-		$invites = $arrEvent['invites'];
-		
-		$calendarid = $this->getCalendarID($calendar);
 
-		$dbw->update( 'mwcalendar_events', 
+		$dbw->update( 'calendar_events', 
 			array(
-				'calendarid' 		=> $calendarid,
-				'subject'        	=> $subject,
-				'location'        	=> $location,
-				'start'        		=> $start,
-				'end'        		=> $end,
-				'allday'        	=> $allday,
-				'text'        		=> $text,
-				'createdby'        	=> $createdby,
-				'invites'        	=> $invites
+				'calendarid' 		=> $this->getCalendarID($calendar),
+				'subject'        	=> $arrEvent['subject'],
+				'location'        	=> $arrEvent['location'],
+				'start'        		=> $arrEvent['start'],
+				'end'        		=> $arrEvent['end'],
+				'allday'        	=> $arrEvent['allday'],
+				'text'        		=> $arrEvent['text'],
+//				'createdby'        	=> $arrEvent['createdby'],
+//				'createddate'       => $arrEvent['createddate'],
+				'invites'        	=> $arrEvent['invites'],
+				'editedby'       	=> $arrEvent['editedby'],
+				'editeddate'       	=> time()
 			),
 			array(
 				'id' => $eventid
@@ -95,7 +81,7 @@ class CalendarDatabase{
 	
 	public function getEvents($calendar, $timestamp1, $timestamp2){
 
-		$eventtable = $this->dbPrefix . 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'calendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -117,8 +103,10 @@ class CalendarDatabase{
 			$arrEvent['allday'] = $r->allday;
 			$arrEvent['text'] = $r->text;
 			$arrEvent['createdby'] = $r->createdby;
-			$arrEvent['text'] = $r->text;
+			$arrEvent['createddate'] = $r->createddate;
 			$arrEvent['invites'] = $r->invites;
+			$arrEvent['editedby'] = $r->editedby;
+			$arrEvent['editeddate'] = $r->editeddate;
 
 			$arrEvents[] = $arrEvent;
 		}
@@ -128,7 +116,7 @@ class CalendarDatabase{
 	
 	public function getEvent($eventid){
 
-		$eventtable = $this->dbPrefix . 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'calendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -149,8 +137,11 @@ class CalendarDatabase{
 			$arrEvent['allday'] = $r->allday;
 			$arrEvent['text'] = $r->text;
 			$arrEvent['createdby'] = $r->createdby;
+			$arrEvent['createddate'] = $r->createddate;
 			$arrEvent['text'] = $r->text;
 			$arrEvent['invites'] = $r->invites;
+			$arrEvent['editedby'] = $r->editedby;
+			$arrEvent['editeddate'] = $r->editeddate;
 
 			//$arrEvents[] = $arrEvent;
 		}
@@ -160,18 +151,21 @@ class CalendarDatabase{
 	
 	public function checkTables(){
 		$dbw = wfGetDB( DB_MASTER );
-		$dbr = wfGetDB( DB_SLAVE );		
+		$dbr = wfGetDB( DB_SLAVE );	
+
+		$header =  "`" . $this->dbPrefix . "calendar_header" . "`";
+		$events =  "`" . $this->dbPrefix . "calendar_events" . "`";
 		
-		$sql['mwcalendar_calendars'] = 
-			"CREATE TABLE `mwcalendar_calendars` (
+		$sql[$header] = 
+			"CREATE TABLE $header (
 				`id` integer NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL default '',
 				`description` varchar(255) default '',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";
 			
-		$sql['mwcalendar_events'] = 
-			"CREATE TABLE `mwcalendar_events` (
+		$sql[$events] = 
+			"CREATE TABLE $events (
 				`id` integer NOT NULL auto_increment,
 				`calendarid` integer NOT NULL default '0',
 				`subject` varchar(255) default '',
@@ -181,7 +175,10 @@ class CalendarDatabase{
 				`allday` boolean NOT NULL default false,
 				`text` longtext default '',
 				`createdby` varchar(255) NOT NULL default '',
+				`createddate` double NOT NULL default '0',
 				`invites` mediumtext default '',
+				`editedby` varchar(255) default '',
+				`editeddate` double default '0',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";			
 		
@@ -200,7 +197,7 @@ class CalendarDatabase{
 	private function getCalendarID($calendar){
 	
 		$id = 0;
-		$table = $this->dbPrefix . 'mwcalendar_calendars';
+		$table = $this->dbPrefix . 'calendar_header';
 		$dbr = wfGetDB( DB_SLAVE );	
 		$sql = "SELECT id FROM $table WHERE name = '$calendar'";		
 					
@@ -218,7 +215,7 @@ class CalendarDatabase{
 	private function createCalendar($name, $description){
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$dbw->insert( $this->dbPrefix . 'mwcalendar_calendars', array(
+		$dbw->insert( 'calendar_header', array(
 			'name' 		=> $name,
 			'description'        	=> $description) 
 		);	

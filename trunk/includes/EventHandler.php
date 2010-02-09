@@ -28,7 +28,8 @@ class EventHandler{
 			$start = strtotime($_POST["start"]);
 			$end = strtotime($_POST["end"]);
 			
-			$createdby = $wgUser->getName();
+			// this is the active user (can be the creator... or the editor)
+			$whodidit = $wgUser->getName();
 			
 			$arrEvent = array(	'calendar' => 		$_POST["calendar"],
 								'subject' => 		$_POST["subject"],
@@ -37,12 +38,11 @@ class EventHandler{
 								'end' => 			$end,
 								'allday' => 		($_POST["allday"] == 'on') ? 1:0,
 								'text' => 			$_POST["text"],
-								'createdby' => 		$createdby,
+								'createdby' => 		$whodidit,
+								'editedby' => 		$whodidit,
 								'invites' => 		$_POST["invites"] 
 						);
 						
-			
-			
 			// are we updating or creating new?
 			if($_POST['eventid']){
 				$db->updateEvent($arrEvent, $_POST['eventid']);
