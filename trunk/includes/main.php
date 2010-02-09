@@ -73,6 +73,7 @@ class mwCalendar{
 			$html = str_replace('[[EventID]]', null, $html);
 			$html = str_replace('[[Start]]', $startDate, $html);
 			$html = str_replace('[[End]]', $endDate, $html);
+			$html = str_replace('[[Disabled]]', 'disabled', $html);
 			
 			break;
 			
@@ -94,7 +95,14 @@ class mwCalendar{
 			$html = str_replace('[[Text]]', $event['text'], $html);		
 		
 			break;
+/*		
+		case 'EditEvent':
+			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			$event = $this->db->getEvent( $urlEvent[1] );
 			
+			
+			break;
+	*/		
 		case 'monthForward':
 			$arr_date = getdate($urlEvent[1]);
 			$this->month = $arr_date['mon']+1;
@@ -131,7 +139,8 @@ class mwCalendar{
 		$html = str_replace('[[Invites]]', '', $html);	
 		$html = str_replace('[[Start]]', '', $html);	
 		$html = str_replace('[[End]]', '', $html);				
-		$html = str_replace('[[Text]]', '', $html);				
+		$html = str_replace('[[Text]]', '', $html);	
+		$html = str_replace('[[Disabled]]', '', $html);			
 		
 		return $html;
 	}
