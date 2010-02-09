@@ -3,6 +3,11 @@
 		border:0px solid #808080;
 		width:100%
 	}
+	.add_event{
+		text-align:right;
+		font-size: 9px;
+		vertical-align:top;		
+	}
 	.calendar_title{
 		font-size:18px;
 		text-align:center;
@@ -17,6 +22,7 @@
 		border-collapse:collapse;
 		vertical-align:top;	
 		border:1px solid #808080;
+		width:0%
 	}
 	
 	.calendar_weekday{	
@@ -59,6 +65,7 @@
 		border:0px solid #808080;
 		height:70px;
 		vertical-align:top;
+		font-size: 10px;
 	}
 	
 	.month_control{
@@ -68,6 +75,8 @@
 	.year_control{
 		text-align:right;
 	}
+	
+	.bullets{ }
 	
 	.calendar_header{
 		width:100%;

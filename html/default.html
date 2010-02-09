@@ -1,5 +1,5 @@
 <!--Calendar Start-->
-<form>
+<form method=post name="navigate">
 <table class=calendar_main>
 	<tr><td>[[HEADER]]</td></tr>
 	<tr><td class=day_cell_main>[[BODY]]</td></tr>
@@ -18,27 +18,16 @@
 </table>
 <!--Nav End-->
 
-<!--AddEvent Start-->
-<form name="CalenderFull" method="post">
-	<table border=1>
-		<tr>
-			<td>
-				<input type=submit name=new value="New Event" />
-			</td>
-		</tr>
-	</table>
-</form>
-<!--AddEvent End-->
-
 <!--Weekday Start-->
 <td class=day_cell_main>
 	<table class="calendar_weekday">
 		<tr>
 			<td class=calendar_day>[[Day]]</td>
-			<td>&nbsp;</td>
+			<td></td>
+			<td class="add_event">[[Add]]</td>
 		</tr>
 		<tr>
-			<td class=calendar_events colspan="2">[[EventList]]</td>
+			<td class=calendar_events colspan="3">[[EventList]]</td>
 		</tr>
 	</table>
 </td>
@@ -49,10 +38,11 @@
 	<table class="calendar_weekend">
 		<tr>
 			<td class=calendar_day>[[Day]]</td>
-			<td>&nbsp;</td>
+			<td></td>
+			<td class="add_event">[[Add]]</td>
 		</tr>
 		<tr>
-			<td class=calendar_events colspan="2">[[EventList]]</td>
+			<td class=calendar_events colspan="3">[[EventList]]</td>
 		</tr>
 	</table>
 </td>

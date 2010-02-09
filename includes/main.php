@@ -21,19 +21,18 @@ class mwCalendar{
 	
 	public function mwCalendar(){
 		global $wgOut;	
+		// set the calendar's initial date
+		$now = getdate();
+		
+		$this->month = $now['mon'];
+		$this->year = $now['year'];
+		$this->day = $now['mday'];			
 		
 		//$events = new EventHandler();	
 		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
 
-		// set the calendar's initial date
-		$now = getdate();
-		
-		$this->month = $now['mon'];
-		$this->year = $now['year'];
-		$this->day = $now['mday'];	
-		
 		$wgOut->addScriptFile( '/mediawiki/extensions/mwCalendar/html/DatePicker.js');	
 		$wgOut->addStyle( '/mediawiki/extensions/mwCalendar/html/DatePicker.css', 'screen');
 		
@@ -49,27 +48,38 @@ class mwCalendar{
 		
 		$this->calendarName = $name;
 		
-		//$arr = $this->db->getEvents($name, 0,12654324000);
-		//return $arr[0]['subject'];
-	
 		// determine what we need to display
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
-		$param = explode( '=', $arrUrl[1] );
+
+		$urlEvent[0] = '';
+		if( isset($arrUrl[1]) ){
+			$urlEvent = explode( '=', $arrUrl[1] ); #ex: EditEvent=45
+		}
 		
-		switch( $param[0] ){
+		switch( $urlEvent[0] ){
 		case 'AddEvent':
 			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
+			
+			if( isset($urlEvent[1]) ){
+				$startDate = date('n/j/Y', $urlEvent[1]);
+				$endDate = date('n/j/Y', $urlEvent[1]);
+			}else{
+				$startDate = date('n/j/Y', time());
+				$endDate = date('n/j/Y', time());
+			}
 			
 			// update the 'hidden' input field so we retain the calendar name for the db update
 			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
 			$html = str_replace('[[EventID]]', null, $html);
+			$html = str_replace('[[Start]]', $startDate, $html);
+			$html = str_replace('[[End]]', $endDate, $html);
 			
 			break;
 			
 		case 'EditEvent':
 			$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
 			
-			$event = $this->db->getEvent( $param[1] );
+			$event = $this->db->getEvent( $urlEvent[1] );
 			$start = date('n/j/Y', $event['start']);
 			$end = date('n/j/Y', $event['end']);
 				
@@ -85,34 +95,63 @@ class mwCalendar{
 		
 			break;
 			
+		case 'monthForward':
+			$arr_date = getdate($urlEvent[1]);
+			$this->month = $arr_date['mon']+1;
+			$this->day = 1;
+			$this->year = $arr_date['year'];
+			
+			$html = $this->createCalendar();
+			
+			break;
+				
+			
 		default:
+			$cookie_name = $this->calendarName;
+			if( isset($_COOKIE[$cookie_name]) ){
+				$date = getdate($_COOKIE[$cookie_name]); //timestamp value
+				$this->month = $date['mon'];
+				$this->year = $date['year'];
+			}
 			$html = $this->createCalendar();
 		} //end switch
-			
+		
+		 // remove any remaining [[xyz]] type tags
+		$html = $this->clearHtmlTags($html);
+		
 		$wgOut->addHtml($html);
+	}
+	
+	// this function removes any HTML tags that havent been overwritten
+	private function clearHtmlTags($html){
+		$html = str_replace('[[CalendarName]]', '', $html);
+		$html = str_replace('[[EventID]]', '', $html);	
+		$html = str_replace('[[Subject]]', '', $html);	
+		$html = str_replace('[[Location]]', '', $html);			
+		$html = str_replace('[[Invites]]', '', $html);	
+		$html = str_replace('[[Start]]', '', $html);	
+		$html = str_replace('[[End]]', '', $html);				
+		$html = str_replace('[[Text]]', '', $html);				
+		
+		return $html;
 	}
 	
 	// build main calendar month
 	private function createCalendar(){
 		$calendarHTML = $this->searchHTML($this->htmlData, 	'<!--Calendar Start-->', 	'<!--Calendar End-->');
-		//$headerHTML = $this->searchHTML($this->htmlData, 	'<!--Header Start-->', 		'<!--Header End-->');
 		$weekdayHTML = $this->searchHTML($this->htmlData, 	'<!--Weekday Start-->', 	'<!--Weekday End-->');
 		$weekendHTML = $this->searchHTML($this->htmlData, 	'<!--Weekend Start-->', 	'<!--Weekend End-->');
 		$emptyHTML = $this->searchHTML($this->htmlData, 	'<!--Empty Start-->', 		'<!--Empty End-->');
 		$weekHTML = $this->searchHTML($this->htmlData, 		'<!--Week Start-->', 		'<!--Week End-->');
-
-		$addEventHTML = $this->searchHTML($this->htmlData, 		'<!--AddEvent Start-->', '<!--AddEvent End-->');
 	
 		$dayOfWeek = date('N', mktime(12, 0, 0, $this->month, 1, $this->year));	// 0-6
 	    $daysInMonth = date('t', mktime(12, 0, 0, $this->month, 1, $this->year));  // 28-31
 		$weeksInMonth = ceil( ($dayOfWeek + $daysInMonth)/7 ); // 4-6
 		
-		$first = mktime(12,0,0,$this->month,1,$this->year);
-		$last = mktime(12,0,0,$this->month,$daysInMonth,$this->year);
+		$first = mktime(0,0,0,$this->month-3,1,$this->year);
+		$last = mktime(0,0,0,$this->month,$daysInMonth,$this->year);
 		
-		//$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
-		$arrMonthEvents = $this->db->getEvents('test2', $first, $last);
-		//return print_r($arrMonthEvents );
+		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		
 		$day = (-$dayOfWeek) +1;
 		
@@ -130,12 +169,18 @@ class mwCalendar{
 					}
 					elseif( $i==0 || $i==6 ){
 						$events = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
-						$temp = str_replace("[[Day]]", $day, $weekendHTML);
+						$addLink = $this->buildAddEventLink($this->month, $day, $this->year);
+						
+						$temp = str_replace("[[Add]]", $addLink, $weekendHTML);
+						$temp = str_replace("[[Day]]", $day, $temp);
 						$temp = str_replace("[[EventList]]", $events, $temp);
 					}
 					else{
 						$events = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
-						$temp = str_replace("[[Day]]", $day, $weekdayHTML);
+						$addLink = $this->buildAddEventLink($this->month, $day, $this->year);
+						
+						$temp = str_replace("[[Add]]", $addLink, $weekdayHTML);						
+						$temp = str_replace("[[Day]]", $day, $temp);
 						$temp = str_replace("[[EventList]]", $events, $temp);
 					}
 					$ret .= $temp;
@@ -150,15 +195,24 @@ class mwCalendar{
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
 		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
-
-		$calendarHTML .= $addEventHTML; //temp button
 		
 		return $calendarHTML;
 	}
 	
+	private function buildAddEventLink($month, $day, $year){
+		
+		$timestamp = mktime(0,0,0,$month,$day,$year);
+		
+		$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
+		$link = '<a href="' . $url . '">new</a>';		
+		return $link;
+	}
+	
 	private function buildWeekHeader(){
 		
-		$arr = array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+		$header = '';
+		
+		$arr = array('Sunday', 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
 		
 		foreach($arr as $head){
 			$header .= '<td>' . $head . '</td>';
@@ -179,9 +233,11 @@ class mwCalendar{
 	function buildMonthSelect(){
 		global $wgLang;
 		
+		$todayBtn = "&nbsp;<input class='btn' name='today' type='submit' value='today'>";		
 		$backBtn = "<input class='btn' name='monthBack' type='submit' value='<<'>&nbsp;";
 		$forwardBtn = "&nbsp;<input class='btn' name='monthForward' type='submit' value='>>'>";		
-	
+		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
+		
 	    // build the month select box
 	    $monthSelect = "<select name='monthSelect' method='post' onChange='javascript:this.form.submit()'>";
 		for ($i = 1; $i <= 12; $i++) {
@@ -195,8 +251,11 @@ class mwCalendar{
     		}
 	    }
 	    $monthSelect .= "</select>";
+		
+		$hidden = "<input name=timestamp type=hidden value='$timestamp' size=10>"
+			. "<input name=name type=hidden value='$this->calendarName' size=10>";
 	
-		return $backBtn . $monthSelect . $forwardBtn;
+		return $backBtn . $monthSelect . $forwardBtn . $todayBtn . $hidden;
 	}
 	
 	private function buildYearSelect(){
@@ -223,36 +282,52 @@ class mwCalendar{
 	}	
 	
 	private function buildEventList($arrEvents, $month, $day, $year){
+	
+		$links = '';
+	
 		$date = mktime(0,0,0,$month,$day,$year);
 		//$date2 = mktime(23,59,59,$month,$day,$year);
 		
 		foreach($arrEvents as $event){
 
 			if( ($date >= $event['start']) && ($date <= $event['end']) ){
-				$links .= $this->buildLink($event);
+				$links .= '<li>' . $this->buildLink($event) . '</li>';
 			}
 		}
 
-		return $links;
+		return "<ul class='bullets'>" . $links . '</ul>';
 	}
 	
 	private function buildLink($event){
-		$html = file_get_contents("C:\Inetpub\wwwroot\mediawiki\extensions\mwCalendar\html\AddEvent.html");
 		
-		$url = $_SERVER['REQUEST_URI'] . '&EditEvent=' . $event['id'];
-		$link = '<a href="' . $url . '">' . $event['subject'] . '</a> <br>';
+		$url = $this->cleanLink($_SERVER['REQUEST_URI']) . '&EditEvent=' . $event['id'];
+		$link = '<a href="' . $url . '">' . $event['subject'] . '</a>';
+		
 		return $link;
 	}
 		
     function searchHTML($html, $beginString, $endString) {
 	
-    	$temp = split($beginString, $html);
+    	$temp = explode($beginString, $html);
     	if (count($temp) > 1) {
-			$temp = split($endString, $temp[1]);
+			$temp = explode($endString, $temp[1]);
 			return $temp[0];
     	}
     	return "";
     }	
+	
+	private function cleanLink($url){
+		
+		$arr = explode('&', $url);
+		
+		return $arr[0];
+	}
+	
+	private function urlParse(){
+		
+		//$arrURL = explode
+	
+	}
 }
 
 
