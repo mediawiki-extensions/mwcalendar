@@ -103,7 +103,7 @@ class CalendarDatabase{
 		
 		$sql = "SELECT *
 					FROM $eventtable
-					WHERE start >= $timestamp1 AND end <= $timestamp2
+					WHERE start >= $timestamp1 AND start <= $timestamp2
 					AND calendarid = $calendarid";// LIMIT 0,25";
 
 		$res = $dbr->query($sql);    

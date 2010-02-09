@@ -21,24 +21,25 @@ class mwCalendar{
 	var $title = '';
 	var $addEventHtml = '';
 	
-	public function mwCalendar(){
+	var $subject_max_length;
+	
+	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
-		// set the calendar's initial date
+			
+		$this->setDefaults($params); ## RUN FIRST ##
+		
+		// set the calendar's initial date (can be overridden later)
 		$now = getdate();
+		$this->month = $now['mon'];
+		$this->year = $now['year'];
+		$this->day = $now['mday'];		
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
 		
-		//$src = 'DatePicker.js';
-		//$htmlScript = '<script type="text/javascript" src="'.$src.'"></script>';
-
-		
 		$this->addEventHtml = $htmlScript.file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");
 		
-		$this->month = $now['mon'];
-		$this->year = $now['year'];
-		$this->day = $now['mday'];			
-		
-		//$events = new EventHandler();	
+		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
+		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
@@ -52,12 +53,17 @@ class mwCalendar{
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
 	}
 	
-	public function begin($name){
+	## SET DEFAULTS ##
+	private function setDefaults($params){
+
+		$this->calendarName = isset( $params['name'] ) ? $params['name'] : 'Public';
+		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : '15';			
+	}
+	
+	public function begin(){
 		global $wgOut;	
 		$html = "";		
-		
-		$this->calendarName = $name;
-		
+
 		// determine what we need to display
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 
@@ -106,14 +112,7 @@ class mwCalendar{
 			$html = str_replace('[[Text]]', $event['text'], $html);		
 		
 			break;
-/*		
-		case 'EditEvent':
-			$html = $this->addEventHtml;
-			$event = $this->db->getEvent( $urlEvent[1] );
-			
-			
-			break;
-	*/		
+	
 		case 'monthForward':
 			$arr_date = getdate($urlEvent[1]);
 			$this->month = $arr_date['mon']+1;
@@ -133,6 +132,7 @@ class mwCalendar{
 				$this->year = $date['year'];
 			}
 			$html = $this->createCalendar();
+			$html .= $this->createEventList();
 		} //end switch
 		
 		 // remove any remaining [[xyz]] type tags
@@ -151,7 +151,8 @@ class mwCalendar{
 		$html = str_replace('[[Start]]', '', $html);	
 		$html = str_replace('[[End]]', '', $html);				
 		$html = str_replace('[[Text]]', '', $html);	
-		$html = str_replace('[[Disabled]]', '', $html);			
+		$html = str_replace('[[Disabled]]', '', $html);		
+		$html = str_replace('[[FOOTER]]', '', $html);			
 		
 		return $html;
 	}
@@ -168,8 +169,8 @@ class mwCalendar{
 	    $daysInMonth = date('t', mktime(12, 0, 0, $this->month, 1, $this->year));  // 28-31
 		$weeksInMonth = ceil( ($dayOfWeek + $daysInMonth)/7 ); // 4-6
 		
-		$first = mktime(0,0,0,$this->month-3,1,$this->year);
-		$last = mktime(0,0,0,$this->month,$daysInMonth,$this->year);
+		$first = mktime(0,0,0,$this->month-12,1,$this->year);
+		$last = mktime(23,59,59,$this->month,$daysInMonth,$this->year);
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		
@@ -217,6 +218,30 @@ class mwCalendar{
 		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
 		
 		return $calendarHTML;
+	}
+	
+	private function createEventList(){
+		$first = mktime(0,0,0,$this->month-12,1,$this->year);
+		$last = mktime(23,59,59,$this->month,28,$this->year);
+		
+		$eventListRange = 30;
+		
+		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
+		$day = $this->day;
+		
+		for($i=0; $i < $eventListRange; $i++){
+						
+			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
+			
+			if($ret){
+				$date = "<tr><td class=eventlist_header>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td></tr>";
+				$ret = "<tr><td>" . $ret . "<br></td></tr>";
+				$events .= $date . $ret;
+			}
+			$day++;
+		}
+		
+		return "<table width=100%>" . $events . "</table>";
 	}
 	
 	private function buildAddEventLink($month, $day, $year){
@@ -311,6 +336,10 @@ class mwCalendar{
 	private function buildEventList($arrEvents, $month, $day, $year){
 	
 		$links = '';
+		#start = 1267333200 
+		#end = 1268024400 
+		
+		#date = 1267333200 
 	
 		$date = mktime(0,0,0,$month,$day,$year);
 		//$date2 = mktime(23,59,59,$month,$day,$year);
@@ -321,14 +350,21 @@ class mwCalendar{
 				$links .= '<li>' . $this->buildLink($event) . '</li>';
 			}
 		}
-
-		return "<ul class='bullets'>" . $links . '</ul>';
+		if($links != '')
+			return "<ul class='bullets'>" . $links . '</ul>';
+			
+		return '';
 	}
 	
 	private function buildLink($event){
 		
-		$subject = substr($event['subject'], 0, 20) . "..."; //plaintext
+		$limit = $this->subject_max_length;
+		$subject = $event['subject'];
 		
+		if(strlen($subject) > $limit ) {
+			$subject = substr($subject, 0, $limit) . "...";
+		}
+
 		$url = $this->cleanLink($this->title) . '&EditEvent=' . $event['id'];
 		$link = '<a href="' . $url . '">' . $subject . '</a>';
 		
