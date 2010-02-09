@@ -71,7 +71,7 @@ class EventHandler{
 			header("Location: " . $url);
 		}
 		
-		// timestamp will be populated if any nav butten is clicked
+		// timestamp will be populated only if any nav butten is clicked
 		if ( isset($_POST["timestamp"]) ){
 			$month = $_POST['monthSelect'];
 			$year = $_POST['yearSelect'];
@@ -86,7 +86,9 @@ class EventHandler{
 			}else{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
-			setcookie($_POST['name'], $timestamp);
+			
+			$cookie_name = preg_replace('/(\.|\s)/',  '_', $_POST['name']); //replace periods and spaces
+			setcookie($cookie_name, $timestamp);
 			
 			header("Location: " . $url);
 		}		

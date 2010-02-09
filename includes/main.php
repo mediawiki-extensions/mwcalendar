@@ -22,6 +22,7 @@ class mwCalendar{
 	var $addEventHtml = '';
 	
 	var $subject_max_length;
+	var $event_list = 0;
 	
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
@@ -57,11 +58,12 @@ class mwCalendar{
 	private function setDefaults($params){
 
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] : 'Public';
-		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : '15';			
+		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 15;	
+		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;		
 	}
 	
 	public function begin(){
-		global $wgOut;	
+	
 		$html = "";		
 
 		// determine what we need to display
@@ -125,20 +127,27 @@ class mwCalendar{
 				
 			
 		default:
-			$cookie_name = $this->calendarName;
+			$cookie_name = preg_replace('/(\.|\s)/',  '_', $this->calendarName); //replace periods and spaces
+
 			if( isset($_COOKIE[$cookie_name]) ){
 				$date = getdate($_COOKIE[$cookie_name]); //timestamp value
 				$this->month = $date['mon'];
 				$this->year = $date['year'];
 			}
-			$html = $this->createCalendar();
-			$html .= $this->createEventList();
+			
+			if($this->event_list > 0){
+				$html .= $this->createEventList();
+			}else{
+				$html = $this->createCalendar();
+			}
+			
 		} //end switch
 		
 		 // remove any remaining [[xyz]] type tags
 		$html = $this->clearHtmlTags($html);
 		
-		$wgOut->addHtml($html);
+		return $html;
+		//$wgOut->addHtml($html);
 	}
 	
 	// this function removes any HTML tags that havent been overwritten
@@ -224,7 +233,7 @@ class mwCalendar{
 		$first = mktime(0,0,0,$this->month-12,1,$this->year);
 		$last = mktime(23,59,59,$this->month,28,$this->year);
 		
-		$eventListRange = 30;
+		$eventListRange = $this->event_list;
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		$day = $this->day;
@@ -234,8 +243,9 @@ class mwCalendar{
 			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
 			
 			if($ret){
-				$date = "<tr><td class=eventlist_header>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td></tr>";
-				$ret = "<tr><td>" . $ret . "<br></td></tr>";
+				$add = "<td text-align=right>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
+				$date = "<tr><td class=eventlist_header>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
+				$ret = "<tr><td colspan=2>" . $ret . "<br></td></tr>";
 				$events .= $date . $ret;
 			}
 			$day++;
