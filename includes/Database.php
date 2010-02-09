@@ -6,8 +6,13 @@ if (!defined('MEDIAWIKI')) {
 }
 
 class CalendarDatabase{
+	
+	var $dbPrefix = '';
 
 	public function CalendarDatabase(){
+		global $wgDBprefix;
+		$this->dbPrefix = $wgDBprefix;
+		
 		$this->checkTables();
 		//$this->createCalendar('test', 'text calendar');
 	}
@@ -29,7 +34,7 @@ class CalendarDatabase{
 		
 		$calendarid = $this->getCalendarID($calendar);
 
-		$dbw->insert( 'mwcalendar_events', array(
+		$dbw->insert('mwcalendar_events', array(
 			'calendarid' 		=> $calendarid,
 			'subject'        	=> $subject,
 			'location'        	=> $location,
@@ -45,7 +50,7 @@ class CalendarDatabase{
 	public function deleteEvent($eventid){	
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$eventtable = 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'mwcalendar_events';
 			
 		$sql = "DELETE FROM $eventtable
 					WHERE id = $eventid";// LIMIT 0,25";	
@@ -90,7 +95,7 @@ class CalendarDatabase{
 	
 	public function getEvents($calendar, $timestamp1, $timestamp2){
 
-		$eventtable = 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'mwcalendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -123,7 +128,7 @@ class CalendarDatabase{
 	
 	public function getEvent($eventid){
 
-		$eventtable = 'mwcalendar_events';
+		$eventtable = $this->dbPrefix . 'mwcalendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		
@@ -195,7 +200,7 @@ class CalendarDatabase{
 	private function getCalendarID($calendar){
 	
 		$id = 0;
-		$table = 'mwcalendar_calendars';
+		$table = $this->dbPrefix . 'mwcalendar_calendars';
 		$dbr = wfGetDB( DB_SLAVE );	
 		$sql = "SELECT id FROM $table WHERE name = '$calendar'";		
 					
@@ -213,7 +218,7 @@ class CalendarDatabase{
 	private function createCalendar($name, $description){
 		$dbw = wfGetDB( DB_MASTER );
 		
-		$dbw->insert( 'mwcalendar_calendars', array(
+		$dbw->insert( $this->dbPrefix . 'mwcalendar_calendars', array(
 			'name' 		=> $name,
 			'description'        	=> $description) 
 		);	
