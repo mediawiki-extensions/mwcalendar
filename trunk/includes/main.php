@@ -18,14 +18,21 @@ class mwCalendar{
 	var $db;
 	
 	var $calendarName;
+	var $title = '';
 	var $addEventHtml = '';
 	
 	public function mwCalendar(){
-		global $wgOut;	
+		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
 		// set the calendar's initial date
 		$now = getdate();
 		
-		$this->addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");
+		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
+		
+		//$src = 'DatePicker.js';
+		//$htmlScript = '<script type="text/javascript" src="'.$src.'"></script>';
+
+		
+		$this->addEventHtml = $htmlScript.file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");
 		
 		$this->month = $now['mon'];
 		$this->year = $now['year'];
@@ -35,10 +42,10 @@ class mwCalendar{
 		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
-
-		$wgOut->addScriptFile( '/mediawiki/extensions/mwCalendar/html/DatePicker.js');	
-		$wgOut->addStyle( '/mediawiki/extensions/mwCalendar/html/DatePicker.css', 'screen');
 		
+		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
+		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
+
 		$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
 		$wgOut->addHtml($style . chr(13));	
 		
@@ -76,7 +83,8 @@ class mwCalendar{
 			$html = str_replace('[[EventID]]', null, $html);
 			$html = str_replace('[[Start]]', $startDate, $html);
 			$html = str_replace('[[End]]', $endDate, $html);
-			$html = str_replace('[[Disabled]]', 'disabled', $html);
+			$html = str_replace('[[Disabled]]', 'disabled', $html); 
+			//$html = str_replace('[[SAFE_URL]]', $this->title, $html);
 			
 			break;
 			
@@ -215,7 +223,9 @@ class mwCalendar{
 		
 		$timestamp = mktime(0,0,0,$month,$day,$year);
 		
-		$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
+		//$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
+		$url = $this->cleanLink( $this->title ) . '&AddEvent=' . $timestamp;
+		
 		$link = '<a href="' . $url . '">new</a>';		
 		return $link;
 	}
@@ -317,7 +327,7 @@ class mwCalendar{
 	
 	private function buildLink($event){
 		
-		$url = $this->cleanLink($_SERVER['REQUEST_URI']) . '&EditEvent=' . $event['id'];
+		$url = $this->cleanLink($this->title) . '&EditEvent=' . $event['id'];
 		$link = '<a href="' . $url . '">' . $event['subject'] . '</a>';
 		
 		return $link;
