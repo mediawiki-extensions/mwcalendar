@@ -47,7 +47,8 @@ class mwCalendar{
 		
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
-
+		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/InviteSelect.js');
+		
 		$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
 		$wgOut->addHtml($style . chr(13));	
 		
@@ -245,7 +246,7 @@ class mwCalendar{
 			if($ret){
 				$add = "<td text-align=right>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
 				$date = "<tr><td class=eventlist_header>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
-				$ret = "<tr><td colspan=2>" . $ret . "<br></td></tr>";
+				$ret = "<tr><td colspan=2 class=eventlist_events>" . $ret . "<br></td></tr>";
 				$events .= $date . $ret;
 			}
 			$day++;
