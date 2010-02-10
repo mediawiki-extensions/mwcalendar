@@ -37,13 +37,22 @@ class mwCalendar{
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
 		
-		$this->addEventHtml = $htmlScript.file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");
+
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
+		$arrUsers = $this->db->getDatabaseUsers();
+		
+		while(list($user,$realname) = each($arrUsers)){
+			$list .= "<option>$user ($realname)</option>";
+		}
+				
+		$addHtml = $htmlScript.file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
+		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
+		$this->addEventHtml = $addHtml;		
 		
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
@@ -64,7 +73,7 @@ class mwCalendar{
 	}
 	
 	public function begin(){
-	
+
 		$html = "";		
 
 		// determine what we need to display

@@ -223,6 +223,22 @@ class CalendarDatabase{
 		
 		return $dbw->insertid();
 	}	
+	
+	public function getDatabaseUsers(){
+		$table = $this->dbPrefix . 'user';
+		$dbr = wfGetDB( DB_SLAVE );		
+
+		$sql = "SELECT *
+					FROM $table;";
+					//WHERE user_email <> '';";	
+
+		$res = $dbr->query($sql);    
+		while ($r = $dbr->fetchObject( $res )) {					
+			
+			$arr[$r->user_name] = $r->user_real_name;
+		}
+		return $arr;
+	}
 
 } //end class
 
