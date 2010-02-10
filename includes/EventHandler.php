@@ -27,12 +27,13 @@ class EventHandler{
 			
 			$start = strtotime($_POST["start"]);
 			$end = strtotime($_POST["end"]);
+			$subject = strip_tags ( $_POST["subject"] );
 			
 			// this is the active user (can be the creator... or the editor)
 			$whodidit = $wgUser->getName();
 			
 			$arrEvent = array(	'calendar' => 		$_POST["calendar"],
-								'subject' => 		$_POST["subject"],
+								'subject' => 		$subject,
 								'location' => 		$_POST["location"],
 								'start' => 			$start,
 								'end' => 			$end,

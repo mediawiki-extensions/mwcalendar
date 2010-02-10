@@ -33,18 +33,28 @@ function launchCalendar($paramstring, $params = array()) {
 	
 	$calendar = new mwCalendar($params);
 	
-	//return $params['start'];
-	if( isset($params['name']) && isset($params['source']) && isset($params['startdate'])  ){
-		$conversion = new conversion($params['go']);
-		return $conversion->convert( $params['source'], $params['name'], $params['startdate'] );
+	if($ret = run_conversion($params)) {
+		return $ret;
 	}
 
 	return $calendar->begin();
 }
 
-
-
-
+function run_conversion($params){
+	global $run_conversion, $calendar_source, $calendar_target, $calendar_startdate;
+	
+	$run_conversion = false;
+	//$calendar_source = 'CalendarEvents:NSC Interface Calendar/MWP Team Calendar';
+	$calendar_target = 'eric';
+	$calendar_startdate = '7/1/1973';
+	
+	if( isset($calendar_source) && isset($calendar_target) && isset($calendar_startdate)  ){
+		$conversion = new conversion($run_conversion);
+		return $conversion->convert( $calendar_source, $calendar_target, $calendar_startdate );
+	}
+	
+	return false;
+}
 
 
 

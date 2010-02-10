@@ -39,12 +39,21 @@ class conversion{
 	
 	function create_event($title, $body, $target){
 		
-		$temp1 = explode('/', $title); //1-1-2009 -Event 1
+		$temp1 = explode('/', $title); // 1-1-2009 -Event 1
 		$grab_tail = array_pop($temp1);
 		$date = explode('-', $grab_tail);	
 
-		//return count($date) . "<br>";
-		if(count($date) != 4) return "[[Error Parsing]]: $title <br>";
+		if(count($date) < 3) {
+			return "[[Error Parsing]]: $title <br>";
+		}
+		
+		## add templates
+		if(count($date) == 3) {
+			 $this->add_from_template($title,$body,$target);
+			 return $title . '<br>';
+		}
+		
+		## if we're here, we're adding standard events
 		
 		$month = trim($date[0]);
 		$day = trim($date[1]);
@@ -73,6 +82,58 @@ class conversion{
 
 		//return $text . " -x<br>'";
 		return $title . '<br>';
+	}
+	
+	public function add_from_template($title, $body, $target){
+		$displayText = "";
+		$arrEvent = array();
+		
+		$temp1 = explode('/', $title);
+		$grab_tail = array_pop($temp1); // 2-2010 -Template
+		$date = explode('-', $grab_tail);
+		
+		if(count($date) != 3) return "[[Error Parsing]]: $title <br>";
+		
+		$db = new CalendarDatabase();
+		
+		$month = trim($date[0]);
+		$year = trim($date[1]);		
+		
+		$displayText = $body;//$article->fetchContent(0,false,false);
+	
+		$arrAllEvents=split(chr(10),$displayText);
+		if (count($arrAllEvents) > 0){
+			for($i=0; $i<count($arrAllEvents); $i++){
+				$arrEvent = split("#",$arrAllEvents[$i]);
+				
+				if(!isset($arrEvent[1])) continue;//skip 
+				
+				if(strlen($arrEvent[1]) > 0){
+	
+					//$day = $arrEvent[0];
+					$arrRepeat = split("-",$arrEvent[0]);
+					
+					$startDay = $arrRepeat[0];
+					$endDay = $arrRepeat[0];	
+					
+					if(count($arrRepeat) > 1){
+						$endDay = $arrRepeat[1];
+					}
+					
+					$arr['calendar'] = $target;//$db->getCalendarID($target);
+					$arr['subject'] = $arrEvent[1];
+					$arr['location'] = '';
+					$arr['start']  = mktime(0,0,0,$month,$startDay,$year);
+					$arr['end']  = mktime(0,0,0,$month,$endDay,$year);		
+					$arr['allday'] = 1;
+					$arr['text']  = '';	
+					$arr['createdby'] = 'conversion';
+					$arr['invites'] = '';	
+					
+					if($this->go == true) $db->setEvent($arr);
+				}	
+			}
+		}	
 	}
 }
 
