@@ -25,6 +25,11 @@ class CalendarDatabase{
 		$calendar = $arrEvent['calendar'];	
 		$subject = trim( strip_tags($arrEvent['subject']) );
 		
+		// min data we need to file a good event...
+		if(strlen($subject) == 0) return; 
+		if(strlen($arrEvent['start']) == 0) return; 
+		if(strlen($arrEvent['end']) == 0) return; 
+		
 		$dbw->insert('calendar_events', array(
 			'calendarid' 		=> $this->getCalendarID($calendar),
 			'subject'        	=> $subject,
@@ -229,8 +234,8 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );		
 
 		$sql = "SELECT *
-					FROM $table;";
-					//WHERE user_email <> '';";	
+					FROM $table
+					WHERE user_email <> ''  LIMIT 0,100;";	
 
 		$res = $dbr->query($sql);    
 		while ($r = $dbr->fetchObject( $res )) {					
