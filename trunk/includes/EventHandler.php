@@ -27,6 +27,7 @@ class EventHandler{
 			
 			$start = strtotime($_POST["start"]);
 			$end = strtotime($_POST["end"]);
+									
 			$subject = strip_tags ( $_POST["subject"] );
 			
 			// this is the active user (can be the creator... or the editor)
@@ -58,18 +59,21 @@ class EventHandler{
 			// need to call new URL to clear POST events
 			// return to calendar
 			header("Location: " . $url);
+			return;
 			
 		} ## END SAVE ##
 		
 		if ( isset($_POST["delete"]) ){
 			$db->deleteEvent($_POST['eventid']);
 			header("Location: " . $url . "&DeleteEvent");
+			return;
 		}		
 
 		if ( isset($_POST["cancel"]) ){
 			
 			// return to main calendar page
 			header("Location: " . $url);
+			return;
 		}
 		
 		// timestamp will be populated only if any nav butten is clicked
@@ -92,6 +96,7 @@ class EventHandler{
 			setcookie($cookie_name, $timestamp);
 			
 			header("Location: " . $url);
+			return;
 		}		
 	}
 }

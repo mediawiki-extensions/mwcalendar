@@ -47,6 +47,7 @@ class mwCalendar{
 		$arrUsers = $this->db->getDatabaseUsers();
 		
 		while(list($user,$realname) = each($arrUsers)){
+			$realname = htmlentities($realname, ENT_QUOTES);
 			$list .= "<option>$user ($realname)</option>";
 		}
 				
@@ -110,6 +111,9 @@ class mwCalendar{
 			$html = $this->addEventHtml;
 			
 			$event = $this->db->getEvent( $urlEvent[1] );
+			
+			$this->makeSafeHtml($event);
+			
 			$start = date('n/j/Y', $event['start']);
 			$end = date('n/j/Y', $event['end']);
 				
@@ -123,18 +127,7 @@ class mwCalendar{
 			$html = str_replace('[[End]]', $end, $html);				
 			$html = str_replace('[[Text]]', $event['text'], $html);		
 		
-			break;
-	
-		case 'monthForward':
-			$arr_date = getdate($urlEvent[1]);
-			$this->month = $arr_date['mon']+1;
-			$this->day = 1;
-			$this->year = $arr_date['year'];
-			
-			$html = $this->createCalendar();
-			
-			break;
-				
+			break;				
 			
 		default:
 			$cookie_name = preg_replace('/(\.|\s)/',  '_', $this->calendarName); //replace periods and spaces
@@ -158,6 +151,14 @@ class mwCalendar{
 		
 		return $html;
 		//$wgOut->addHtml($html);
+	}
+	
+	private function makeSafeHtml(&$arrEvent){
+		
+		$arrEvent['subject'] = htmlentities($arrEvent['subject'], ENT_QUOTES);
+		$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES);
+		$arrEvent['location'] = htmlentities($arrEvent['location'], ENT_QUOTES);
+
 	}
 	
 	// this function removes any HTML tags that havent been overwritten
