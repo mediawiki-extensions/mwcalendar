@@ -43,10 +43,10 @@ function launchCalendar($paramstring, $params = array()) {
 function run_conversion($params){
 	global $run_conversion, $calendar_source, $calendar_target, $calendar_startdate;
 	
-	$run_conversion = false;
-	//$calendar_source = 'CalendarEvents:NSC Interface Calendar/MWP Team Calendar';
-	$calendar_target = 'eric';
-	$calendar_startdate = '7/1/1973';
+	//$run_conversion = true;
+	//$calendar_source = 'Calendar:NSC Interface Calendar/Interface Team';
+	$calendar_target = $params['name'];
+	$calendar_startdate = '1/1/2008';
 	
 	if( isset($calendar_source) && isset($calendar_target) && isset($calendar_startdate)  ){
 		$conversion = new conversion($run_conversion);
@@ -55,7 +55,6 @@ function run_conversion($params){
 	
 	return false;
 }
-
 
 
 

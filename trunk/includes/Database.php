@@ -23,10 +23,11 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );	
 			
 		$calendar = $arrEvent['calendar'];	
-
+		$subject = trim( strip_tags($arrEvent['subject']) );
+		
 		$dbw->insert('calendar_events', array(
 			'calendarid' 		=> $this->getCalendarID($calendar),
-			'subject'        	=> $arrEvent['subject'],
+			'subject'        	=> $subject,
 			'location'        	=> $arrEvent['location'],
 			'start'        		=> $arrEvent['start'],
 			'end'        		=> $arrEvent['end'],
