@@ -8,23 +8,20 @@
 			<td>Location:&nbsp;</td><td width=100%><input type="text" name="location" value="[[Location]]" size=50/></td>
 		</tr>	
 		<tr>
-			<td>Invite(s):&nbsp;</td><td width=100%><input title='comma seperated SSO'type="text" name="invites" value="[[Invites]]" size=50/></td>
+			<td>Invite(s):&nbsp;</td>
+			<td width=100%><input title='comma seperated SSO'type="text" name="invites" id="invites" value="[[Invites]]" size=42/><!--
+			-->&nbsp;<input name="add_invite" type=button value="add" onclick="displayInviteList('<form name=frm_selected><select size=4 name=selected id=selected><option>Schwartz <option>Eric </select></form>','invites')"/></td>
 		</tr>			
 		<tr>
 			<td colspan=2><hr></td>
 		</tr>	
 		<tr>
 			<td>Start:&nbsp;</td>
-			<td>
-				<input type=text name="start" size=20 value="[[Start]]"  onclick="displayDatePicker('start','end')" />
-				<input type=checkbox name=allday checked=true disabled />&nbsp;All day
-			</td>
+			<td><input type=text name="start" size=20 value="[[Start]]"  onclick="displayDatePicker('start','end')" /><input type=checkbox name=allday checked=true disabled />&nbsp;All day</td>
 		</tr>	
 		<tr>
 			<td>End:&nbsp;</td>
-			<td>
-				<input type=text name="end" size=20 value="[[End]]" onclick="displayDatePicker('end')" />
-			</td>
+			<td><input type=text name="end" size=20 value="[[End]]" onclick="displayDatePicker('end')" /></td>
 		</tr>	
 		<tr><td colspan=2><hr></td></tr>
 		<tr>
