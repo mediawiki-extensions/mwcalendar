@@ -27,6 +27,8 @@ class mwCalendar{
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
 			
+		$list = '';	
+		
 		$this->setDefaults($params); ## RUN FIRST ##
 		
 		// set the calendar's initial date (can be overridden later)
@@ -51,7 +53,7 @@ class mwCalendar{
 			$list .= "<option>$user ($realname)</option>";
 		}
 				
-		$addHtml = $htmlScript.file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
+		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
 		$this->addEventHtml = $addHtml;		
 		
@@ -130,6 +132,7 @@ class mwCalendar{
 			break;				
 			
 		default:
+			global $wgTitle;
 			$cookie_name = preg_replace('/(\.|\s)/',  '_', $this->calendarName); //replace periods and spaces
 
 			if( isset($_COOKIE[$cookie_name]) ){
@@ -357,10 +360,8 @@ class mwCalendar{
 	private function buildEventList($arrEvents, $month, $day, $year){
 	
 		$links = '';
-		#start = 1267333200 
-		#end = 1268024400 
-		
-		#date = 1267333200 
+
+		if(!isset($arrEvents)) return '';
 	
 		$date = mktime(0,0,0,$month,$day,$year);
 		//$date2 = mktime(23,59,59,$month,$day,$year);

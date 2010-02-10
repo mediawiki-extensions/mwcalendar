@@ -87,6 +87,8 @@ class CalendarDatabase{
 	
 	public function getEvents($calendar, $timestamp1, $timestamp2){
 
+		$arrEvents = array();
+		
 		$eventtable = $this->dbPrefix . 'calendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
