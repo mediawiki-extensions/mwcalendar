@@ -33,9 +33,12 @@ function ModalDialogMaintainFocus()
 
    ModalDialogRemoveWatch();
    ModalDialog.eventhandler = "handler()";
-
+/*
    var args='width=350,height=350,left=325,top=300,toolbar=0,';
        args+='location=0,status=0,menubar=0,scrollbars=1,resizable=0';  
+	   */
+   var args='width=350,height=350,toolbar=0,';
+       args+='location=0,status=0,menubar=0,scrollbars=1,resizable=0'; 
 
    ModalDialogWindow=window.open("","",args); 
    ModalDialogWindow.document.open(); 
@@ -54,9 +57,9 @@ function ModalDialogMaintainFocus()
    ModalDialogWindow.document.write('</head>');   
    ModalDialogWindow.document.write('<body>');
    ModalDialogWindow.document.write('<table border=0 width="95%" align=center cellspacing=0 cellpadding=2>');
-   ModalDialogWindow.document.write('<tr><td align=left>' + BodyText + '</td></tr>');
-   ModalDialogWindow.document.write('<tr><td align=left><br></td></tr>');
-   ModalDialogWindow.document.write('<tr><td align=center><input type=button value=ok name=inviteok onClick=javascript:CloseForm("Me!") /></td></tr>');
+   ModalDialogWindow.document.write('<tr><td align=center>' + BodyText + '</td></tr>');
+   ModalDialogWindow.document.write('<tr><td align=center><input type=button value=&nbsp;add&nbsp; name=inviteok onClick=javascript:CloseForm("Me!") /></td></tr>');
+   ModalDialogWindow.document.write('</table>');
    ModalDialogWindow.document.write('</body>');
    ModalDialogWindow.document.write('</html>'); 
    ModalDialogWindow.document.close(); 
@@ -74,6 +77,9 @@ function ModalDialogMaintainFocus()
  function handler()
  {
    value = document.getElementById(ModalDialog.targetField).value;
+   
+   if(ModalDialog.value == "") { return; }
+   
    document.getElementById(ModalDialog.targetField).value = value + ModalDialog.value + ",";
    ModalDialogRemoveWatch();
  }
