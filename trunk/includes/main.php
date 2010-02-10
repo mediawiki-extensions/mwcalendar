@@ -371,10 +371,6 @@ class mwCalendar{
 		$limit = $this->subject_max_length;
 		$subject = $event['subject'];
 		
-		if(strlen($subject) > $limit ) {
-			$subject = substr($subject, 0, $limit) . "...";
-		}
-
 		$url = $this->cleanLink($this->title) . '&EditEvent=' . $event['id'];
 		$link = '<a href="' . $url . '">' . $subject . '</a>';
 		
