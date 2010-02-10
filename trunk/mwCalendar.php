@@ -35,7 +35,7 @@ function launchCalendar($paramstring, $params = array()) {
 	
 	//return $params['start'];
 	if( isset($params['name']) && isset($params['source']) && isset($params['startdate'])  ){
-		$conversion = new conversion(true);
+		$conversion = new conversion($params['go']);
 		return $conversion->convert( $params['source'], $params['name'], $params['startdate'] );
 	}
 
