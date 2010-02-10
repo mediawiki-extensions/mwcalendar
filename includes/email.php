@@ -13,7 +13,13 @@ class CalendarEmail{
 		$start = date('D n/j/Y H:i:s', $event['start']);
 		$end = date('D n/j/Y H:i:s', $event['end']);
 		
-		$text = 'FROM: ' . $start . chr(13) . 'END: ' . $end . chr(13). chr(13) . $event['text'];
+		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
+		$urlPath = $arrUrl[0]; //clear any previous parameters	
+		
+		$text = 'FROM: ' . $start . chr(13) . 'END: ' . $end . chr(13)
+			. chr(13) . $event['text'] . chr(13). chr(13) . CalendarEmail::curPageURL();
+	
+
 	
 		foreach($arr as $u){
 			$username = explode('(',$u);
@@ -23,5 +29,17 @@ class CalendarEmail{
 				$user->sendMail($subject, $text, $fromEmail);
 			}
 		}
+	}
+	
+	public static function curPageURL() {
+		$pageURL = 'http';
+		if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+			$pageURL .= "://";
+		if ($_SERVER["SERVER_PORT"] != "80") {
+			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		} else {
+			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		}
+		return $pageURL;
 	}
 }

@@ -86,7 +86,7 @@ class EventHandler{
 			if( isset($_POST['yearForward']))	{$year +=1;}	
 			if( isset($_POST['yearBack']))		{$year -=1;}			
 			
-			if($_POST['today']){
+			if(isset($_POST['today'])){
 				$timestamp = time(); //now
 			}else{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
