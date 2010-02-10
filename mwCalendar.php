@@ -11,6 +11,7 @@ define('mwcalendar_version','v.0.1');
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
 require_once( mwcalendar_base_path . '/includes/main.php' );
+require_once( mwcalendar_base_path . '/includes/conversion.php' );
 
 # Credits	
 $wgExtensionCredits['parserhook'][] = array(
@@ -31,9 +32,13 @@ function mwCalendar() {
 function launchCalendar($paramstring, $params = array()) {
 	
 	$calendar = new mwCalendar($params);
-
-	//return $date = mktime(0,0,0,2,28,2010);
 	
+	//return $params['start'];
+	if( isset($params['name']) && isset($params['source']) && isset($params['startdate'])  ){
+		$conversion = new conversion(true);
+		return $conversion->convert( $params['source'], $params['name'], $params['startdate'] );
+	}
+
 	return $calendar->begin();
 }
 
