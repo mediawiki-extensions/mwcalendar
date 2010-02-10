@@ -194,7 +194,7 @@ class CalendarDatabase{
 		}
 	}
 	
-	private function getCalendarID($calendar){
+	public function getCalendarID($calendar){
 	
 		$id = 0;
 		$table = $this->dbPrefix . 'calendar_header';
