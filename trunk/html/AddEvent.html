@@ -1,6 +1,6 @@
-<table class=add_event_parent><tr><td>
 <form name='NewEvent' method="post">
-	<table class=add_event_main> <!-- width=1 is set to ensure the table is compacted -->
+<table class=add_event_parent><tr><td><!--
+--><table class=add_event_main> <!-- width=1 is set to ensure the table is compacted -->
 		<tr>
 			<td>Subject:&nbsp;</td><td width=100%><input type="text" name="subject" value="[[Subject]]" size=50/></td>
 		</tr>
@@ -17,32 +17,27 @@
 		</tr>	
 		<tr>
 			<td>Start:&nbsp;</td>
-			<td><input type=text name="start" size=20 value="[[Start]]"  onclick="displayDatePicker('start','end')" /><input type=checkbox name=allday checked=true disabled />&nbsp;All day</td>
+			<td><input type=text name="start" size=20 value="[[Start]]"  onclick="displayDatePicker('start','end', false, '[[JSDateFormat]]')" /><input type=checkbox name=allday checked=true disabled />&nbsp;All day</td>
 		</tr>	
 		<tr>
 			<td>End:&nbsp;</td>
-			<td><input type=text name="end" size=20 value="[[End]]" onclick="displayDatePicker('end')" /></td>
+			<td><input type=text name="end" size=20 value="[[End]]" onclick="displayDatePicker('end',false, false, '[[JSDateFormat]]')" /></td>
 		</tr>	
 		<tr><td colspan=2><hr></td></tr>
 		<tr>
-			<td colspan=2>
-				<textarea style="WIDTH: 100%; HEIGHT: 100px;" name=text>[[Text]]</textarea>
-			</td>
+			<td colspan=2><textarea style="WIDTH: 99%; HEIGHT: 100px;" name=text>[[Text]]</textarea></td>
 		</tr>
-		<tr><td colspan=2 class=audit_info>[[CreatedBy]]</td></tr>
-		<tr><td colspan=2 class=audit_info>[[LastEdited]]</td></tr>
+		<tr>
+			<td colspan=2 class=audit_info>[[CreatedBy]]</td>
+		</tr>
+		<tr>
+			<td colspan=2 class=audit_info>[[LastEdited]]</td>
+		</tr>
 		<tr><td colspan=2><hr></td></tr>
 		<tr>
 			<td><input class='' type=submit name=delete value='Delete' [[Disabled]] /></td>
-			<td colspanx=2 align=right>
-				<input class='' type=submit name=save  value='Save' />&nbsp;
-				<input class='' type=submit name=cancel  value='Cancel' />
-			</td>				
+			<td colspanx=2 align=right><!--
+				--><input class='' type=submit name=save  value='Save' />&nbsp;<input class='' type=submit name=cancel  value='Cancel' /></td>				
 		</tr>
-	</table>
-	<input type=hidden name=calendar value="[[CalendarName]]" />
-	<input type=hidden name=eventid value="[[EventID]]" />
-</form>
-</td></tr>
-</table>
-<!--<span class=audit_info>[[CreatedBy]]<br>[[LastEdited]]</span>-->
+	</table><input type=hidden name=calendar value="[[CalendarName]]" /><input type=hidden name=eventid value="[[EventID]]" />
+</td></tr></table></form>

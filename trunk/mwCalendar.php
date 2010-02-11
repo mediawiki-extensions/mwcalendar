@@ -30,23 +30,27 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
-	
+
+	// conversion option; no need to do any normal calendar initializations
+	if($ret = run_conversion($params)) {return $ret;}	
+
 	$calendar = new mwCalendar($params);
-	
-	if($ret = run_conversion($params)) {
-		return $ret;
-	}
 
 	return $calendar->begin();
 }
 
+// this will query any wiki-page calendar previous used and port that 
+// data into this new database calendar
 function run_conversion($params){
 	global $run_conversion, $calendar_source, $calendar_target, $calendar_startdate;
 	
-	//$run_conversion = true;
-	//$calendar_source = 'Calendar:NSC Interface Calendar/Interface Team';
-	$calendar_target = $params['name'];
-	$calendar_startdate = '1/1/2008';
+	# $calendar_source - ex: "Calendar:Main Page/Team Calendar"
+	# $calendar_target - ex: "Supprot Team"
+	# $calendar_startdate - ex: "1/1/2009" - any standard date would work as php auto detects the date
+	
+	# $run_conversion: (careful, this WILL create duplicates... run only ONCE!
+		# true - run conversion and update database
+		# false (default) - only display pages found - trial run
 	
 	if( isset($calendar_source) && isset($calendar_target) && isset($calendar_startdate)  ){
 		$conversion = new conversion($run_conversion);

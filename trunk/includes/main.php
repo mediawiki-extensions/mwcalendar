@@ -7,6 +7,7 @@ if (!defined('MEDIAWIKI')) {
 
 require_once( mwcalendar_base_path . '/includes/EventHandler.php');
 require_once( mwcalendar_base_path . '/includes/Database.php');
+require_once( mwcalendar_base_path . '/includes/helpers.php');
 
 class mwCalendar{
 	
@@ -92,11 +93,11 @@ class mwCalendar{
 			$html = $this->addEventHtml;
 			
 			if( isset($urlEvent[1]) ){
-				$startDate = date('n/j/Y', $urlEvent[1]);
-				$endDate = date('n/j/Y', $urlEvent[1]);
+				$startDate = helpers::date($urlEvent[1]);
+				$endDate = helpers::date($urlEvent[1]);
 			}else{
-				$startDate = date('n/j/Y', time());
-				$endDate = date('n/j/Y', time());
+				$startDate = helpers::date(time());
+				$endDate = helpers::date(time());
 			}
 			
 			// update the 'hidden' input field so we retain the calendar name for the db update
@@ -105,7 +106,6 @@ class mwCalendar{
 			$html = str_replace('[[Start]]', $startDate, $html);
 			$html = str_replace('[[End]]', $endDate, $html);
 			$html = str_replace('[[Disabled]]', 'disabled', $html); 
-			$html = str_replace('[[CreatedBy]]', $createdby, $html);	
 			
 			break;
 			
@@ -114,22 +114,22 @@ class mwCalendar{
 			
 			$event = $this->db->getEvent( $urlEvent[1] );
 
-			$start = date('n/j/Y', $event['start']);
-			$end = date('n/j/Y', $event['end']);		
+			$start = helpers::date( $event['start' ] );
+			$end = helpers::date( $event['end'] );		
 						
 			if(isset($event['editeddate'])){
-				$editeddate = date('n/j/Y', $event['editeddate']);					
+				$editeddate = helpers::date( $event['editeddate']);					
 				$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
 			}
 
 			
-			$createddate = date('n/j/Y', $event['createddate']);					
+			$createddate = helpers::date($event['createddate']);					
 			$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
 			
 			$this->makeSafeHtml($event);
 			
-			$start = date('n/j/Y', $event['start']);
-			$end = date('n/j/Y', $event['end']);
+			$start = helpers::date( $event['start']);
+			$end = helpers::date( $event['end']);
 				
 			// update the 'hidden' input field so we retain the calendar name for the db update
 			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
@@ -146,8 +146,7 @@ class mwCalendar{
 			break;				
 			
 		default:
-			global $wgTitle;
-			$cookie_name = preg_replace('/(\.|\s)/',  '_', $this->calendarName); //replace periods and spaces
+			$cookie_name = helpers::cookie_name( $this->calendarName ); 
 
 			if( isset($_COOKIE[$cookie_name]) ){
 				$date = getdate($_COOKIE[$cookie_name]); //timestamp value
@@ -178,7 +177,7 @@ class mwCalendar{
 
 	}
 	
-	// this function removes any HTML tags that havent been overwritten
+	// this function removes or defaults any HTML tags that havent been overwritten
 	private function clearHtmlTags($html){
 		$html = str_replace('[[CalendarName]]', '', $html);
 		$html = str_replace('[[EventID]]', '', $html);	
@@ -191,7 +190,8 @@ class mwCalendar{
 		$html = str_replace('[[Disabled]]', '', $html);		
 		$html = str_replace('[[FOOTER]]', '', $html);	
 		$html = str_replace('[[LastEdited]]', '', $html);
-		$html = str_replace('[[CreatedBy]]', '', $html);		
+		$html = str_replace('[[CreatedBy]]', '', $html);	
+		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);		
 		
 		return $html;
 	}

@@ -224,8 +224,8 @@ class CalendarDatabase{
 		$dbw = wfGetDB( DB_MASTER );
 		
 		$dbw->insert( 'calendar_header', array(
-			'name' 		=> $name,
-			'description'        	=> $description) 
+			'name' 			=> $name,
+			'description' 	=> $description) 
 		);	
 		
 		return $dbw->insertid();
