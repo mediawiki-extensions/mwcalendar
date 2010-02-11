@@ -1,4 +1,4 @@
-<table class=add_event_parent><td>
+<table class=add_event_parent><tr><td>
 <form name='NewEvent' method="post">
 	<table class=add_event_main> <!-- width=1 is set to ensure the table is compacted -->
 		<tr>
@@ -29,6 +29,9 @@
 				<textarea style="WIDTH: 100%; HEIGHT: 100px;" name=text>[[Text]]</textarea>
 			</td>
 		</tr>
+		<tr><td colspan=2 class=audit_info>[[CreatedBy]]</td></tr>
+		<tr><td colspan=2 class=audit_info>[[LastEdited]]</td></tr>
+		<tr><td colspan=2><hr></td></tr>
 		<tr>
 			<td><input class='' type=submit name=delete value='Delete' [[Disabled]] /></td>
 			<td colspanx=2 align=right>
@@ -40,4 +43,6 @@
 	<input type=hidden name=calendar value="[[CalendarName]]" />
 	<input type=hidden name=eventid value="[[EventID]]" />
 </form>
-</td></table>
+</td></tr>
+</table>
+<!--<span class=audit_info>[[CreatedBy]]<br>[[LastEdited]]</span>-->

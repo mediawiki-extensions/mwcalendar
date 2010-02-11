@@ -83,7 +83,7 @@
 		vertical-align:bottom;
 	}
 
-/************************ EventList ****************************/		
+/************************ EventList (calendar agenda) ****************************/		
 	.eventlist_header{
 		font-weight:bold;
 		font-size: 16px;
@@ -94,11 +94,8 @@
 		font-size: 11px;	
 	}
 	
-	.select_list{
-		width:100px;
-		background-color:#E0E0E0;
-	
-	}
+
+
 /************************ AddEvent.html ****************************/	
 	.add_event_parent{
 		border:2px solid #808080;
@@ -106,7 +103,20 @@
 	}
 	
 	.add_event_main{
-	background-color: transparent;
+		background-color: transparent;
+		border-collapse:collapse;
 	}
-
+	
+	.select_list{
+		width:100px;
+		background-color:#E0E0E0;
+	}	
+	
+	.audit_info{
+		text-align:right;
+		font-size: 11px;
+		font-style:italic; 
+		border:0px solid #808080;	
+	}
+	
 </style>
