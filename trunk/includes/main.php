@@ -105,7 +105,7 @@ class mwCalendar{
 			$html = str_replace('[[Start]]', $startDate, $html);
 			$html = str_replace('[[End]]', $endDate, $html);
 			$html = str_replace('[[Disabled]]', 'disabled', $html); 
-			//$html = str_replace('[[SAFE_URL]]', $this->title, $html);
+			$html = str_replace('[[CreatedBy]]', $createdby, $html);	
 			
 			break;
 			
@@ -113,6 +113,18 @@ class mwCalendar{
 			$html = $this->addEventHtml;
 			
 			$event = $this->db->getEvent( $urlEvent[1] );
+
+			$start = date('n/j/Y', $event['start']);
+			$end = date('n/j/Y', $event['end']);		
+						
+			if(isset($event['editeddate'])){
+				$editeddate = date('n/j/Y', $event['editeddate']);					
+				$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
+			}
+
+			
+			$createddate = date('n/j/Y', $event['createddate']);					
+			$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
 			
 			$this->makeSafeHtml($event);
 			
@@ -127,7 +139,9 @@ class mwCalendar{
 			$html = str_replace('[[Invites]]', $event['invites'], $html);	
 			$html = str_replace('[[Start]]', $start, $html);	
 			$html = str_replace('[[End]]', $end, $html);				
-			$html = str_replace('[[Text]]', $event['text'], $html);		
+			$html = str_replace('[[Text]]', $event['text'], $html);	
+			$html = str_replace('[[LastEdited]]', $lastedited, $html);
+			$html = str_replace('[[CreatedBy]]', $createdby, $html);			
 		
 			break;				
 			
@@ -175,7 +189,9 @@ class mwCalendar{
 		$html = str_replace('[[End]]', '', $html);				
 		$html = str_replace('[[Text]]', '', $html);	
 		$html = str_replace('[[Disabled]]', '', $html);		
-		$html = str_replace('[[FOOTER]]', '', $html);			
+		$html = str_replace('[[FOOTER]]', '', $html);	
+		$html = str_replace('[[LastEdited]]', '', $html);
+		$html = str_replace('[[CreatedBy]]', '', $html);		
 		
 		return $html;
 	}
