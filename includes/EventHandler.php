@@ -7,6 +7,7 @@ if (!defined('MEDIAWIKI')) {
 
 require_once( mwcalendar_base_path . '/includes/Database.php');
 require_once( mwcalendar_base_path . '/includes/email.php');
+require_once( mwcalendar_base_path . '/includes/helpers.php');
 
 class EventHandler{
 
@@ -22,9 +23,7 @@ class EventHandler{
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) ){
-			
-			//$date = date('D n/j/Y g:i A', 0);
-			
+
 			$start = strtotime($_POST["start"]);
 			$end = strtotime($_POST["end"]);
 									
@@ -92,7 +91,7 @@ class EventHandler{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
 			
-			$cookie_name = preg_replace('/(\.|\s)/',  '_', $_POST['name']); //replace periods and spaces
+			$cookie_name = helpers::cookie_name( $_POST['name'] );
 			setcookie($cookie_name, $timestamp);
 			
 			header("Location: " . $url);

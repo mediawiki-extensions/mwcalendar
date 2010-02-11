@@ -1,5 +1,7 @@
 <?php
 
+require_once( mwcalendar_base_path . '/includes/helpers.php');
+
 class CalendarEmail{
 	
 	public static function send($users, $event){
@@ -10,8 +12,8 @@ class CalendarEmail{
 		$arr = array_unique($arr); //remove duplicates
 		
 		$subject = $event['subject'];
-		$start = date('D n/j/Y H:i:s', $event['start']);
-		$end = date('D n/j/Y H:i:s', $event['end']);
+		$start = helpers::date($event['start']);
+		$end = helpers::date($event['end']);
 		
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 		$urlPath = $arrUrl[0]; //clear any previous parameters	
