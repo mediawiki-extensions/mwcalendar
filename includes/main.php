@@ -40,8 +40,6 @@ class mwCalendar{
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
 		
-
-		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents();		
@@ -124,7 +122,6 @@ class mwCalendar{
 				$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
 			}
 
-			
 			$createddate = helpers::date($event['createddate']);					
 			$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
 			
@@ -174,7 +171,7 @@ class mwCalendar{
 	private function makeSafeHtml(&$arrEvent){
 		
 		$arrEvent['subject'] = htmlentities($arrEvent['subject'], ENT_QUOTES);
-		$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES);
+		@$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES);
 		$arrEvent['location'] = htmlentities($arrEvent['location'], ENT_QUOTES);
 
 	}

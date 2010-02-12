@@ -164,7 +164,6 @@ function drawDatePicker(targetDateField, x, y)
 	dt = getFieldDate(targetDateField.value );
   }
 	//dt = getFieldDate(targetReferenceField.value );
-	
   //var prev_dt = getFieldDate(targetPreviousField.value );
  
   // the datepicker table will be drawn inside of a <div> with an ID defined by the
@@ -210,7 +209,7 @@ function refreshDatePicker(dateFieldName, year, month, day)
     day = thisDay.getDate();
     thisDay.setDate(1);
   }
- 
+
   // the calendar will be drawn as a table
   // you can customize the table elements with a global CSS style sheet,
   // or by hardcoding style and formatting elements below
