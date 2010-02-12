@@ -78,6 +78,8 @@ class mwCalendar{
 	
 	public function begin(){
 
+		//return helpers::date(1265658240);
+	
 		$html = "";		
 
 		// determine what we need to display
@@ -213,6 +215,8 @@ class mwCalendar{
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		
+		//return print_r($arrMonthEvents);
+		
 		$day = (-$dayOfWeek) +1;
 		
 		$ret = $this->buildWeekHeader();
@@ -269,7 +273,9 @@ class mwCalendar{
 		$day = $this->day;
 		
 		for($i=0; $i < $eventListRange; $i++){
-						
+								
+ 			//$eventDate = mktime(0,0,0,$this->month,$day,$this->year);
+			
 			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
 			
 			if($ret){
@@ -379,15 +385,21 @@ class mwCalendar{
 
 		if(!isset($arrEvents)) return '';
 	
-		$date = mktime(0,0,0,$month,$day,$year);
-		//$date2 = mktime(23,59,59,$month,$day,$year);
+		$min = mktime(0,0,0,$month,$day,$year);  // 1000
+		$max = mktime(23,59,59,$month,$day,$year); // 1059
 		
 		foreach($arrEvents as $event){
-
-			if( ($date >= $event['start']) && ($date <= $event['end']) ){
+			$bFound = false;
+			
+			if( ($min >= $event['start']) && ($min <= $event['end']) ) $bFound = true;
+			if( ($max >= $event['start']) && ($max <= $event['end']) ) $bFound = true;
+			if( ($min <= $event['start']) && ($max >= $event['start']) ) $bFound = true;
+			
+			if($bFound){
 				$links .= '<li>' . $this->buildLink($event) . '</li>';
 			}
 		}
+		
 		if($links != '')
 			return "<ul class='bullets'>" . $links . '</ul>';
 			

@@ -12,6 +12,7 @@ define( 'mwcalendar_base_path', dirname(__FILE__) );
 
 require_once( mwcalendar_base_path . '/includes/main.php' );
 require_once( mwcalendar_base_path . '/includes/conversion.php' );
+require_once( mwcalendar_base_path . '/includes/helpers.php');
 
 # Credits	
 $wgExtensionCredits['parserhook'][] = array(
@@ -30,6 +31,11 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
+
+$ret = helpers::date(1265670240) . '--- start<br>' 
+	. helpers::date(1265670240) . '--- end<br><br>' 
+	. helpers::date(mktime(0,0,0,2,8,2010));
+//return $ret;
 
 	// conversion option; no need to do any normal calendar initializations
 	if($ret = run_conversion($params)) {return $ret;}	
