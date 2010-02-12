@@ -3,7 +3,8 @@
 # this should be static only functions
 class helpers{
 
-	private static $date_format = 'n/j/Y g:i A';
+	//private static $date_format = 'n/j/Y g:i A';
+	private static $date_format = 'n/j/Y';
 	
 	## date functions
 	public static function getDateFormat(){ return self::$date_format; }
