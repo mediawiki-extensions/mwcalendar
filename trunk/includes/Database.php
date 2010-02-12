@@ -123,7 +123,8 @@ class CalendarDatabase{
 	}
 	
 	public function getEvent($eventid){
-
+		$arrEvent = array();
+		
 		$eventtable = $this->dbPrefix . 'calendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
