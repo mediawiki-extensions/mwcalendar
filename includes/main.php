@@ -261,7 +261,7 @@ class mwCalendar{
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
 		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
 		
-		return $calendarHTML;
+		return $calendarHTML . '<small>'.mwcalendar_version.'</small><br>';
 	}
 	
 	private function createEventList(){

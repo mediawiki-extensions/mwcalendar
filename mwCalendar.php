@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 # set the version
-define('mwcalendar_version','v.0.1');
+define('mwcalendar_version','beta v.02 (2/11/2010)');
 
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
