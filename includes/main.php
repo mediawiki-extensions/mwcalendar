@@ -54,6 +54,7 @@ class mwCalendar{
 				
 		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
+		
 		$this->addEventHtml = $addHtml;		
 		
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
@@ -160,6 +161,9 @@ class mwCalendar{
 			}
 			
 		} //end switch
+		
+		// post a clean URL to the <form action>
+		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
 		
 		 // remove any remaining [[xyz]] type tags
 		$html = $this->clearHtmlTags($html);
@@ -382,8 +386,8 @@ class mwCalendar{
 
 		if(!isset($arrEvents)) return '';
 	
-		$min = mktime(0,0,0,$month,$day,$year);  // 1000
-		$max = mktime(23,59,59,$month,$day,$year); // 1059
+		$min = mktime(0,0,0,$month,$day,$year);  // calendar day (12:00am)
+		$max = mktime(23,59,59,$month,$day,$year); // calendar day (11:59pm))
 		
 		foreach($arrEvents as $event){
 			$bFound = false;
