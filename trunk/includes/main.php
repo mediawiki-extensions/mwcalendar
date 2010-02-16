@@ -47,6 +47,8 @@ class mwCalendar{
 		EventHandler::CheckForEvents();		
 		
 		$this->db = new CalendarDatabase;
+		$this->db->validateVersion(); //make sure db and files match
+		
 		$arrUsers = $this->db->getDatabaseUsers();
 		
 		while(list($user,$realname) = each($arrUsers)){

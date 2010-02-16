@@ -33,8 +33,6 @@ function mwCalendar() {
 
 function launchCalendar($paramstring, $params = array()) {
 
-//return preg_replace('[(\s*\()+.+(\))]', '', '12345            (eric)-'); 
-
 	// conversion option; no need to do any normal calendar initializations
 	if($ret = run_conversion($params)) {return $ret;}	
 

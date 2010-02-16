@@ -6,5 +6,5 @@ if($db_ver < '0.0.3'){
 	// clean out invites... re-did them completely
 	$dbw->query("UPDATE $calendar_events SET invites=''; ");
 
-$wgOut->addHtml("Updated to: (0.0.3) -Success!<br>");
+$wgOut->addHtml("...update to: (0.0.3) -Success!<br>");
 }
