@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 # set the version
-define('mwcalendar_version','0.0.3');
+define('mwcalendar_version','0.0.3'); //do not modify format
 
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
@@ -40,7 +40,7 @@ function launchCalendar($paramstring, $params = array()) {
 
 	$calendar = new mwCalendar($params);
 
-	return $calendar->begin();
+	return $calendar->begin() . '<small>v.'.mwcalendar_version.'</small><br>';;
 }
 
 // this will query any wiki-page calendar previous used and port that 
