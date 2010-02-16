@@ -14,6 +14,7 @@ class mwCalendar{
 	var $month = '';
 	var $day = '';
 	var $year = '';
+	var $now = array();
 	
 	var $htmlData = '';
 	var $db;
@@ -32,8 +33,9 @@ class mwCalendar{
 		
 		$this->setDefaults($params); ## RUN FIRST ##
 		
-		// set the calendar's initial date (can be overridden later)
-		$now = getdate();
+		// set the calendar's initial date
+		$now = $this->now = getdate();
+		
 		$this->month = $now['mon'];
 		$this->year = $now['year'];
 		$this->day = $now['mday'];		
@@ -195,6 +197,7 @@ class mwCalendar{
 		$html = str_replace('[[LastEdited]]', '', $html);
 		$html = str_replace('[[CreatedBy]]', '', $html);	
 		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);		
+		$html = str_replace('[[Today_CSS]]', '', $html);	  
 		
 		return $html;
 	}
@@ -215,9 +218,7 @@ class mwCalendar{
 		$last = mktime(23,59,59,$this->month,$daysInMonth,$this->year);
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
-		
-		//return print_r($arrMonthEvents);
-		
+			
 		$day = (-$dayOfWeek) +1;
 		
 		$ret = $this->buildWeekHeader();
@@ -248,6 +249,11 @@ class mwCalendar{
 						$temp = str_replace("[[Day]]", $day, $temp);
 						$temp = str_replace("[[EventList]]", $events, $temp);
 					}
+					
+					if( helpers::isToday($this->month, $day, $this->year) ){
+						$temp = str_replace("[[Today_CSS]]", 'today_css', $temp);
+					}
+					
 					$ret .= $temp;
 					$day++;
 				}
@@ -273,6 +279,8 @@ class mwCalendar{
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		$day = $this->day;
 		
+		$today_css = 'today_css';
+		
 		for($i=0; $i < $eventListRange; $i++){
 								
  			//$eventDate = mktime(0,0,0,$this->month,$day,$this->year);
@@ -280,15 +288,17 @@ class mwCalendar{
 			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
 			
 			if($ret){
+				if(!helpers::isToday($this->month,$day,$this->year)) $today_css = '';
 				$add = "<td text-align=right>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
-				$date = "<tr><td class=eventlist_header>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
-				$ret = "<tr><td colspan=2 class=eventlist_events>" . $ret . "<br></td></tr>";
+//				$add = "<td class='add_event'>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
+				$date = "<tr><td class='eventlist_header $today_css_x'>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
+				$ret = "<tr><td colspan=2 class='eventlist_events $today_css'>" . $ret . "<br></td></tr>";
 				$events .= $date . $ret;
 			}
 			$day++;
 		}
 		
-		return "<table width=100%>" . $events . "</table>";
+		return "<table class='day_cell_child' width=100%>" . $events . "</table>";
 	}
 	
 	private function buildAddEventLink($month, $day, $year){
