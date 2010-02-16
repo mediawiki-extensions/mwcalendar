@@ -132,13 +132,16 @@ class mwCalendar{
 			
 			$start = helpers::date( $event['start']);
 			$end = helpers::date( $event['end']);
+			
+			$arr_invites = unserialize($event['invites']);
+			foreach($arr_invites as $invite) {$strInvites .= "&#10;" . $invite;} //saved in db as "\n"
 				
 			// update the 'hidden' input field so we retain the calendar name for the db update
 			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
 			$html = str_replace('[[EventID]]', $event['id'], $html);	
 			$html = str_replace('[[Subject]]', $event['subject'], $html);	
 			$html = str_replace('[[Location]]', $event['location'], $html);			
-			$html = str_replace('[[Invites]]', $event['invites'], $html);	
+			$html = str_replace('[[Invites]]', $strInvites, $html);	
 			$html = str_replace('[[Start]]', $start, $html);	
 			$html = str_replace('[[End]]', $end, $html);				
 			$html = str_replace('[[Text]]', $event['text'], $html);	
@@ -177,7 +180,7 @@ class mwCalendar{
 	private function makeSafeHtml(&$arrEvent){
 		
 		$arrEvent['subject'] = htmlentities($arrEvent['subject'], ENT_QUOTES);
-		@$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES);
+		//$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES); //not needed in a <textarea>
 		$arrEvent['location'] = htmlentities($arrEvent['location'], ENT_QUOTES);
 
 	}
@@ -274,13 +277,13 @@ class mwCalendar{
 		$first = mktime(0,0,0,$this->month-12,1,$this->year);
 		$last = mktime(23,59,59,$this->month,28,$this->year);
 
-		
 		$eventListRange = $this->event_list;
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		$day = $this->day;
 		
 		$extra_css = '';
+		$events = '';
 		
 		for($i=0; $i < $eventListRange; $i++){
 							

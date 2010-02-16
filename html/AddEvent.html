@@ -2,14 +2,14 @@
 <table class=add_event_parent><tr><td><!--
 --><table class=add_event_main> <!-- width=1 is set to ensure the table is compacted -->
 		<tr>
-			<td>Subject:&nbsp;</td><td width=100%><input type="text" name="subject" value="[[Subject]]" size=50/></td>
+			<td>Subject:&nbsp;</td><td width=100%><input type="text" name="subject" value="[[Subject]]" size=40/></td>
 		</tr>
 		<tr>
-			<td>Location:&nbsp;</td><td width=100%><input type="text" name="location" value="[[Location]]" size=50/></td>
+			<td>Location:&nbsp;</td><td width=100%><input type="text" name="location" value="[[Location]]" size=40/></td>
 		</tr>	
 		<tr>
 			<td>Notify:&nbsp;</td>
-			<td width=100%><input title='comma seperated SSO'type="text" name="invites" id="invites" value="[[Invites]]" size=42/><!--
+			<td><textarea style="WIDTH: 85%;" name="invites">[[Invites]]</textarea><!--
 			-->&nbsp;<input name="add_invite" type=button value="add" onclick="displayInviteList('<form name=frm_selected><select size=15 name=selected id=selected class=select_list>[[SELECT_OPTIONS]]</select></form>','invites')"/></td>
 		</tr>			
 		<tr>
@@ -17,11 +17,11 @@
 		</tr>	
 		<tr>
 			<td>Start:&nbsp;</td>
-			<td><input type=text name="start" size=30 value="[[Start]]"  onclick="displayDatePicker('start','end', false, '[[JSDateFormat]]')" /><input type=checkbox name=allday checked=true disabled />&nbsp;All day</td>
+			<td><input type=text name="start" size=25 value="[[Start]]"  onclick="displayDatePicker('start','end', false, '[[JSDateFormat]]')" /><input type=checkbox name=allday checked=true disabled />&nbsp;All day</td>
 		</tr>	
 		<tr>
 			<td>End:&nbsp;</td>
-			<td><input type=text name="end" size=30 value="[[End]]" onclick="displayDatePicker('end',false, false, '[[JSDateFormat]]')" /></td>
+			<td><input type=text name="end" size=25 value="[[End]]" onclick="displayDatePicker('end',false, false, '[[JSDateFormat]]')" /></td>
 		</tr>	
 		<tr><td colspan=2><hr></td></tr>
 		<tr>
