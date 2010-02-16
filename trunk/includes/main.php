@@ -273,28 +273,32 @@ class mwCalendar{
 	private function createEventList(){
 		$first = mktime(0,0,0,$this->month-12,1,$this->year);
 		$last = mktime(23,59,59,$this->month,28,$this->year);
+
 		
 		$eventListRange = $this->event_list;
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
 		$day = $this->day;
 		
-		$today_css = 'today_css';
+		$extra_css = '';
 		
 		for($i=0; $i < $eventListRange; $i++){
-								
- 			//$eventDate = mktime(0,0,0,$this->month,$day,$this->year);
+							
+			$dayOfWeek = date('N', mktime(12, 0, 0, $this->month, $day, $this->year));	// 0-6
+			if($dayOfWeek > 5) $extra_css = 'calendar_weekend_empty';
 			
 			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
 			
 			if($ret){
-				if(!helpers::isToday($this->month,$day,$this->year)) $today_css = '';
+				if(helpers::isToday($this->month,$day,$this->year)) $extra_css = 'today_css';
+				
 				$add = "<td text-align=right>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
 //				$add = "<td class='add_event'>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
-				$date = "<tr><td class='eventlist_header $today_css_x'>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
-				$ret = "<tr><td colspan=2 class='eventlist_events $today_css'>" . $ret . "<br></td></tr>";
+				$date = "<tr><td class='eventlist_header'>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
+				$ret = "<tr><td colspan=2 class='eventlist_events $extra_css'>" . $ret . "<br></td></tr>";
 				$events .= $date . $ret;
 			}
+			$extra_css = '';	
 			$day++;
 		}
 		
