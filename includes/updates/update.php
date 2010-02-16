@@ -111,6 +111,6 @@ class update{
 		
 		$dbw->insert('calendar_version',$calendar_version); 
 		
-		$wgOut->addHtml('<br><br><b>VALIDATION COMPLETED</b>');
+		$wgOut->addHtml('<br><br><b>VALIDATION COMPLETED (please refresh)</b>');
 	}
 }
