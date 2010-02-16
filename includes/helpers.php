@@ -22,4 +22,14 @@ class helpers{
 		
 		return $ret;
 	}
+	
+	public static function isToday($month, $day, $year){
+		$today = getdate();
+		
+		if( ($month == $today['mon'])&&($day == $today['mday'])&&($year == $today['year']) ){
+			return true;
+		}	
+		
+		return false;
+	}
 }

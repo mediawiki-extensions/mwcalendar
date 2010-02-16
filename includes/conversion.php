@@ -12,7 +12,7 @@ class conversion{
 	// uses prefix seaching (NS:page/name/date)... anything after doesn't matter
     function convert($source, $target, $startdate) {
 		
-		$date = getdate( strtotime($start_date) );
+		$date = getdate( strtotime($startdate) );
 		
 		$month = $date['mon'];
 		$day = $date['mday'];
