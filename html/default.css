@@ -1,7 +1,7 @@
 <style type="text/css">
 	.calendar_main{
 		border:0px solid #808080;
-		width:100%
+		width:100%;
 	}
 	
 	.month_body{
@@ -18,28 +18,27 @@
 	.calendar_title{
 		font-size:18px;
 		text-align:center;
-		font-weight:;	
 	}
 	
 	.day_cell_main{ /* <td> - this wraps 'day_cell_child' <table>; used for the collapse ability? */
 		border-collapse:collapse;
 		vertical-align:top;	
 		width:12%; /* 100/7 = ~12% */
+		border:1px solid #808080;
 	}
 
 	.day_cell_child{ /* <table> - this contains all the day, events and addnew cells and links*/
 		background-color: transparent;
-		width:100%;	
+		width:100%;
 	}
 	
 	.calendar_weekday{	
-		border:1px solid #808080;
 	}	
 	
 	.calendar_weekend_empty{		
 		background-color:#EEEEEE;
-		border:1px solid #808080;
-	}		
+	}	
+	
 	.today_css{
 		background-color:#FFFFDD;
 	}
@@ -56,11 +55,9 @@
 	.calendar_week_table{
 		border-collapse:collapse;		
 		width:100%;
-		border:1px solid #808080;
 	}
 	
 	.calendar_events{
-		border:0px solid #808080;
 		height:75px;
 		vertical-align:top;
 		font-size: 11px;
@@ -73,8 +70,7 @@
 		width:100%;
 		text-align:center;
 		font-weight:bold;
-		background-color:#E0E0E0;	
-		border:0px solid #808080;		
+		background-color:#E0E0E0;		
 	}
 
 	.month_control{
