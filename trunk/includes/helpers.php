@@ -32,4 +32,15 @@ class helpers{
 		
 		return false;
 	}
+	
+	// clean usernames before filing into database
+	public static function invites_str_to_arr($str_invites){
+		
+		$str_invites = trim($str_invites);
+		
+		//removes "(realname)" including trailing spaces
+		$str_invites = preg_replace('[(\s*\()+.+(\))]', '', $str_invites); 
+		
+		return explode("\r\n", $str_invites); //javascript uses "\n"	
+	}
 }

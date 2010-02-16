@@ -153,9 +153,7 @@ class CalendarDatabase{
 		$eventtable = $this->dbPrefix . 'calendar_events';
 		
 		$dbr = wfGetDB( DB_SLAVE );	
-		
-		//$calendarid = $this->getCalendarID($calendar);
-		
+			
 		$sql = "SELECT *
 					FROM $eventtable
 					WHERE id = $eventid";// LIMIT 0,25";
