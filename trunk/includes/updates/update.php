@@ -13,11 +13,11 @@ class update{
 	}
 	
 	private function runUpdates($db_ver){
-		global $wgOut,$wgPrefix;
+		global $wgOut,$wgDBprefix;
 		
-		$calendar_header = $wgPrefix.'calendar_header';
-		$calendar_events = $wgPrefix.'calendar_events';
-		$calendar_version = $wgPrefix.'calendar_version';
+		$calendar_header = $wgDBprefix.'calendar_header';
+		$calendar_events = $wgDBprefix.'calendar_events';
+		$calendar_version = $wgDBprefix.'calendar_version';
 		
 		$dbw = wfGetDB( DB_MASTER );
 		$dbr = wfGetDB( DB_SLAVE );	
@@ -29,14 +29,15 @@ class update{
 	
 	// create new tables for new installs and updates
 	private function createTables(){
-		global $dbPrefix;
+		global $wgDBprefix,$wgOut;
+		$wgOut->addHtml("checking tables... <br>");
 		
 		$dbw = wfGetDB( DB_MASTER );
 		$dbr = wfGetDB( DB_SLAVE );	
 
-		$header =  "`" . $dbPrefix . "calendar_header" . "`";
-		$events =  "`" . $dbPrefix . "calendar_events" . "`";
-		$version =  "`" . $dbPrefix . "calendar_version" . "`";
+		$header =  "`" . $wgDBprefix . "calendar_header" . "`";
+		$events =  "`" . $wgDBprefix . "calendar_events" . "`";
+		$version =  "`" . $wgDBprefix . "calendar_version" . "`";
 		
 		$sql[$header] = 
 			"CREATE TABLE $header (
@@ -77,9 +78,13 @@ class update{
 			$dbr->ignoreErrors(true);
 			$res = $dbr->query( "SELECT 1 FROM $table LIMIT 0,1" );
 			$dbr->ignoreErrors(false);
+			
+			//$wgOut->addHtml("...adding table: $table <br>");
 			if( !$res ) {
+				$wgOut->addHtml("...inserting table: $table <br>");
 				$dbw->query($sqldata);		
-			}				
+				
+			}		
 		}
 	}
 	

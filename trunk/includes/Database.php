@@ -32,6 +32,7 @@ class CalendarDatabase{
 		$dbr->ignoreErrors(true);	
 		
 		if(!$res) {
+			
 			$update->validate("0"); //early beta crud
 		}else{
 			$r = $dbr->fetchObject( $res );
