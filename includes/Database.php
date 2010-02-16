@@ -14,12 +14,11 @@ class CalendarDatabase{
 	public function CalendarDatabase(){
 		global $wgDBprefix;
 		$this->dbPrefix = $wgDBprefix;
-		
-		$this->validateVersion(); //make sure db and files match
 	}
 	
-	private function validateVersion(){
+	public function validateVersion(){
 		global $wgOut;
+		//$wgOut->addHtml('validating...');
 		
 		$dbr = wfGetDB( DB_SLAVE );	
 		$update = new update();
@@ -27,13 +26,13 @@ class CalendarDatabase{
 			
 		$sql = "SELECT MAX(version) as ver FROM $table;";				
 		
+		//make sure we have a version table...
 		$dbr->ignoreErrors(true);
 		$res = $dbr->query($sql);  
 		$dbr->ignoreErrors(true);	
 		
-		if(!$res) {
-			
-			$update->validate("0"); //early beta crud
+		if(!$res) {			
+			$update->validate("0"); //early beta crud wont have version table
 		}else{
 			$r = $dbr->fetchObject( $res );
 

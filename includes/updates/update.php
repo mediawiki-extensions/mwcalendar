@@ -4,16 +4,22 @@ class update{
 
 	public function validate($db_ver){
 		global $wgOut;
-		$wgOut->addHtml("validated database version...<br>");
+		$wgOut->addHtml("<u><b><big>validating database</big></b></u><br>");
 		
-		$this->createTables(); # always run 1st (create all new tables here too...)	
-		$this->runUpdates($db_ver);	
+		$new_install = $this->createTables(); # always run 1st (create all new tables here too...)	
+		
+		// no need to run update scripts if its a new db
+		if(!$new_install){
+			$this->runUpdates($db_ver);
+		}
 		
 		$this->setDBVersion(); # RUN LAST!!!
 	}
 	
 	private function runUpdates($db_ver){
 		global $wgOut,$wgDBprefix;
+		
+		$wgOut->addHtml('<br><b>running database update scripts...</b><br>');
 		
 		$calendar_header = $wgDBprefix.'calendar_header';
 		$calendar_events = $wgDBprefix.'calendar_events';
@@ -30,7 +36,9 @@ class update{
 	// create new tables for new installs and updates
 	private function createTables(){
 		global $wgDBprefix,$wgOut;
-		$wgOut->addHtml("checking tables... <br>");
+		$wgOut->addHtml("<b>checking tables...</b><br>");
+		
+		$new_install = false;
 		
 		$dbw = wfGetDB( DB_MASTER );
 		$dbr = wfGetDB( DB_SLAVE );	
@@ -81,14 +89,19 @@ class update{
 			
 			//$wgOut->addHtml("...adding table: $table <br>");
 			if( !$res ) {
-				$wgOut->addHtml("...inserting table: $table <br>");
-				$dbw->query($sqldata);		
+				if($table == $header) $new_install = true;
 				
+				$wgOut->addHtml("...inserting table: $table <br>");
+				$dbw->query($sqldata);						
 			}		
 		}
+		
+		return $new_install;
 	}
 	
 	private function setDBVersion(){
+		global $wgOut;
+		
 		$dbw = wfGetDB( DB_MASTER );
 		
 		$calendar_version = array(
@@ -97,5 +110,7 @@ class update{
 		);
 		
 		$dbw->insert('calendar_version',$calendar_version); 
+		
+		$wgOut->addHtml('<br><br><b>VALIDATION COMPLETED</b>');
 	}
 }
