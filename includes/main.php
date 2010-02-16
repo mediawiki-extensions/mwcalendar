@@ -51,13 +51,13 @@ class mwCalendar{
 		
 		while(list($user,$realname) = each($arrUsers)){
 			$realname = htmlentities($realname, ENT_QUOTES);
-			$list .= "<option>$user ($realname)</option>";
+			$list .= "<option>$user($realname)</option>";
 		}
 				
 		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
 		
-		$this->addEventHtml = $addHtml;		
+		$this->addEventHtml = $addHtml;
 		
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
@@ -133,8 +133,15 @@ class mwCalendar{
 			$start = helpers::date( $event['start']);
 			$end = helpers::date( $event['end']);
 			
+			// build invite(notify) list
 			$arr_invites = unserialize($event['invites']);
-			foreach($arr_invites as $invite) {$strInvites .= "&#10;" . $invite;} //saved in db as "\n"
+			foreach($arr_invites as $invite) {
+				$user = User::newFromName( trim($invite) );
+				if($user){
+					$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+				}
+				
+			}
 				
 			// update the 'hidden' input field so we retain the calendar name for the db update
 			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);

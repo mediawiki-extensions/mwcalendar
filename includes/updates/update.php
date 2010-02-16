@@ -9,11 +9,19 @@ class update{
 		$this->createTables(); # always run 1st (create all new tables here too...)	
 		$this->runUpdates($db_ver);	
 		
-		$this->setVersion(); # RUN LAST!!!
+		$this->setDBVersion(); # RUN LAST!!!
 	}
 	
 	private function runUpdates($db_ver){
-		global $wgOut;
+		global $wgOut,$wgPrefix;
+		
+		$calendar_header = $wgPrefix.'calendar_header';
+		$calendar_events = $wgPrefix.'calendar_events';
+		$calendar_version = $wgPrefix.'calendar_version';
+		
+		$dbw = wfGetDB( DB_MASTER );
+		$dbr = wfGetDB( DB_SLAVE );	
+		
 		require_once( mwcalendar_base_path . '/includes/updates/update_003.php');
 		//require_once( mwcalendar_base_path . '/includes/updates/update_004.php');
 		//require_once( mwcalendar_base_path . '/includes/updates/update_005.php');
@@ -75,7 +83,7 @@ class update{
 		}
 	}
 	
-	private function setVersion(){
+	private function setDBVersion(){
 		$dbw = wfGetDB( DB_MASTER );
 		
 		$calendar_version = array(

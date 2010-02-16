@@ -24,6 +24,7 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 
 $wgExtensionFunctions[] = "mwCalendar";
+$wgShowSQLErrors=true;
 
 function mwCalendar() {
 	global $wgParser;
@@ -32,10 +33,7 @@ function mwCalendar() {
 
 function launchCalendar($paramstring, $params = array()) {
 
-$ret = helpers::date(1265670240) . '--- start<br>' 
-	. helpers::date(1265670240) . '--- end<br><br>' 
-	. helpers::date(mktime(0,0,0,2,8,2010));
-//return $ret;
+//return preg_replace('[(\s*\()+.+(\))]', '', '12345            (eric)-'); 
 
 	// conversion option; no need to do any normal calendar initializations
 	if($ret = run_conversion($params)) {return $ret;}	
