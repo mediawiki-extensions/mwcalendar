@@ -5,6 +5,8 @@ if (!defined('MEDIAWIKI')) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
 
+require_once( mwcalendar_base_path . '/includes/updates/update.php');
+
 class CalendarDatabase{
 	
 	var $dbPrefix = '';
@@ -13,8 +15,31 @@ class CalendarDatabase{
 		global $wgDBprefix;
 		$this->dbPrefix = $wgDBprefix;
 		
-		$this->checkTables();
-		//$this->createCalendar('test', 'text calendar');
+		$this->validateVersion(); //make sure db and files match
+	}
+	
+	private function validateVersion(){
+		global $wgOut;
+		
+		$dbr = wfGetDB( DB_SLAVE );	
+		$update = new update();
+		$table = $this->dbPrefix . 'calendar_version';		
+			
+		$sql = "SELECT MAX(version) as ver FROM $table;";				
+		
+		$dbr->ignoreErrors(true);
+		$res = $dbr->query($sql);  
+		$dbr->ignoreErrors(true);	
+		
+		if(!$res) {
+			$update->validate("0"); //early beta crud
+		}else{
+			$r = $dbr->fetchObject( $res );
+
+			if($r->ver < mwcalendar_version) { 
+				$update->validate($r->ver); 
+			}				
+		}
 	}
 	
 	public function setEvent($arrEvent){
@@ -158,51 +183,6 @@ class CalendarDatabase{
 		return $arrEvent;
 	}	
 	
-	public function checkTables(){
-		$dbw = wfGetDB( DB_MASTER );
-		$dbr = wfGetDB( DB_SLAVE );	
-
-		$header =  "`" . $this->dbPrefix . "calendar_header" . "`";
-		$events =  "`" . $this->dbPrefix . "calendar_events" . "`";
-		
-		$sql[$header] = 
-			"CREATE TABLE $header (
-				`id` integer NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL default '',
-				`description` varchar(255) default '',
-				PRIMARY KEY (`id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";
-			
-		$sql[$events] = 
-			"CREATE TABLE $events (
-				`id` integer NOT NULL auto_increment,
-				`calendarid` integer NOT NULL default '0',
-				`subject` varchar(255) default '',
-				`location` varchar(255) default '',
-				`start` double NOT NULL default '0',
-				`end` double NOT NULL default '0',
-				`allday` boolean NOT NULL default false,
-				`text` longtext default '',
-				`createdby` varchar(255) NOT NULL default '',
-				`createddate` double NOT NULL default '0',
-				`invites` mediumtext default '',
-				`editedby` varchar(255) default '',
-				`editeddate` double default '0',
-				PRIMARY KEY (`id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";			
-		
-		
-		// create tables if they do not exist
-		while (list($table, $sqldata) = each($sql)){
-			$dbr->ignoreErrors(true);
-			$res = $dbr->query( "SELECT 1 FROM $table LIMIT 0,1" );
-			$dbr->ignoreErrors(false);
-			if( !$res ) {
-				$dbw->query($sqldata); 
-			}				
-		}
-	}
-	
 	public function getCalendarID($calendar){
 	
 		$id = 0;
@@ -226,8 +206,8 @@ class CalendarDatabase{
 		
 		$dbw->insert( 'calendar_header', array(
 			'name' 			=> $name,
-			'description' 	=> $description) 
-		);	
+			'description' 	=> $description
+		) );	
 		
 		return $dbw->insertid();
 	}	

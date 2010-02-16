@@ -32,6 +32,8 @@ class EventHandler{
 			// this is the active user (can be the creator... or the editor)
 			$whodidit = $wgUser->getName();
 			
+			$arrInvites = explode("\n", $_POST["invites"]); //javascript uses "\n"
+			
 			$arrEvent = array(	'calendar' => 		$_POST["calendar"],
 								'subject' => 		$subject,
 								'location' => 		$_POST["location"],
@@ -41,7 +43,7 @@ class EventHandler{
 								'text' => 			$_POST["text"],
 								'createdby' => 		$whodidit,
 								'editedby' => 		$whodidit,
-								'invites' => 		$_POST["invites"] 
+								'invites' => 		serialize($arrInvites)
 						);
 						
 			// are we updating or creating new?

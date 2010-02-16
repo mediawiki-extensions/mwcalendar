@@ -80,7 +80,7 @@ function ModalDialogMaintainFocus()
    
    if(ModalDialog.value == "") { return; }
    
-   document.getElementById(ModalDialog.targetField).value = value + ModalDialog.value + ",";
+   document.getElementById(ModalDialog.targetField).value = value + ModalDialog.value + "\n";
    ModalDialogRemoveWatch();
  }
  
