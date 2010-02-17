@@ -59,16 +59,44 @@ class mwCalendar{
 		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
 		
-		$this->addEventHtml = $addHtml;
+		//$this->addEventHtml = $addHtml;
 		
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
-		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
-		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/InviteSelect.js');
+		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/tabber.css', 'screen');
+		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/default.css', 'screen');
 		
-		$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
-		$wgOut->addHtml($style . chr(13));	
+		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
+		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/tabber.js');
+		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/InviteSelect.js');
+	
+		$htmlTabHeader = '<div class="tabber">';
+		$htmlTabFooter = '</div>';
+		
+		$tab1 = $this->buildTab('Event',$addHtml);
+		$tab2 = $this->buildTab('Options','Comming soon...');
+		
+		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter . '</td></tr></table>';	
+
+		//$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
+		//$wgOut->addHtml($style . chr(13));	
 		
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
+	}
+
+	function buildTab($name,$tabBody){
+		global $wgParser;
+		
+		//if( trim($tab) == '' ) return '';
+		
+		//$arr = split("=",$tab);
+		//$tabName = $name;
+		//$tabBody = $tab;//$wgParser->recursiveTagParse( implode("=",$arr) );
+		
+		$tab = '<div class="tabbertab" title='.$name.'>'
+			. '<p>'.$tabBody.'</p>'
+			. '</div>';
+
+		return $tab;
 	}
 	
 	## SET DEFAULTS ##
