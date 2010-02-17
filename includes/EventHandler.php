@@ -59,7 +59,13 @@ class EventHandler{
 			
 			// need to call new URL to clear POST events
 			// return to calendar
-			header("Location: " . $url);
+			header("Location: ". $url . "&AddEvent");
+/*			if(isset($_POST['add_additional'])){
+				header("Location: " . $url . "&AddEvent");
+			}else{
+				header("Location: ". $url);
+			}
+*/
 			return;
 			
 		} ## END SAVE ##
