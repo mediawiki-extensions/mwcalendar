@@ -32,7 +32,7 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
-
+//return strtotime('2-22-10');
 	// conversion option; no need to do any normal calendar initializations
 	if($ret = run_conversion($params)) {return $ret;}	
 

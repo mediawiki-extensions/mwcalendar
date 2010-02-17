@@ -91,7 +91,7 @@ class CalendarDatabase{
 
 		$dbw->update( 'calendar_events', 
 			array(
-				'calendarid' 		=> $this->getCalendarID($calendar),
+//				'calendarid' 		=> $this->getCalendarID($calendar), //this shouldnt change (can cross contaminate)
 				'subject'        	=> $arrEvent['subject'],
 				'location'        	=> $arrEvent['location'],
 				'start'        		=> $arrEvent['start'],
