@@ -73,9 +73,10 @@ class mwCalendar{
 		$htmlTabFooter = '</div>';
 		
 		$tab1 = $this->buildTab('Event',$addHtml);
-		$tab2 = $this->buildTab('Options','Comming soon...');
+		$tab2 = $this->buildTab('Recurrence','Comming soon...');
+		$tab3 = $this->buildTab('Options','Comming soon...');
 		
-		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter . '</td></tr></table>';	
+		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $tab3 . $htmlTabFooter . '</td></tr></table>';	
 
 		//$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
 		//$wgOut->addHtml($style . chr(13));	
