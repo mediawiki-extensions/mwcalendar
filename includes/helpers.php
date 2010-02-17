@@ -43,4 +43,41 @@ class helpers{
 		
 		return explode("\r\n", $str_invites); //javascript uses "\n"	
 	}
+	
+	static function getNextValidDate(&$month, &$day, &$year){
+
+		$seconds = 86400; //1 day
+		$arr = getdate(mktime(12, 0, 0, $month, $day, $year) + $seconds);
+		
+		$day = $arr['mday'];
+		$month = $arr['mon'];
+		$year = $arr['year'];
+		
+		return $arr;
+	}
+	
+	static function is_my_calendar($calendarName){
+
+		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
+
+		if( !isset($arr[1]) ) return true;
+		
+		if( stripos($arr[1], $calendarName) > 0)
+			return true;
+	
+		if( isset($_POST['calendar'])){
+			if($_POST['calendar'] == $calendarName)
+				return true;
+		}
+
+		return false;	
+	}
 }
+
+
+
+
+
+
+
+

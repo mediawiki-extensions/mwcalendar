@@ -44,7 +44,9 @@ class mwCalendar{
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
-		EventHandler::CheckForEvents();		
+		if( helpers::is_my_calendar($this->calendarName) ){
+			EventHandler::CheckForEvents();	
+		}
 		
 		$this->db = new CalendarDatabase;
 		$this->db->validateVersion(); //make sure db and files match
@@ -57,6 +59,7 @@ class mwCalendar{
 		}
 				
 		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
+		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
 		
 		//$this->addEventHtml = $addHtml;
@@ -73,26 +76,17 @@ class mwCalendar{
 		$htmlTabFooter = '</div>';
 		
 		$tab1 = $this->buildTab('Event',$addHtml);
-		$tab2 = $this->buildTab('Recurrence','Comming soon...');
-		$tab3 = $this->buildTab('Options','Comming soon...');
+		$tab2 = $this->buildTab('Batch',$batchHtml);
+		//$tab3 = $this->buildTab('Options','Comming soon...');
 		
-		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $tab3 . $htmlTabFooter . '</td></tr></table>';	
-
-		//$style = file_get_contents( mwcalendar_base_path. "/html/default.css");
-		//$wgOut->addHtml($style . chr(13));	
+		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter . '</td></tr></table>';	
 		
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
 	}
 
-	function buildTab($name,$tabBody){
+	private function buildTab($name,$tabBody){
 		global $wgParser;
-		
-		//if( trim($tab) == '' ) return '';
-		
-		//$arr = split("=",$tab);
-		//$tabName = $name;
-		//$tabBody = $tab;//$wgParser->recursiveTagParse( implode("=",$arr) );
-		
+
 		$tab = '<div class="tabbertab" title='.$name.'>'
 			. '<p>'.$tabBody.'</p>'
 			. '</div>';
@@ -109,8 +103,7 @@ class mwCalendar{
 	}
 	
 	public function begin(){
-
-		//return helpers::date(1265658240);
+		global $wgOut;
 	
 		$html = "";		
 
@@ -118,101 +111,109 @@ class mwCalendar{
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 
 		$urlEvent[0] = '';
-		if( isset($arrUrl[1]) ){
-			$urlEvent = explode( '=', $arrUrl[1] ); #ex: EditEvent=45
+		if( isset($arrUrl[2]) ){
+			$urlEvent = explode( '=', $arrUrl[2] ); #ex: EditEvent=45
+		}
+
+		if( helpers::is_my_calendar($this->calendarName) ){
+			if($urlEvent[0] == 'AddEvent' ){
+				return $this->url_AddEvent($arrUrl[0],$urlEvent[1]);			
+			}
+			
+			if($urlEvent[0] == 'EditEvent' ){
+				return $this->url_EditEvent($arrUrl[0],$urlEvent[1]);
+			}
 		}
 		
-		switch( $urlEvent[0] ){
-		case 'AddEvent':
-			$html = $this->addEventHtml;
-			
-			if( isset($urlEvent[1]) ){
-				$startDate = helpers::date($urlEvent[1]);
-				$endDate = helpers::date($urlEvent[1]);
-			}else{
-				$startDate = helpers::date(time());
-				$endDate = helpers::date(time());
-			}
-			
-			// update the 'hidden' input field so we retain the calendar name for the db update
-			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
-			$html = str_replace('[[EventID]]', null, $html);
-			$html = str_replace('[[Start]]', $startDate, $html);
-			$html = str_replace('[[End]]', $endDate, $html);
-			$html = str_replace('[[Disabled]]', 'disabled', $html); 
-			
-			break;
-			
-		case 'EditEvent':
-			$html = $this->addEventHtml;
-			
-			$event = $this->db->getEvent( $urlEvent[1] );
+		## load normal calendar
+		$cookie_name = helpers::cookie_name( $this->calendarName ); 
 
-			$start = helpers::date( $event['start' ] );
-			$end = helpers::date( $event['end'] );		
-						
-			if(isset($event['editeddate'])){
-				$editeddate = helpers::date( $event['editeddate']);					
-				$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
-			}
-
-			$createddate = helpers::date($event['createddate']);					
-			$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
-			
-			$this->makeSafeHtml($event);
-			
-			$start = helpers::date( $event['start']);
-			$end = helpers::date( $event['end']);
-			
-			// build invite(notify) list
-			$arr_invites = unserialize($event['invites']);
-			foreach($arr_invites as $invite) {
-				$user = User::newFromName( trim($invite) );
-				if($user){
-					$strInvites .= $invite . "(".$user->getRealName().")&#10;";
-				}
-				
-			}
-				
-			// update the 'hidden' input field so we retain the calendar name for the db update
-			$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
-			$html = str_replace('[[EventID]]', $event['id'], $html);	
-			$html = str_replace('[[Subject]]', $event['subject'], $html);	
-			$html = str_replace('[[Location]]', $event['location'], $html);			
-			$html = str_replace('[[Invites]]', $strInvites, $html);	
-			$html = str_replace('[[Start]]', $start, $html);	
-			$html = str_replace('[[End]]', $end, $html);				
-			$html = str_replace('[[Text]]', $event['text'], $html);	
-			$html = str_replace('[[LastEdited]]', $lastedited, $html);
-			$html = str_replace('[[CreatedBy]]', $createdby, $html);			
+		if( isset($_COOKIE[$cookie_name]) ){
+			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
+			$this->month = $date['mon'];
+			$this->year = $date['year'];
+		}
 		
-			break;				
-			
-		default:
-			$cookie_name = helpers::cookie_name( $this->calendarName ); 
-
-			if( isset($_COOKIE[$cookie_name]) ){
-				$date = getdate($_COOKIE[$cookie_name]); //timestamp value
-				$this->month = $date['mon'];
-				$this->year = $date['year'];
-			}
-			
-			if($this->event_list > 0){
-				$html .= $this->createEventList();
-			}else{
-				$html = $this->createCalendar();
-			}
-			
-		} //end switch
+		if($this->event_list > 0){
+			$html .= $this->createEventList();
+		}else{
+			$html = $this->createCalendar();
+		}
 		
-		// post a clean URL to the <form action>
 		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
-		
-		 // remove any remaining [[xyz]] type tags
 		$html = $this->clearHtmlTags($html);
 		
 		return $html;
-		//$wgOut->addHtml($html);
+	}
+	
+	private function url_AddEvent($safeUrl, $timestamp){
+		$html = $this->addEventHtml;
+
+		$startDate = $endDate = helpers::date($timestamp);
+
+		// update the 'hidden' input field so we retain the calendar name for the db update
+		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[EventID]]', null, $html);
+		$html = str_replace('[[Start]]', $startDate, $html);
+		$html = str_replace('[[End]]', $endDate, $html);
+		$html = str_replace('[[Disabled]]', 'disabled', $html); 
+		
+		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
+		$html = $this->clearHtmlTags($html);
+		
+		return $html;	
+	}
+	
+	private function url_EditEvent($safeUrl, $eventID){
+		$html = $this->addEventHtml;
+		$strInvites = '';
+		$lastedited = '';
+		
+		$event = $this->db->getEvent( $eventID );
+
+		$start = helpers::date( $event['start' ] );
+		$end = helpers::date( $event['end'] );		
+					
+		if(isset($event['editeddate'])){
+			$editeddate = helpers::date( $event['editeddate']);					
+			$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
+		}
+
+		$createddate = helpers::date($event['createddate']);					
+		$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
+		
+		$this->makeSafeHtml($event);
+		
+		$start = helpers::date( $event['start']);
+		$end = helpers::date( $event['end']);
+		
+		// build invite(notify) list
+		$arr_invites = unserialize($event['invites']);
+		foreach($arr_invites as $invite) {
+			$user = User::newFromName( trim($invite) );
+			if($user){
+				$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+			}
+			
+		}
+			
+		// update the 'hidden' input field so we retain the calendar name for the db update
+		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[EventID]]', $event['id'], $html);	
+		$html = str_replace('[[Subject]]', $event['subject'], $html);	
+		$html = str_replace('[[Location]]', $event['location'], $html);			
+		$html = str_replace('[[Invites]]', $strInvites, $html);	
+		$html = str_replace('[[Start]]', $start, $html);	
+		$html = str_replace('[[End]]', $end, $html);				
+		$html = str_replace('[[Text]]', $event['text'], $html);	
+		$html = str_replace('[[LastEdited]]', $lastedited, $html);
+		$html = str_replace('[[CreatedBy]]', $createdby, $html);	
+
+		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
+		$html = $this->clearHtmlTags($html);
+		
+		return $html;	
+	
 	}
 	
 	private function makeSafeHtml(&$arrEvent){
@@ -312,35 +313,40 @@ class mwCalendar{
 	}
 	
 	private function createEventList(){
+	
+		//we're only going to pull (+/-) 12 months
 		$first = mktime(0,0,0,$this->month-12,1,$this->year);
-		$last = mktime(23,59,59,$this->month,28,$this->year);
+		$last = mktime(23,59,59,$this->month+12,28,$this->year);
 
 		$eventListRange = $this->event_list;
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
-		$day = $this->day;
 		
 		$extra_css = '';
 		$events = '';
 		
+		$day = $this->day;
+		$month = $this->month;
+		$year = $this->year;
+		
 		for($i=0; $i < $eventListRange; $i++){
 							
-			$dayOfWeek = date('N', mktime(12, 0, 0, $this->month, $day, $this->year));	// 0-6
+			$dayOfWeek = date('N', mktime(12, 0, 0, $month, $day, $year));	// 0-6
 			if($dayOfWeek > 5) $extra_css = 'calendar_weekend_empty';
 			
-			$ret = $this->buildEventList($arrMonthEvents, $this->month, $day, $this->year);
+			$ret = $this->buildEventList($arrMonthEvents, $month, $day, $year);
 			
 			if($ret){
-				if(helpers::isToday($this->month,$day,$this->year)) $extra_css = 'today_css';
+				if(helpers::isToday($month,$day,$year)) $extra_css = 'today_css';
 				
-				$add = "<td text-align=right>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
-//				$add = "<td class='add_event'>" . $this->buildAddEventLink($this->month, $day, $this->year) . "</td>";
-				$date = "<tr><td class='eventlist_header'>" . date( 'l, M j', mktime(0,0,0,$this->month, $day, $this->year)) . "</td>$add</tr>";
+				$add = "<td text-align=right>" . $this->buildAddEventLink($month, $day, $year) . "</td>";
+				$date = "<tr><td class='eventlist_header'>" . date( 'l, M j', mktime(0,0,0,$month, $day, $year)) . "</td>$add</tr>";
 				$ret = "<tr><td colspan=2 class='eventlist_events $extra_css'>" . $ret . "<br></td></tr>";
 				$events .= $date . $ret;
 			}
-			$extra_css = '';	
-			$day++;
+			$extra_css = '';
+			helpers::getNextValidDate($month,$day,$year);
+			//$day++;
 		}
 		
 		return "<table class='day_cell_child' width=100%>" . $events . "</table>";
@@ -351,7 +357,7 @@ class mwCalendar{
 		$timestamp = mktime(0,0,0,$month,$day,$year);
 		
 		//$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
-		$url = $this->cleanLink( $this->title ) . '&AddEvent=' . $timestamp;
+		$url = $this->cleanLink( $this->title ) . '&Name='.$this->calendarName.'&AddEvent=' . $timestamp;
 		
 		$link = '<a href="' . $url . '">new</a>';		
 		return $link;
@@ -467,7 +473,7 @@ class mwCalendar{
 		$limit = $this->subject_max_length;
 		$subject = $event['subject'];
 		
-		$url = $this->cleanLink($this->title) . '&EditEvent=' . $event['id'];
+		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
 		$link = '<a href="' . $url . '">' . $subject . '</a>';
 		
 		return $link;

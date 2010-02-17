@@ -20,6 +20,9 @@ class EventHandler{
 		
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 		$url = $arr[0]; //clear any previous parameters
+		
+		// this is the active user (can be the creator... or the editor)
+		$whodidit = $wgUser->getName();
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) ){
@@ -28,9 +31,6 @@ class EventHandler{
 			$end = strtotime($_POST["end"]);
 									
 			$subject = strip_tags ( $_POST["subject"] );
-			
-			// this is the active user (can be the creator... or the editor)
-			$whodidit = $wgUser->getName();
 			
 			$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
 			
@@ -57,19 +57,15 @@ class EventHandler{
 				CalendarEmail::send($_POST["invites"], $arrEvent);
 			}
 			
-			// need to call new URL to clear POST events
-			// return to calendar
-			//header("Location: ". $url . "&AddEvent");
 			header("Location: ". $url);
-/*			if(isset($_POST['add_additional'])){
-				header("Location: " . $url . "&AddEvent");
-			}else{
-				header("Location: ". $url);
-			}
-*/
 			return;
 			
 		} ## END SAVE ##
+
+		if ( isset($_POST["savebatch"]) ){
+			self::addFromBatch($db, $whodidit);
+			header("Location: ". $url);
+		}	
 		
 		if ( isset($_POST["delete"]) ){
 			$db->deleteEvent($_POST['eventid']);
@@ -106,5 +102,37 @@ class EventHandler{
 			header("Location: " . $url);
 			return;
 		}		
+	}
+	
+	private static function addFromBatch($db, $whodidit){
+		$arrBatch = explode("\n", $_POST['batchdata']);
+
+		foreach($arrBatch as $batch_event){
+			$arr = explode('##',$batch_event);
+			
+			// add current month if the value is "2", "15", "28", etc
+			if(strlen($arr[0])< 3){
+				$date = getdate();
+				$arr[0] = $date['mon'] . '/'. $arr[0];
+			}
+					
+			$start = $end = strtotime($arr[0]);
+			
+			//just kludge to make sure we have a valid date
+			if( $start < 1000 ) return '';
+			
+			$arrEvent = array(	'calendar' => 		$_POST["calendar"],
+								'subject' => 		$arr[1],
+								'location' => 		'',
+								'start' => 			$start,
+								'end' => 			$end,
+								'allday' => 		1,
+								'text' => 			'',
+								'createdby' => 		$whodidit,
+								'editedby' => 		$whodidit,
+								'invites' => 		''
+						);		
+			$db->setEvent($arrEvent);
+		}
 	}
 }
