@@ -79,7 +79,7 @@ class mwCalendar{
 		$tab2 = $this->buildTab('Batch',$batchHtml);
 		//$tab3 = $this->buildTab('Options','Comming soon...');
 		
-		$this->addEventHtml  = '<table width=25%><tr><td>' . $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter . '</td></tr></table>';	
+		$this->addEventHtml  = $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter;	
 		
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
 	}
