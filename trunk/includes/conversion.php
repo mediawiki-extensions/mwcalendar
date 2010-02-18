@@ -101,17 +101,17 @@ class conversion{
 		
 		$displayText = $body;//$article->fetchContent(0,false,false);
 	
-		$arrAllEvents=split(chr(10),$displayText);
+		$arrAllEvents=explode(chr(10),$displayText);
 		if (count($arrAllEvents) > 0){
 			for($i=0; $i<count($arrAllEvents); $i++){
-				$arrEvent = split("#",$arrAllEvents[$i]);
+				$arrEvent = explode("#",$arrAllEvents[$i]);
 				
 				if(!isset($arrEvent[1])) continue;//skip 
 				
 				if(strlen($arrEvent[1]) > 0){
 	
 					//$day = $arrEvent[0];
-					$arrRepeat = split("-",$arrEvent[0]);
+					$arrRepeat = explode("-",$arrEvent[0]);
 					
 					$startDay = $arrRepeat[0];
 					$endDay = $arrRepeat[0];	
