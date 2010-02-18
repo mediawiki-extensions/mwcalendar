@@ -168,6 +168,7 @@ class mwCalendar{
 		$html = $this->addEventHtml;
 		$strInvites = '';
 		$lastedited = '';
+		$arr_invites = array();
 		
 		$event = $this->db->getEvent( $eventID );
 
@@ -189,6 +190,7 @@ class mwCalendar{
 		
 		// build invite(notify) list
 		$arr_invites = unserialize($event['invites']);
+		
 		foreach($arr_invites as $invite) {
 			$user = User::newFromName( trim($invite) );
 			if($user){
