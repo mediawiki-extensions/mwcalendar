@@ -28,7 +28,7 @@ class mwCalendar{
 	
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
-			
+		
 		$list = '';	
 		
 		$this->setDefaults($params); ## RUN FIRST ##
@@ -44,9 +44,7 @@ class mwCalendar{
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
-		if( helpers::is_my_calendar($this->calendarName) ){
-			EventHandler::CheckForEvents();	
-		}
+		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
 		
 		$this->db = new CalendarDatabase;
 		$this->db->validateVersion(); //make sure db and files match
