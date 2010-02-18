@@ -60,7 +60,7 @@ class helpers{
 
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 
-		if( !isset($arr[1]) ) return true;
+		//if( !isset($arr[1]) ) return true;
 		
 		$name = urldecode($arr[1]);
 		
