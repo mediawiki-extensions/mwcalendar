@@ -191,12 +191,13 @@ class mwCalendar{
 		// build invite(notify) list
 		$arr_invites = unserialize($event['invites']);
 		
-		foreach($arr_invites as $invite) {
-			$user = User::newFromName( trim($invite) );
-			if($user){
-				$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+		if(is_array($arr_invites)){
+			foreach($arr_invites as $invite) {
+				$user = User::newFromName( trim($invite) );
+				if($user){
+					$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+				}
 			}
-			
 		}
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
