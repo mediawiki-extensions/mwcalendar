@@ -11,7 +11,7 @@ class helpers{
 	public static function setDateFormat($format){ self::$date_format=$format; }
 	public static function date($timestamp){ return date(self::$date_format, $timestamp); }
 	
-	## coolie stuff
+	## cookie stuff
 	public static function cookie_name($calendar_name){
 		global $wgTitle;
 		$wiki_page = $wgTitle->getPrefixedText();
@@ -60,12 +60,12 @@ class helpers{
 
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 
-		//if( !isset($arr[1]) ) return true;
+		if(isset($arr[1])){
+			$name = urldecode($arr[1]);
 		
-		$name = urldecode($arr[1]);
-	
-		if( stripos($name, $calendarName) > 0)
-			return true;
+			if( stripos($name, $calendarName) > 0)
+				return true;
+		}
 	
 		if( isset($_POST['calendar'])){
 			if($_POST['calendar'] == $calendarName)

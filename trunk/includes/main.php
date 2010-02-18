@@ -42,12 +42,12 @@ class mwCalendar{
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
 		
+		$this->db = new CalendarDatabase;
+		$this->db->validateVersion(); //make sure db and files match		
+		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
-		
-		$this->db = new CalendarDatabase;
-		$this->db->validateVersion(); //make sure db and files match
 		
 		$arrUsers = $this->db->getDatabaseUsers();
 		
