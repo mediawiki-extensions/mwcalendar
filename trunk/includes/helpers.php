@@ -62,7 +62,9 @@ class helpers{
 
 		if( !isset($arr[1]) ) return true;
 		
-		if( stripos($arr[1], $calendarName) > 0)
+		$name = urldecode($arr[1]);
+		
+		if( stripos($name, $calendarName) > 0)
 			return true;
 	
 		if( isset($_POST['calendar'])){

@@ -119,11 +119,12 @@
 		font-style:italic; 
 		border:0px solid #808080;	
 	}
-	
+
+/************************ BatchAdd.html ****************************/		
 	.batch_event_parent{
 		border:1px solid #808080;
 		background-color:#E0E0E0;
-		width:100%;
+		width:300px
 	}
 	
 	.batch_examples{
