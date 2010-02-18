@@ -13,8 +13,8 @@ class EventHandler{
 
 	public function EventHandler(){}
 	
-	public static function CheckForEvents(){
-		global $wgUser;
+	public static function CheckForEvents($can_update_db){
+		global $wgUser,$wgOut;
 		
 		$db = new CalendarDatabase();
 		
@@ -25,7 +25,7 @@ class EventHandler{
 		$whodidit = $wgUser->getName();
 
 		// see if a new event was saved and apply changes to database
-		if ( isset($_POST["save"]) ){
+		if ( isset($_POST["save"]) && $can_update_db){
 
 			$start = strtotime($_POST["start"]);
 			$end = strtotime($_POST["end"]);
@@ -57,27 +57,21 @@ class EventHandler{
 				CalendarEmail::send($_POST["invites"], $arrEvent);
 			}
 			
-			header("Location: ". $url);
-			return;
-			
-		} ## END SAVE ##
+			header("Location: " . $url);
+		}
 
 		if ( isset($_POST["savebatch"]) ){
 			self::addFromBatch($db, $whodidit);
-			header("Location: ". $url);
+			header("Location: " . $url);
 		}	
 		
 		if ( isset($_POST["delete"]) ){
 			$db->deleteEvent($_POST['eventid']);
 			header("Location: " . $url);
-			return;
 		}		
 
-		if ( isset($_POST["cancel"]) ){
-			
-			// return to main calendar page
+		if ( isset($_POST["cancel"]) ){	
 			header("Location: " . $url);
-			return;
 		}
 		
 		// timestamp will be populated only if any nav butten is clicked
@@ -100,8 +94,7 @@ class EventHandler{
 			setcookie($cookie_name, $timestamp);
 			
 			header("Location: " . $url);
-			return;
-		}		
+		}
 	}
 	
 	private static function addFromBatch($db, $whodidit){

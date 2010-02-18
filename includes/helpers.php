@@ -63,7 +63,7 @@ class helpers{
 		//if( !isset($arr[1]) ) return true;
 		
 		$name = urldecode($arr[1]);
-		
+	
 		if( stripos($name, $calendarName) > 0)
 			return true;
 	
