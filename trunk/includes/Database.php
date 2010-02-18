@@ -123,7 +123,7 @@ class CalendarDatabase{
 		$sql = "SELECT *
 					FROM $eventtable
 					WHERE start >= $timestamp1 AND start <= $timestamp2
-					AND calendarid = $calendarid ORDER BY subject";// LIMIT 0,25";
+					AND calendarid = $calendarid ORDER BY start, subject";
 
 		$res = $dbr->query($sql);    
 		while ($r = $dbr->fetchObject( $res )) {
