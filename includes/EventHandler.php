@@ -108,7 +108,7 @@ class EventHandler{
 		$arrBatch = explode("\n", $_POST['batchdata']);
 
 		foreach($arrBatch as $batch_event){
-			$arr = explode('##',$batch_event);
+			$arr = explode('--',$batch_event);
 			
 			// add current month if the value is "2", "15", "28", etc
 			if(strlen($arr[0])< 3){

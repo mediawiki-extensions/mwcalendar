@@ -120,4 +120,17 @@
 		border:0px solid #808080;	
 	}
 	
+	.batch_event_parent{
+		border:1px solid #808080;
+		background-color:#E0E0E0;
+		width:100%;
+	}
+	
+	.batch_examples{
+		font-size: 11px;
+		font-style:italic; 
+		width:1%;
+		border:0px solid #808080;	
+	}
+	
 </style>
