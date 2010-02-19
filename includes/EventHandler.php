@@ -60,7 +60,7 @@ class EventHandler{
 			header("Location: " . $url);
 		}
 
-		if ( isset($_POST["savebatch"]) ){
+		if ( isset($_POST["savebatch"]) && $can_update_db ){
 			self::addFromBatch($db, $whodidit);
 			header("Location: " . $url);
 		}	
