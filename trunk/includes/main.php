@@ -60,15 +60,19 @@ class mwCalendar{
 		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");
 		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
 		
-		//$this->addEventHtml = $addHtml;
 		
-		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
+		## for some reason (addStyle() and addScriptFile) doesn't always work.....		
+/*		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/tabber.css', 'screen');
 		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/default.css', 'screen');
-		
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/tabber.js');
 		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/InviteSelect.js');
+*/
+		## building my own sytlesheets and javascript links...
+		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
+		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js') );
+				
 	
 		$htmlTabHeader = '<div class="tabber">';
 		$htmlTabFooter = '</div>';
@@ -80,6 +84,32 @@ class mwCalendar{
 		$this->addEventHtml  = $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter;	
 		
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
+	}
+	
+	private function buildStylesheet($arrStyles){
+		global $wgScriptPath;
+		$ret = chr(13) . "<!-- BEGIN CALENDAR CSS -->".chr(13);
+		
+		foreach($arrStyles as $style){
+			$ret .= '<link rel="stylesheet" href="'.$wgScriptPath.'/extensions/mwcalendar/html/'.$style.'" type="text/css" media="screen" />'.chr(13);		
+		}
+		
+		$ret .= "<!-- END CALENDAR CSS -->".chr(13);
+		
+		return $ret;
+	}
+	
+	private function buildJavascript($arrJavaScripts){
+		global $wgScriptPath;
+		$ret = chr(13) . "<!-- BEGIN CALENDAR JS -->".chr(13);
+		
+		foreach($arrJavaScripts as $javascript){
+			$ret .= '<script type="text/javascript" src="'.$wgScriptPath.'/extensions/mwcalendar/html/'.$javascript.'"></script>'.chr(13);		
+		}
+		
+		$ret .= "<!-- END CALENDAR JS -->".chr(13);
+		
+		return $ret;
 	}
 
 	private function buildTab($name,$tabBody){
@@ -141,7 +171,7 @@ class mwCalendar{
 		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
 		$html = $this->clearHtmlTags($html);
 		
-		return $html;
+		return $this->stylesheet . $this->javascript . $html;
 	}
 	
 	private function url_AddEvent($safeUrl, $timestamp){
