@@ -65,7 +65,7 @@ class EventHandler{
 			header("Location: " . $url);
 		}	
 		
-		if ( isset($_POST["delete"]) ){
+		if ( isset($_POST["delete"]) && $can_update_db  ){
 			$db->deleteEvent($_POST['eventid']);
 			header("Location: " . $url);
 		}		

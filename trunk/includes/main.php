@@ -21,7 +21,7 @@ class mwCalendar{
 	
 	var $calendarName;
 	var $title = '';
-	var $addEventHtml = '';
+	var $tabHtml = '';
 	
 	var $subject_max_length;
 	var $event_list = 0;
@@ -48,42 +48,29 @@ class mwCalendar{
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
-		
+			
+		## build the mw user-list which should only be users with active email
 		$arrUsers = $this->db->getDatabaseUsers();
-		
 		while(list($user,$realname) = each($arrUsers)){
 			$realname = htmlentities($realname, ENT_QUOTES);
 			$list .= "<option>$user($realname)</option>";
 		}
-				
-		$addHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
+			
+		## pull in all the html template forms we have
+		$addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");
-		$addHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addHtml);	
+		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
 		
+		$addEventHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addEventHtml);	
 		
-		## for some reason (addStyle() and addScriptFile) doesn't always work.....		
-/*		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.css', 'screen');
-		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/tabber.css', 'screen');
-		$wgOut->addStyle( $wgScriptPath . '/extensions/mwcalendar/html/default.css', 'screen');
-		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/DatePicker.js');
-		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/tabber.js');
-		$wgOut->addScriptFile( $wgScriptPath . '/extensions/mwcalendar/html/InviteSelect.js');
-*/
 		## building my own sytlesheets and javascript links...
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
 		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js') );
-				
-	
-		$htmlTabHeader = '<div class="tabber">';
-		$htmlTabFooter = '</div>';
 		
-		$tab1 = $this->buildTab('Event',$addHtml);
+		## build the addEvent and batch tabs		
+		$tab1 = $this->buildTab('Event',$addEventHtml);
 		$tab2 = $this->buildTab('Batch',$batchHtml);
-		//$tab3 = $this->buildTab('Options','Comming soon...');
-		
-		$this->addEventHtml  = $htmlTabHeader . $tab1 . $tab2 . $htmlTabFooter;	
-		
-		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
+		$this->tabHtml  = '<div class="tabber">' . $tab1 . $tab2 . '</div>';	
 	}
 	
 	private function buildStylesheet($arrStyles){
@@ -133,7 +120,8 @@ class mwCalendar{
 	public function begin(){
 		global $wgOut;
 	
-		$html = "";		
+		$html = $this->stylesheet;
+		$html .= $this->javascript;
 
 		// determine what we need to display
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
@@ -145,11 +133,11 @@ class mwCalendar{
 
 		if( helpers::is_my_calendar($this->calendarName) ){
 			if($urlEvent[0] == 'AddEvent' ){
-				return $this->url_AddEvent($arrUrl[0],$urlEvent[1]);			
+				return $html . $this->url_AddEvent($arrUrl[0],$urlEvent[1]);			
 			}
 			
 			if($urlEvent[0] == 'EditEvent' ){
-				return $this->url_EditEvent($arrUrl[0],$urlEvent[1]);
+				return $html . $this->url_EditEvent($arrUrl[0],$urlEvent[1]);
 			}
 		}
 		
@@ -165,17 +153,17 @@ class mwCalendar{
 		if($this->event_list > 0){
 			$html .= $this->createEventList();
 		}else{
-			$html = $this->createCalendar();
+			$html .= $this->createCalendar();
 		}
 		
 		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
 		$html = $this->clearHtmlTags($html);
 		
-		return $this->stylesheet . $this->javascript . $html;
+		return $html;
 	}
 	
 	private function url_AddEvent($safeUrl, $timestamp){
-		$html = $this->addEventHtml;
+		$html = $this->tabHtml;
 
 		$startDate = $endDate = helpers::date($timestamp);
 
@@ -193,7 +181,10 @@ class mwCalendar{
 	}
 	
 	private function url_EditEvent($safeUrl, $eventID){
-		$html = $this->addEventHtml;
+		global $wgUser;
+		$currentUser = $wgUser->getName();
+		
+		$html = $this->tabHtml;
 		$strInvites = '';
 		$lastedited = '';
 		$arr_invites = array();
@@ -241,10 +232,16 @@ class mwCalendar{
 		$html = str_replace('[[CreatedBy]]', $createdby, $html);	
 
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
-		$html = $this->clearHtmlTags($html);
 		
-		return $html;	
-	
+		//$arrEvent = $this->db->getEvent( $event['id'] );
+		
+		// disable delete for users that didnt create the event
+		$isValid = User::newFromName( $event['createdby'] )->getID();
+		if( ($currentUser !=  $event['createdby']) && ($isValid) ){
+			$html = str_replace('[[Disabled]]', 'disabled title="Only creator or admin can delete this event."', $html); 
+		}
+		
+		return $this->clearHtmlTags($html);	
 	}
 	
 	private function makeSafeHtml(&$arrEvent){
@@ -376,8 +373,7 @@ class mwCalendar{
 				$events .= $date . $ret;
 			}
 			$extra_css = '';
-			helpers::getNextValidDate($month,$day,$year);
-			//$day++;
+			helpers::getNextValidDate($month,$day,$year);//updated by pointer reference
 		}
 		
 		return "<table class='day_cell_child' width=100%>" . $events . "</table>";
