@@ -74,6 +74,30 @@ class helpers{
 
 		return false;	
 	}
+	
+	static function translate($value, $key=""){
+		global $wgLang;
+		
+		switch($key){
+		case 'month':
+			return $wgLang->getMonthName($value);
+			
+		case 'month-gen': //genitive case or possessive case
+			return $wgLang->getMonthNameGen($value);
+			
+		case 'month_short':
+			return $wgLang->getMonthAbbreviation($value);
+			
+		case 'weekday':
+			return $wgLang->getWeekdayName($value);
+			
+		default:
+			//return $wgLang->iconv("", "UTF-8", Common::translate($value));
+			return utf8_encode(wfMsg($value));
+			//return wfMsg($value);
+		}
+		return "";
+	}
 }
 
 

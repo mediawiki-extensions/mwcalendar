@@ -27,25 +27,8 @@ class EventHandler{
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) && $can_update_db){
 
-			$start = strtotime($_POST["start"]);
-			$end = strtotime($_POST["end"]);
-									
-			$subject = strip_tags ( $_POST["subject"] );
-			
-			$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
-			
-			$arrEvent = array(	'calendar' => 		$_POST["calendar"],
-								'subject' => 		$subject,
-								'location' => 		$_POST["location"],
-								'start' => 			$start,
-								'end' => 			$end,
-								'allday' => 		($_POST["allday"] == 'on') ? 1:0,
-								'text' => 			$_POST["text"],
-								'createdby' => 		$whodidit,
-								'editedby' => 		$whodidit,
-								'invites' => 		serialize($arrInvites)
-						);
-						
+			$arrEvent = self::buildEventArray();
+					
 			// are we updating or creating new?
 			if($_POST['eventid']){
 				$db->updateEvent($arrEvent, $_POST['eventid']);
@@ -54,7 +37,7 @@ class EventHandler{
 			}
 			
 			if( isset($_POST["invites"]) ){
-				CalendarEmail::send($_POST["invites"], $arrEvent);
+				CalendarEmail::send($_POST["invites"], $arrEvent, 'save');
 			}
 			
 			header("Location: " . $url);
@@ -67,6 +50,12 @@ class EventHandler{
 		
 		if ( isset($_POST["delete"]) && $can_update_db  ){
 			$db->deleteEvent($_POST['eventid']);
+			
+			$arrEvent = self::buildEventArray();
+			
+			if( isset($_POST["invites"]) ){
+				CalendarEmail::send($_POST["invites"], $arrEvent, 'delete');
+			}			
 			header("Location: " . $url);
 		}		
 
@@ -95,6 +84,34 @@ class EventHandler{
 			
 			header("Location: " . $url);
 		}
+	}
+	
+	## build events based on $_POST
+	private static function buildEventArray(){
+		global $wgUser;
+		
+		$whodidit = $wgUser->getName();
+			
+		$start = strtotime($_POST["start"]);
+		$end = strtotime($_POST["end"]);
+								
+		$subject = strip_tags ( $_POST["subject"] );
+		
+		$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
+		
+		$arrEvent = array(	'calendar' => 		$_POST["calendar"],
+							'subject' => 		$subject,
+							'location' => 		$_POST["location"],
+							'start' => 			$start,
+							'end' => 			$end,
+							'allday' => 		($_POST["allday"] == 'on') ? 1:0,
+							'text' => 			$_POST["text"],
+							'createdby' => 		$whodidit,
+							'editedby' => 		$whodidit,
+							'invites' => 		serialize($arrInvites)
+					);
+					
+		return $arrEvent;
 	}
 	
 	private static function addFromBatch($db, $whodidit){

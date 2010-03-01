@@ -24,11 +24,14 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 
 $wgExtensionFunctions[] = "mwCalendar";
+$wgExtensionMessagesFiles['mwCalendar'] = mwcalendar_base_path . "/includes/i18n.php";
+
 $wgShowSQLErrors=true;
 
 function mwCalendar() {
 	global $wgParser;
 	$wgParser->setHook( "mwcalendar", "launchCalendar" );
+	wfLoadExtensionMessages( 'mwCalendar' ); 
 }
 
 function launchCalendar($paramstring, $params = array()) {
