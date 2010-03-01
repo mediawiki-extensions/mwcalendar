@@ -25,6 +25,8 @@
 		"mwc_event_close" => "close",
 		"mwc_event_allday" => "all day",
 		"mwc_event_add" => "add",
+		"mwc_batch_delimiter_text" => "delimiter",
+		"mwc_batch_delimiter_title" => "custom delimiter including 'tab'",
 		"" => ""
 	);
 	
