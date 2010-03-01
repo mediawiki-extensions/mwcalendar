@@ -4,7 +4,7 @@ require_once( mwcalendar_base_path . '/includes/helpers.php');
 
 class CalendarEmail{
 	
-	public static function send($users, $event){
+	public static function send($users, $event, $action='save'){
 		global $wgUser;
 		$fromEmail = $wgUser->getEmail();
 		
@@ -21,8 +21,10 @@ class CalendarEmail{
 		$text = 'FROM: ' . $start . chr(13) . 'END: ' . $end . chr(13)
 			. chr(13) . $event['text'] . chr(13). chr(13) . CalendarEmail::curPageURL();
 	
+		if($action == 'delete'){
+			$subject = '{deleted} ' . $subject;
+		}
 
-	
 		foreach($arr as $u){
 			$username = explode('(',$u);
 			$user = User::newFromName(trim($username[0]));

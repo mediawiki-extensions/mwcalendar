@@ -68,8 +68,8 @@ class mwCalendar{
 		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js') );
 		
 		## build the addEvent and batch tabs		
-		$tab1 = $this->buildTab('Event',$addEventHtml);
-		$tab2 = $this->buildTab('Batch',$batchHtml);
+		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
+		$tab2 = $this->buildTab( helpers::translate('mwc_batch'),$batchHtml);
 		$this->tabHtml  = '<div class="tabber">' . $tab1 . $tab2 . '</div>';	
 	}
 	
@@ -112,7 +112,7 @@ class mwCalendar{
 	## SET DEFAULTS ##
 	private function setDefaults($params){
 
-		$this->calendarName = isset( $params['name'] ) ? $params['name'] : 'Public';
+		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
 		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 15;	
 		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;		
 	}
@@ -188,6 +188,7 @@ class mwCalendar{
 		$strInvites = '';
 		$lastedited = '';
 		$arr_invites = array();
+		$tranlated = '';
 		
 		$event = $this->db->getEvent( $eventID );
 
@@ -196,11 +197,11 @@ class mwCalendar{
 					
 		if(isset($event['editeddate'])){
 			$editeddate = helpers::date( $event['editeddate']);					
-			$lastedited = "last edited by: " . $event['editedby'] . " ($editeddate)";
+			$lastedited = helpers::translate('mwc_last_edited_by') . ': ' . $event['editedby'] . " ($editeddate)";
 		}
 
 		$createddate = helpers::date($event['createddate']);					
-		$createdby = "created by: " . $event['createdby'] . " ($createddate)";			
+		$createdby = helpers::translate('mwc_created_by') .": " . $event['createdby'] . " ($createddate)";			
 		
 		$this->makeSafeHtml($event);
 		
@@ -235,10 +236,12 @@ class mwCalendar{
 		
 		//$arrEvent = $this->db->getEvent( $event['id'] );
 		
-		// disable delete for users that didnt create the event
+		// disable delete for users that didnt create the event... only creator or admin can delete
 		$isValid = User::newFromName( $event['createdby'] )->getID();
-		if( ($currentUser !=  $event['createdby']) && ($isValid) ){
-			$html = str_replace('[[Disabled]]', 'disabled title="Only creator or admin can delete this event."', $html); 
+		$isAdmin =  in_array('sysop', $wgUser->getGroups());
+		if( ($currentUser !=  $event['createdby']) && ($isValid) && (!$isAdmin) ){
+			$tranlated = helpers::translate('mwc_delete_title');
+			$html = str_replace('[[Disabled]]', "disabled title='$tranlated'", $html); 
 		}
 		
 		return $this->clearHtmlTags($html);	
@@ -268,6 +271,18 @@ class mwCalendar{
 		$html = str_replace('[[CreatedBy]]', '', $html);	
 		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);		
 		$html = str_replace('[[Today_CSS]]', '', $html);	  
+		
+		## tranlated text labels
+		$html = str_replace('[[SubjectText]]', helpers::translate('mwc_event_subject'), $html);
+		$html = str_replace('[[LocationText]]', helpers::translate('mwc_event_location'), $html);
+		$html = str_replace('[[NotifyText]]', helpers::translate('mwc_event_notify'), $html);
+		$html = str_replace('[[StartText]]', helpers::translate('mwc_event_start'), $html);
+		$html = str_replace('[[EndText]]', helpers::translate('mwc_event_end'), $html);
+		$html = str_replace('[[AlldayText]]', helpers::translate('mwc_event_allday'), $html);
+		$html = str_replace('[[AddText]]', helpers::translate('mwc_event_add'), $html);
+		$html = str_replace('[[DeleteText]]', helpers::translate('mwc_event_delete'), $html);
+		$html = str_replace('[[SaveText]]', helpers::translate('mwc_event_save'), $html);
+		$html = str_replace('[[CloseText]]', helpers::translate('mwc_event_close'), $html);
 		
 		return $html;
 	}
@@ -386,18 +401,17 @@ class mwCalendar{
 		//$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
 		$url = $this->cleanLink( $this->title ) . '&Name='.$this->calendarName.'&AddEvent=' . $timestamp;
 		
-		$link = '<a href="' . $url . '">new</a>';		
+		$link = '<a href="' . $url . '">'.helpers::translate('mwc_new').'</a>';		
 		return $link;
 	}
 	
 	private function buildWeekHeader(){
 		
 		$header = '';
-		
-		$arr = array('Sunday', 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
-		
-		foreach($arr as $head){
-			$header .= '<td>' . $head . '</td>';
+	
+		$i= 1;
+		while( $i <= 7 ){
+			$header .= '<td>' . helpers::translate($i++, 'weekday') . '</td>';
 		}
 	
 		return '<tr class="calendar_header">' . $header . '</tr>';
@@ -420,7 +434,8 @@ class mwCalendar{
 	function buildMonthSelect(){
 		global $wgLang;
 		
-		$todayBtn = "&nbsp;<input class='btn' name='today' type='submit' value='today'>";		
+		$today = helpers::translate('mwc_today');
+		$todayBtn = "&nbsp;<input class='btn' name='today' type='submit' value='$today'>";		
 		$backBtn = "<input class='btn' name='monthBack' type='submit' value='<<'>&nbsp;";
 		$forwardBtn = "&nbsp;<input class='btn' name='monthForward' type='submit' value='>>'>";		
 		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
