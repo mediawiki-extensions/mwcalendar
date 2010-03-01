@@ -283,6 +283,8 @@ class mwCalendar{
 		$html = str_replace('[[DeleteText]]', helpers::translate('mwc_event_delete'), $html);
 		$html = str_replace('[[SaveText]]', helpers::translate('mwc_event_save'), $html);
 		$html = str_replace('[[CloseText]]', helpers::translate('mwc_event_close'), $html);
+		$html = str_replace('[[DelimiterTitle]]', helpers::translate('mwc_batch_delimiter_title'), $html);
+		$html = str_replace('[[DelimiterText]]', helpers::translate('mwc_batch_delimiter_text'), $html);
 		
 		return $html;
 	}

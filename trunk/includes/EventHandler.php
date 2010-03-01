@@ -116,9 +116,13 @@ class EventHandler{
 	
 	private static function addFromBatch($db, $whodidit){
 		$arrBatch = explode("\n", $_POST['batchdata']);
+		
+		$delimiter = $_POST['delimiter'];
+		if($delimiter == '') $delimiter = '--';
+		if($delimiter == 'tab') $delimiter = chr(9);
 
 		foreach($arrBatch as $batch_event){
-			$arr = explode('--',$batch_event);
+			$arr = explode($delimiter, $batch_event);
 			
 			// add current month if the value is "2", "15", "28", etc
 			if(strlen($arr[0])< 3){
