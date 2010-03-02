@@ -40,6 +40,15 @@ class mwCalendar{
 		$this->year = $now['year'];
 		$this->day = $now['mday'];		
 		
+		## load normal calendar
+		$cookie_name = helpers::cookie_name( $this->calendarName ); 
+
+		if( isset($_COOKIE[$cookie_name]) ){
+			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
+			$this->month = $date['mon'];
+			$this->year = $date['year'];
+		}		
+		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
 		
 		$this->db = new CalendarDatabase;
@@ -139,15 +148,6 @@ class mwCalendar{
 			if($urlEvent[0] == 'EditEvent' ){
 				return $html . $this->url_EditEvent($arrUrl[0],$urlEvent[1]);
 			}
-		}
-		
-		## load normal calendar
-		$cookie_name = helpers::cookie_name( $this->calendarName ); 
-
-		if( isset($_COOKIE[$cookie_name]) ){
-			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
-			$this->month = $date['mon'];
-			$this->year = $date['year'];
 		}
 		
 		if($this->event_list > 0){
@@ -270,7 +270,10 @@ class mwCalendar{
 		$html = str_replace('[[LastEdited]]', '', $html);
 		$html = str_replace('[[CreatedBy]]', '', $html);	
 		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);		
-		$html = str_replace('[[Today_CSS]]', '', $html);	  
+		$html = str_replace('[[Today_CSS]]', '', $html);	
+
+		## defaults
+		$html = str_replace('[[BatchTemplate]]', $this->buildBatchTemplate(), $html);
 		
 		## tranlated text labels
 		$html = str_replace('[[SubjectText]]', helpers::translate('mwc_event_subject'), $html);
@@ -538,6 +541,19 @@ class mwCalendar{
 		$arr = explode('&', $url);
 		
 		return $arr[0];
+	}
+	
+	private function buildBatchTemplate(){
+		$day = 1;
+		$list = '';
+		
+		$daysInMonth = date('t', mktime(12, 0, 0, $this->month, 1, $this->year));  // 28-31
+		
+		while($day <= $daysInMonth){
+			$list .= date('D, M j', mktime(12,0,0,$this->month, $day++, $this->year)) . "--" . "\r";
+		}
+		
+		return $list;
 	}
 }
 
