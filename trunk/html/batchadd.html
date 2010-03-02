@@ -1,10 +1,10 @@
 <form name='BatchAdd' method="post" action="">
 <table class=batch_event_parent>
 <tr>
-	<td colspan=2><textarea title="add an event, one per line" style="width:98%; height:250px;" name="batchdata"></textarea></td>
+	<td colspan=2><textarea title="add an event, one per line" style="width:98%; height:250px;" name="batchdata">[[BatchTemplate]]</textarea></td>
 </tr>
 <tr>
-	<td nowrap class="batch_examples"><b>Examples:</b><br>&nbsp;&nbsp;2/25--Vacation(current year)<br>&nbsp;&nbsp;2/25/10--Vacation<br>&nbsp;&nbsp;25--Vacation(current month/year)</td>
+	<td nowrap class="batch_examples"><b>Examples:</b><br>&nbsp;&nbsp;2/25--Vacation(current year)<br>&nbsp;&nbsp;25--Vacation(current month/year)<br>&nbsp;&nbsp;Mon, May 24--Vacation</td>
 	<td align=right valign=top><input type=submit name="savebatch" value="Save" /><br><br>[[DelimiterText]]:&nbsp;<input name="delimiter" title="[[DelimiterTitle]]" size=2 maxlength=4 value="--"/></td>
 </tr>
 <input type=hidden name=calendar value="[[CalendarName]]" />
