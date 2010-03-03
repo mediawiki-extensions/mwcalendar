@@ -1,5 +1,7 @@
 <?php
 
+require_once( mwcalendar_base_path . '/includes/debugger.php');
+
 # this should be static only functions
 class helpers{
 
@@ -12,13 +14,13 @@ class helpers{
 	public static function date($timestamp){ return date(self::$date_format, $timestamp); }
 	
 	## cookie stuff
-	public static function cookie_name($calendar_name){
+	public static function session_name($calendar_name){
 		global $wgTitle;
 		$wiki_page = $wgTitle->getPrefixedText();
 
-		$cookie_name = $wiki_page . "_" . $calendar_name;
+		$session_name = $wiki_page . "_" . $calendar_name;
 		
-		$ret = preg_replace('/(\.|\s)/',  '_', $cookie_name); //replace periods and spaces		
+		$ret = preg_replace('/(\.|\s)/',  '_', $session_name); //replace periods and spaces		
 		
 		return $ret;
 	}

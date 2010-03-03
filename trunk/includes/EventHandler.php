@@ -16,6 +16,8 @@ class EventHandler{
 	public static function CheckForEvents($can_update_db){
 		global $wgUser,$wgOut;
 		
+		mwcDebugger::set('CheckForEvents');
+		
 		$db = new CalendarDatabase();
 		
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
@@ -65,6 +67,7 @@ class EventHandler{
 		
 		// timestamp will be populated only if any nav butten is clicked
 		if ( isset($_POST["timestamp"]) ){
+
 			$month = $_POST['monthSelect'];
 			$year = $_POST['yearSelect'];
 		
@@ -79,8 +82,9 @@ class EventHandler{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
 			
-			$cookie_name = helpers::cookie_name( $_POST['name'] );
-			setcookie($cookie_name, $timestamp);
+			$session_name = helpers::session_name( $_POST['name'] );
+			//setcookie($cookie_name, $timestamp);
+			$_SESSION[$session_name] = $timestamp;
 			
 			header("Location: " . $url);
 		}

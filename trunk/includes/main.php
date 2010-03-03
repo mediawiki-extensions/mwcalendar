@@ -41,12 +41,13 @@ class mwCalendar{
 		$this->day = $now['mday'];		
 		
 		## load normal calendar
-		$cookie_name = helpers::cookie_name( $this->calendarName ); 
-
-		if( isset($_COOKIE[$cookie_name]) ){
-			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
+		$session_name = helpers::session_name( $this->calendarName ); 
+		//mwcDebugger::set('session_name: ' . $session_name);
+		if( isset($_SESSION[$session_name]) ){
+			$date = getdate($_SESSION[$session_name]); //timestamp value
 			$this->month = $date['mon'];
 			$this->year = $date['year'];
+			mwcDebugger::set('session_name: ' . $this->month . '/' . $this->year);			
 		}		
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
@@ -163,6 +164,8 @@ class mwCalendar{
 	}
 	
 	private function url_AddEvent($safeUrl, $timestamp){
+		mwcDebugger::set('url_AddEvent');
+		
 		$html = $this->tabHtml;
 
 		$startDate = $endDate = helpers::date($timestamp);
@@ -181,6 +184,8 @@ class mwCalendar{
 	}
 	
 	private function url_EditEvent($safeUrl, $eventID){
+		mwcDebugger::set('url_EditEvent');
+		
 		global $wgUser;
 		$currentUser = $wgUser->getName();
 		
@@ -544,6 +549,8 @@ class mwCalendar{
 	}
 	
 	private function buildBatchTemplate(){
+		mwcDebugger::set('buildBatchTemplate');
+		
 		$day = 1;
 		$list = '';
 		

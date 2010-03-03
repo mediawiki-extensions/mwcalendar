@@ -41,7 +41,11 @@ function launchCalendar($paramstring, $params = array()) {
 
 	$calendar = new mwCalendar($params);
 
-	return $calendar->begin() . '<small>v.'.mwcalendar_version.'</small><br>';;
+	$ret = $calendar->begin() . '<small>v.'.mwcalendar_version.'</small><br>';
+	
+	if( $params['debugger'] ) $ret .=  mwcDebugger::get();
+	
+	return $ret;
 }
 
 // this will query any wiki-page calendar previous used and port that 
