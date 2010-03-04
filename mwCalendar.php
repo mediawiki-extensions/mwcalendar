@@ -41,7 +41,7 @@ function launchCalendar($paramstring, $params = array()) {
 
 	$calendar = new mwCalendar($params);
 
-	$ret = $calendar->begin() . '<small>v.'.mwcalendar_version.'</small><br>';
+	$ret = $calendar->display() . '<small>v.'.mwcalendar_version.'</small><br>';
 	
 	if( $params['debugger'] ) $ret .=  mwcDebugger::get();
 	

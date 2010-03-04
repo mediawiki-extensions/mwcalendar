@@ -127,7 +127,7 @@ class mwCalendar{
 		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;		
 	}
 	
-	public function begin(){
+	public function display(){
 		global $wgOut;
 	
 		$html = $this->stylesheet;
@@ -158,7 +158,7 @@ class mwCalendar{
 		}
 		
 		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
-		$html = $this->clearHtmlTags($html);
+		$html = $this->setHtmlTags($html);
 		
 		return $html;
 	}
@@ -178,7 +178,7 @@ class mwCalendar{
 		$html = str_replace('[[Disabled]]', 'disabled', $html); 
 		
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
-		$html = $this->clearHtmlTags($html);
+		$html = $this->setHtmlTags($html);
 		
 		return $html;	
 	}
@@ -249,7 +249,7 @@ class mwCalendar{
 			$html = str_replace('[[Disabled]]', "disabled title='$tranlated'", $html); 
 		}
 		
-		return $this->clearHtmlTags($html);	
+		return $this->setHtmlTags($html);	
 	}
 	
 	private function makeSafeHtml(&$arrEvent){
@@ -261,7 +261,7 @@ class mwCalendar{
 	}
 	
 	// this function removes or defaults any HTML tags that havent been overwritten
-	private function clearHtmlTags($html){
+	private function setHtmlTags($html){
 		$html = str_replace('[[CalendarName]]', '', $html);
 		$html = str_replace('[[EventID]]', '', $html);	
 		$html = str_replace('[[Subject]]', '', $html);	
