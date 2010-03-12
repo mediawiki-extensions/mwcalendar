@@ -75,7 +75,7 @@ class mwCalendar{
 		
 		## building my own sytlesheets and javascript links...
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
-		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js') );
+		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js','TimePicker.js') );
 		
 		## build the addEvent and batch tabs		
 		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
@@ -177,6 +177,9 @@ class mwCalendar{
 		$html = str_replace('[[End]]', $endDate, $html);
 		$html = str_replace('[[Disabled]]', 'disabled', $html); 
 		
+		$html = str_replace('[[START_TIME]]', '12:00 AM', $html);
+		$html = str_replace('[[END_TIME]]', '12:00 AM', $html);		
+		
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
 		$html = $this->setHtmlTags($html);
 		
@@ -199,7 +202,10 @@ class mwCalendar{
 
 		$start = helpers::date( $event['start' ] );
 		$end = helpers::date( $event['end'] );		
-					
+		
+		$startTime = date( 'g:i A',$event['start']);
+		$endTime = date( 'g:i A', $event['end']);	
+		
 		if(isset($event['editeddate'])){
 			$editeddate = helpers::date( $event['editeddate']);					
 			$lastedited = helpers::translate('mwc_last_edited_by') . ': ' . $event['editedby'] . " ($editeddate)";
@@ -209,9 +215,6 @@ class mwCalendar{
 		$createdby = helpers::translate('mwc_created_by') .": " . $event['createdby'] . " ($createddate)";			
 		
 		$this->makeSafeHtml($event);
-		
-		$start = helpers::date( $event['start']);
-		$end = helpers::date( $event['end']);
 		
 		// build invite(notify) list
 		$arr_invites = unserialize($event['invites']);
@@ -236,6 +239,8 @@ class mwCalendar{
 		$html = str_replace('[[Text]]', $event['text'], $html);	
 		$html = str_replace('[[LastEdited]]', $lastedited, $html);
 		$html = str_replace('[[CreatedBy]]', $createdby, $html);	
+		$html = str_replace('[[START_TIME]]', $startTime, $html);
+		$html = str_replace('[[END_TIME]]', $endTime, $html);		
 
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
 		
@@ -492,7 +497,7 @@ class mwCalendar{
 	
 		return $backBtn . $yearSelect . $forwardBtn;
 	}	
-	
+
 	private function buildEventList($arrEvents, $month, $day, $year){
 	
 		$links = '';
