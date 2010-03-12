@@ -178,7 +178,12 @@ class mwCalendar{
 		$html = str_replace('[[Disabled]]', 'disabled', $html); 
 		
 		$html = str_replace('[[START_TIME]]', '12:00 AM', $html);
-		$html = str_replace('[[END_TIME]]', '12:00 AM', $html);		
+		$html = str_replace('[[END_TIME]]', '12:00 AM', $html);			
+
+		$html = str_replace('[[START_TIME_DISABLED]]', 'disabled', $html);
+		$html = str_replace('[[END_TIME_DISABLED]]', 'disabled', $html);	
+		
+		$html = str_replace('[[ALL_DAY_CHECKED]]', 'checked', $html);	
 		
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
 		$html = $this->setHtmlTags($html);
@@ -203,8 +208,8 @@ class mwCalendar{
 		$start = helpers::date( $event['start' ] );
 		$end = helpers::date( $event['end'] );		
 		
-		$startTime = date( 'g:i A',$event['start']);
-		$endTime = date( 'g:i A', $event['end']);	
+		$startTime = helpers::time($event['start']);
+		$endTime = helpers::time($event['end']);
 		
 		if(isset($event['editeddate'])){
 			$editeddate = helpers::date( $event['editeddate']);					
@@ -228,6 +233,13 @@ class mwCalendar{
 			}
 		}
 			
+		$disableTimeFields = '';
+		$allDayChecked = '';
+		if($event['allday'] == true) {
+			$allDayChecked = 'checked';
+			$disableTimeFields = 'disabled';
+		}
+			
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
 		$html = str_replace('[[EventID]]', $event['id'], $html);	
@@ -241,6 +253,10 @@ class mwCalendar{
 		$html = str_replace('[[CreatedBy]]', $createdby, $html);	
 		$html = str_replace('[[START_TIME]]', $startTime, $html);
 		$html = str_replace('[[END_TIME]]', $endTime, $html);		
+		
+		$html = str_replace('[[START_TIME_DISABLED]]', $disableTimeFields, $html);
+		$html = str_replace('[[END_TIME_DISABLED]]', $disableTimeFields, $html);	
+		$html = str_replace('[[ALL_DAY_CHECKED]]', $allDayChecked, $html);			
 
 		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
 		
@@ -532,8 +548,15 @@ class mwCalendar{
 		$limit = $this->subject_max_length;
 		$subject = $event['subject'];
 		
+		$time  = '';
+		if(!$event['allday']){
+			$time = helpers::event_time($event['start']);	
+		}
+		
+		//if($time=='(12:00am) ') $time ='';
+		
 		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
-		$link = '<a href="' . $url . '">' . $subject . '</a>';
+		$link = '<a href="' . $url . '">' . $time.$subject . '</a>';
 		
 		return $link;
 	}

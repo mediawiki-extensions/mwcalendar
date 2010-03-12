@@ -95,9 +95,12 @@ class EventHandler{
 		global $wgUser;
 		
 		$whodidit = $wgUser->getName();
+		
+		$startTime = isset($_POST['timepicker1']) ? $_POST['timepicker1'] : '';
+		$endTime = isset($_POST['timepicker2']) ? $_POST['timepicker2'] : '';
 			
-		$start = strtotime( $_POST["start"] . ' ' . $_POST['timepicker1'] );
-		$end = strtotime($_POST["end"] . ' ' . $_POST['timepicker2']);
+		$start = strtotime( $_POST["start"] . ' ' . $startTime);
+		$end = strtotime($_POST["end"] . ' ' . $endTime);
 								
 		$subject = strip_tags ( $_POST["subject"] );
 		
@@ -108,7 +111,7 @@ class EventHandler{
 							'location' => 		$_POST["location"],
 							'start' => 			$start,
 							'end' => 			$end,
-							'allday' => 		($_POST["allday"] == 'on') ? 1:0,
+							'allday' => 		(isset($_POST["allday"])) ? 1:0,
 							'text' => 			$_POST["text"],
 							'createdby' => 		$whodidit,
 							'editedby' => 		$whodidit,
