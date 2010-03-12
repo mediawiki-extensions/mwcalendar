@@ -106,7 +106,8 @@ class EventHandler{
 		
 		$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
 		
-		$arrEvent = array(	'calendar' => 		$_POST["calendar"],
+		$arrEvent = array(	'id' => 			$_POST["eventid"],
+							'calendar' => 		$_POST["calendar"],
 							'subject' => 		$subject,
 							'location' => 		$_POST["location"],
 							'start' => 			$start,

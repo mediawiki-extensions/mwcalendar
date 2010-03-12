@@ -6,6 +6,8 @@ class CalendarEmail{
 	
 	public static function send($users, $event, $action='save'){
 		global $wgUser;
+		
+		#todo: might filter out users without an email...
 		$fromEmail = $wgUser->getEmail();
 		
 		$arr = explode(',',$users);
@@ -18,8 +20,14 @@ class CalendarEmail{
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 		$urlPath = $arrUrl[0]; //clear any previous parameters	
 		
-		$text = 'FROM: ' . $start . chr(13) . 'END: ' . $end . chr(13)
-			. chr(13) . $event['text'] . chr(13). chr(13) . CalendarEmail::curPageURL();
+		
+		$body = 
+			"FROM: $start" . chr(13) . 
+			"TO: $end" . chr(13) . chr(13) . 
+			"Location: " . $event['location'] . chr(13) . chr(13) .
+			"Comments: "  . chr(13) . $event['text'] . chr(13) . chr(13) . 
+			"Link: " . CalendarEmail::curPageURL();// . "&Name=" . $event['calendar'] . "&EditEvent=" . $event['id']; #new events dont have an id..
+
 	
 		if($action == 'delete'){
 			$subject = '{deleted} ' . $subject;
@@ -30,7 +38,7 @@ class CalendarEmail{
 			$user = User::newFromName(trim($username[0]));
 			
 			if($user){
-				$user->sendMail($subject, $text, $fromEmail);
+				$user->sendMail($subject, $body, $fromEmail);
 			}
 		}
 	}
