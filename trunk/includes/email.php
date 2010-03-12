@@ -12,8 +12,8 @@ class CalendarEmail{
 		$arr = array_unique($arr); //remove duplicates
 		
 		$subject = $event['subject'];
-		$start = helpers::date($event['start']);
-		$end = helpers::date($event['end']);
+		$start = helpers::date($event['start']) . date(' g:i A', $event['start']);
+		$end = helpers::date($event['end']) . date(' g:i A', $event['end']);
 		
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 		$urlPath = $arrUrl[0]; //clear any previous parameters	
