@@ -247,7 +247,9 @@ class mwCalendar{
 		//$arrEvent = $this->db->getEvent( $event['id'] );
 		
 		// disable delete for users that didnt create the event... only creator or admin can delete
-		$isValid = User::newFromName( $event['createdby'] )->getID();
+		//$isValid = User::newFromName( $event['createdby'] )->getID();
+		$isValid = User::newFromName( $event['createdby'] );
+
 		$isAdmin =  in_array('sysop', $wgUser->getGroups());
 		if( ($currentUser !=  $event['createdby']) && ($isValid) && (!$isAdmin) ){
 			$tranlated = helpers::translate('mwc_delete_title');
