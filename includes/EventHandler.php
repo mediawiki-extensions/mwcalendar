@@ -96,8 +96,8 @@ class EventHandler{
 		
 		$whodidit = $wgUser->getName();
 			
-		$start = strtotime($_POST["start"]);
-		$end = strtotime($_POST["end"]);
+		$start = strtotime( $_POST["start"] . ' ' . $_POST['timepicker1'] );
+		$end = strtotime($_POST["end"] . ' ' . $_POST['timepicker2']);
 								
 		$subject = strip_tags ( $_POST["subject"] );
 		
