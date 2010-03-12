@@ -29,8 +29,7 @@ class update{
 		$dbr = wfGetDB( DB_SLAVE );	
 		
 		require_once( mwcalendar_base_path . '/includes/updates/update_003.php');
-		//require_once( mwcalendar_base_path . '/includes/updates/update_004.php');
-		//require_once( mwcalendar_base_path . '/includes/updates/update_005.php');
+		require_once( mwcalendar_base_path . '/includes/updates/update_007.php');
 	}		
 	
 	// create new tables for new installs and updates
