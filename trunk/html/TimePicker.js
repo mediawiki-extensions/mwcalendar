@@ -119,9 +119,7 @@ function selectedTime(){
 	main.value = dropdownValue;
 	
 	if(ref){
-	//if(dropdownValue
-		ref.value = dropdownValue;
-		
+		ref.value = dropdownValue;	
 	}
 		
 	main.focus();
@@ -134,6 +132,20 @@ function hidePicker(){
 	pickerDiv.style.display = "none";
 }
 
+function setTimeFields(allDayChk,time1,time2){
+	allday = document.getElementsByName (allDayChk).item(0);
+	field1 = document.getElementsByName (time1).item(0);
+	field2 = document.getElementsByName (time2).item(0);
+//debugger;	
+	if(allday.checked){
+		field1.disabled=false;
+		field2.disabled=false;	
+	}
+	else{
+		field1.disabled=true;
+		field2.disabled=true;		
+	}
+}
 
 
 

@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 # set the version
-define('mwcalendar_version','0.0.6'); //do not modify format
+define('mwcalendar_version','0.0.7'); //do not modify format
 
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 

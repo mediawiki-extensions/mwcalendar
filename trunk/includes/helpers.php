@@ -5,13 +5,16 @@ require_once( mwcalendar_base_path . '/includes/debugger.php');
 # this should be static only functions
 class helpers{
 
-	//private static $date_format = 'n/j/Y g:i A';
-	private static $date_format = 'n/j/Y';
+	private static $date_format = 'n/j/Y'; //used in email, addevent, etc
+	private static $time_format = 'g:i A'; //used in email, addevent, etc
+	private static $time_format_event = '(g:ia) '; //used for the time prefix in the calendar eventlist
 	
 	## date functions
 	public static function getDateFormat(){ return self::$date_format; }
 	public static function setDateFormat($format){ self::$date_format=$format; }
 	public static function date($timestamp){ return date(self::$date_format, $timestamp); }
+	public static function time($timestamp){ return date(self::$time_format, $timestamp); }
+	public static function event_time($timestamp){ return date(self::$time_format_event, $timestamp); }
 	
 	## cookie stuff
 	public static function session_name($calendar_name){
