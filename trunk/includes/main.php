@@ -123,7 +123,7 @@ class mwCalendar{
 	private function setDefaults($params){
 
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
-		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 15;	
+		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 20;	
 		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;		
 	}
 	
@@ -546,17 +546,22 @@ class mwCalendar{
 	private function buildLink($event){
 		
 		$limit = $this->subject_max_length;
-		$subject = $event['subject'];
-		
+	
 		$time  = '';
 		if(!$event['allday']){
 			$time = helpers::event_time($event['start']);	
 		}
 		
-		//if($time=='(12:00am) ') $time ='';
-		
+		$title =  $event['subject'];//dont cut this text
+		$subject = $time . $event['subject'];
+
+		$len = strlen($subject);
+		if($len > $limit){
+			$subject = trim(substr($subject, 0, $limit)) . "...";	
+		}
+
 		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
-		$link = '<a href="' . $url . '">' . $time.$subject . '</a>';
+		$link = "<a href='$url' title='$title'>$subject</a>";
 		
 		return $link;
 	}
