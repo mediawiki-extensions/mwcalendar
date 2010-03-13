@@ -9,8 +9,7 @@
 		</tr>	
 		<tr>
 			<td>[[NotifyText]]:&nbsp;</td>
-			<td><textarea style="WIDTH: 80%;" title="add invites on newline" name="invites">[[Invites]]</textarea><!--
-			-->&nbsp;<input name="add_invite" type=button value="[[AddText]]" onclick="displayInviteList('<form name=frm_selected><select size=15 name=selected id=selected class=select_list>[[SELECT_OPTIONS]]</select></form>','invites')"/></td>
+			<td><textarea style="WIDTH: 98%;" title="add invites on newline" name="invites" onclick="displayInviteList('invites', '[[SELECT_OPTIONS]]')" onkeydown="hidePicker()">[[Invites]]</textarea></td>
 		</tr>			
 		<tr>
 			<td colspan=2><hr></td>
