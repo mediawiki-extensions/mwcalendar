@@ -65,6 +65,8 @@ class mwCalendar{
 			$realname = htmlentities($realname, ENT_QUOTES);
 			$list .= "<option>$user($realname)</option>";
 		}
+		
+		$list =  "<SELECT id=selectNotify name=selectNotify size=8 onClick=selectedNotify()>" . $list . "</SELECT>";
 			
 		## pull in all the html template forms we have
 		$addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
