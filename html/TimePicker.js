@@ -1,4 +1,4 @@
-var timePickerDivID = "timepicker";
+var pickerDivID = "timepicker";
 var mainFieldName;
 var refFieldName;
 var fieldTime='';
@@ -21,22 +21,16 @@ function selectTime(main, ref){
 		y += parent.offsetTop;
 	}
 	
-	// the datepicker table will be drawn inside of a <div> with an ID defined by the
-	// global timePickerDivID variable. If such a div doesn't yet exist on the HTML
-	// document we're working with, add one.
-	if (!document.getElementById(timePickerDivID)) {
-		// don't use innerHTML to update the body, because it can cause global variables
-		// that are currently pointing to objects on the page to have bad references
-		//document.body.innerHTML += "<div id='" + timePickerDivID + "' class='dpDiv'></div>";
+	if (!document.getElementById(pickerDivID)) {
 		var newNode = document.createElement("div");
-		newNode.setAttribute("id", timePickerDivID);
+		newNode.setAttribute("id", pickerDivID);
 		newNode.setAttribute("class", "dpDiv");
 		newNode.setAttribute("style", "visibility: hidden;");
 		document.body.appendChild(newNode);
 	}
 
 	// move the datepicker div to the proper x,y coordinate and toggle the visiblity
-	var pickerDiv = document.getElementById(timePickerDivID);
+	var pickerDiv = document.getElementById(pickerDivID);
 	pickerDiv.style.position = "absolute";
 	pickerDiv.style.left = x + "px";
 	pickerDiv.style.top = y + "px";
@@ -44,7 +38,7 @@ function selectTime(main, ref){
 	pickerDiv.style.display = (pickerDiv.style.display == "block" ? "none" : "block");
 	pickerDiv.style.zIndex = 10000;	
 	
-	document.getElementById(timePickerDivID).innerHTML = buildTimeSelect();
+	document.getElementById(pickerDivID).innerHTML = buildTimeSelect();
 }
 
 function buildTimeSelect(){
@@ -108,7 +102,7 @@ function selectedTime(){
 	main = document.getElementsByName (mainFieldName).item(0);
 	ref = document.getElementsByName (refFieldName).item(0);
 
-	var pickerDiv = document.getElementById(timePickerDivID);
+	var pickerDiv = document.getElementById(pickerDivID);
 	
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
@@ -127,7 +121,7 @@ function selectedTime(){
 
 function hidePicker(){
 	//main = document.getElementsByName (field).item(0);
-	var pickerDiv = document.getElementById(timePickerDivID);
+	var pickerDiv = document.getElementById(pickerDivID);
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
 }
