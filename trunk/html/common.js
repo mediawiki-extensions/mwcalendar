@@ -2,7 +2,7 @@ var pickerDivID = "eventsummary";
 function EventSummary(ctrl,event,comment){
 	var element = document.getElementsByName (ctrl).item(0);
 
-	 x = window.event.clientX;
+	 x = window.event.clientX +15;
 	 y = window.event.clientY + document.documentElement.scrollTop;//window.event.clientY;
 	
 	if (!document.getElementById(pickerDivID)) {
