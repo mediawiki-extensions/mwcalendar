@@ -1,20 +1,20 @@
-var pickerDivID = "eventsummary";
+var summaryDivID = "eventsummary";
 function EventSummary(ctrl,event,comment){
 	var element = document.getElementsByName (ctrl).item(0);
 
 	 x = window.event.clientX +15;
-	 y = window.event.clientY + document.documentElement.scrollTop;//window.event.clientY;
+	 y = window.event.clientY + document.documentElement.scrollTop;
 	
-	if (!document.getElementById(pickerDivID)) {
+	if (!document.getElementById(summaryDivID)) {
 		var newNode = document.createElement("div");
-		newNode.setAttribute("id", pickerDivID);
+		newNode.setAttribute("id", summaryDivID);
 		newNode.setAttribute("class", "dpDiv");
 		newNode.setAttribute("style", "visibility: hidden;");
 		document.body.appendChild(newNode);
 	}
 
 	// move the datepicker div to the proper x,y coordinate and toggle the visiblity
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(summaryDivID);
 	pickerDiv.style.position = "absolute";
 	pickerDiv.style.left = x + "px";
 	pickerDiv.style.top = y + "px";
@@ -26,11 +26,11 @@ function EventSummary(ctrl,event,comment){
 	html += "</table></td></table>";
 
 	
-	document.getElementById(pickerDivID).innerHTML = html;
+	document.getElementById(summaryDivID).innerHTML = html;
 }
 
 function ClearEventSummary(){
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(summaryDivID);
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
 }
