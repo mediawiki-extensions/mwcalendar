@@ -77,8 +77,7 @@ class mwCalendar{
 		
 		## building my own sytlesheets and javascript links...
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
-		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InviteSelect.js','TimePicker.js') );
-		
+		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js') );
 		## build the addEvent and batch tabs		
 		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
 		$tab2 = $this->buildTab( helpers::translate('mwc_batch'),$batchHtml);
