@@ -569,6 +569,7 @@ class mwCalendar{
 		$text = $event['text'] . '&nbsp;';
 		
 		$text = str_replace("\r\n","<br>",$text);
+		$text = str_replace("'","",$text); ##todo... need to work on this issue
 		
 		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
 		$link = "<a href='$url' titlex='$title' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout='ClearEventSummary()' >$subject</a>";
