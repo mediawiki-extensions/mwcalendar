@@ -9,18 +9,18 @@
 		</tr>	
 		<tr>
 			<td>[[NotifyText]]:&nbsp;</td>
-			<td><textarea style="WIDTH: 98%;" title="add invites on newline" name="invites" onclick="displayInviteList('invites', '[[SELECT_OPTIONS]]')" onkeydown="hidePicker()">[[Invites]]</textarea></td>
+			<td><textarea style="WIDTH: 98%;" title="add invites on newline" name="invites" onclick="displayInviteList('invites', '[[SELECT_OPTIONS]]')" onkeydown="hideInvitePicker()">[[Invites]]</textarea></td>
 		</tr>			
 		<tr>
 			<td colspan=2><hr></td>
 		</tr>	
 		<tr>
 			<td>[[StartText]]:&nbsp;</td>
-			<td><input type=text name="start" size=15 value="[[Start]]"  onclick="displayDatePicker('start','end', false, '[[JSDateFormat]]')" />&nbsp;&nbsp;<input id=timepicker1 name=timepicker1 size=10 [[START_TIME_DISABLED]] value='[[START_TIME]]' ONCLICK="selectTime('timepicker1','timepicker2')" onkeydown="hidePicker()" />&nbsp;<input type="checkbox" name="allday" [[ALL_DAY_CHECKED]] onMouseup="setTimeFields('allday', 'timepicker1','timepicker2')"/>[[AlldayText]]</td>
+			<td><input type=text name="start" size=15 value="[[Start]]"  onclick="displayDatePicker('start','end', false, '[[JSDateFormat]]')" />&nbsp;&nbsp;<input id=timepicker1 name=timepicker1 size=10 [[START_TIME_DISABLED]] value='[[START_TIME]]' ONCLICK="selectTime('timepicker1','timepicker2')" onkeydown="hideTimePicker()" />&nbsp;<input type="checkbox" name="allday" [[ALL_DAY_CHECKED]] onMouseup="setTimeFields('allday', 'timepicker1','timepicker2')"/>[[AlldayText]]</td>
 		</tr>	
 		<tr>
 			<td>[[EndText]]:&nbsp;</td>
-			<td><input type=text name="end" size=15 value="[[End]]" onclick="displayDatePicker('end',false, false, '[[JSDateFormat]]')" />&nbsp;&nbsp;<input id=timepicker2 name=timepicker2 size=10 [[START_TIME_DISABLED]] value='[[END_TIME]]' ONCLICK="selectTime('timepicker2','')" onkeydown="hidePicker()"/></td>
+			<td><input type=text name="end" size=15 value="[[End]]" onclick="displayDatePicker('end',false, false, '[[JSDateFormat]]')" />&nbsp;&nbsp;<input id=timepicker2 name=timepicker2 size=10 [[START_TIME_DISABLED]] value='[[END_TIME]]' ONCLICK="selectTime('timepicker2','')" onkeydown="hideTimePicker()"/></td>
 		</tr>	
 		<tr><td colspan=2><hr></td></tr>
 		<tr>

@@ -1,4 +1,4 @@
-var pickerDivID = "timepicker";
+var timeDivID = "timepicker";
 var mainFieldName;
 var refFieldName;
 var fieldTime='';
@@ -21,16 +21,16 @@ function selectTime(main, ref){
 		y += parent.offsetTop;
 	}
 	
-	if (!document.getElementById(pickerDivID)) {
+	if (!document.getElementById(timeDivID)) {
 		var newNode = document.createElement("div");
-		newNode.setAttribute("id", pickerDivID);
+		newNode.setAttribute("id", timeDivID);
 		newNode.setAttribute("class", "dpDiv");
 		newNode.setAttribute("style", "visibility: hidden;");
 		document.body.appendChild(newNode);
 	}
 
 	// move the datepicker div to the proper x,y coordinate and toggle the visiblity
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(timeDivID);
 	pickerDiv.style.position = "absolute";
 	pickerDiv.style.left = x + "px";
 	pickerDiv.style.top = y + "px";
@@ -38,7 +38,7 @@ function selectTime(main, ref){
 	pickerDiv.style.display = (pickerDiv.style.display == "block" ? "none" : "block");
 	pickerDiv.style.zIndex = 10000;	
 	
-	document.getElementById(pickerDivID).innerHTML = buildTimeSelect();
+	document.getElementById(timeDivID).innerHTML = buildTimeSelect();
 }
 
 function buildTimeSelect(){
@@ -102,7 +102,7 @@ function selectedTime(){
 	main = document.getElementsByName (mainFieldName).item(0);
 	ref = document.getElementsByName (refFieldName).item(0);
 
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(timeDivID);
 	
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
@@ -119,11 +119,13 @@ function selectedTime(){
 	main.focus();
 }
 
-function hidePicker(){
+function hideTimePicker(){
 	//main = document.getElementsByName (field).item(0);
-	var pickerDiv = document.getElementById(pickerDivID);
-	pickerDiv.style.visibility = "hidden";
-	pickerDiv.style.display = "none";
+	var pickerDiv = document.getElementById(timeDivID);
+	if(pickerDiv){
+		pickerDiv.style.visibility = "hidden";
+		pickerDiv.style.display = "none";
+	}
 }
 
 function setTimeFields(allDayChk,time1,time2){

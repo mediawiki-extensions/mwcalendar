@@ -568,15 +568,26 @@ class mwCalendar{
 		$tag = 'eventtag' . $event['id'];
 		$text = $event['text'] . '&nbsp;';
 		
+		## this fixes the line feed issue in the comments/text
 		$text = str_replace("\r\n","<br>",$text);
-		$text = str_replace("'","",$text); ##todo... need to work on this issue
+
+		## we're passing these strings into javascript, so we need to handle special characters
+		## need to come back and re-visit this... there has to be a better way...
+		$title = $this->fixJavascriptSpecialChars($title);
+		$text = $this->fixJavascriptSpecialChars($text);
 		
 		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
-		$link = "<a href='$url' titlex='$title' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout='ClearEventSummary()' >$subject</a>";
-		//$link = "<a href='$url' title='$title' name='$tag' >$subject</a>";
-		//onmousemove
+		$link = "<a href='$url' title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
 		
 		return $link;
+	}
+	
+	public function fixJavascriptSpecialChars($string){
+		$string = str_replace("'","",$string);
+		$string = str_replace('"','',$string);
+		$string = str_replace("\\","",$string);
+
+		return $string;
 	}
 		
     function searchHTML($html, $beginString, $endString) {
