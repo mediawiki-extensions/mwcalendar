@@ -25,7 +25,7 @@ class mwCalendar{
 	
 	var $subject_max_length;
 	var $event_list = 0;
-	
+
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
 		
@@ -77,7 +77,7 @@ class mwCalendar{
 		
 		## building my own sytlesheets and javascript links...
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
-		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js') );
+		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js') );
 		## build the addEvent and batch tabs		
 		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
 		$tab2 = $this->buildTab( helpers::translate('mwc_batch'),$batchHtml);
@@ -240,6 +240,10 @@ class mwCalendar{
 			$allDayChecked = 'checked';
 			$disableTimeFields = 'disabled';
 		}
+		
+		## funky display as the text is saves as \r\n.. so I'm removing the \n and leaving the \r
+		## caused textarea to add html tags (<p><br/>) etc
+		$text = str_replace("\n", "", $event['text']);
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
@@ -249,7 +253,7 @@ class mwCalendar{
 		$html = str_replace('[[Invites]]', $strInvites, $html);	
 		$html = str_replace('[[Start]]', $start, $html);	
 		$html = str_replace('[[End]]', $end, $html);				
-		$html = str_replace('[[Text]]', $event['text'], $html);	
+		$html = str_replace('[[Text]]', $text, $html);	
 		$html = str_replace('[[LastEdited]]', $lastedited, $html);
 		$html = str_replace('[[CreatedBy]]', $createdby, $html);	
 		$html = str_replace('[[START_TIME]]', $startTime, $html);
@@ -561,8 +565,15 @@ class mwCalendar{
 			$subject = trim(substr($subject, 0, $limit)) . "...";	
 		}
 
+		$tag = 'eventtag' . $event['id'];
+		$text = $event['text'] . '&nbsp;';
+		
+		$text = str_replace("\r\n","<br>",$text);
+		
 		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
-		$link = "<a href='$url' title='$title'>$subject</a>";
+		$link = "<a href='$url' titlex='$title' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout='ClearEventSummary()' >$subject</a>";
+		//$link = "<a href='$url' title='$title' name='$tag' >$subject</a>";
+		//onmousemove
 		
 		return $link;
 	}
