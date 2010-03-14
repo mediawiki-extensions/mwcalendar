@@ -6,7 +6,8 @@ if (!defined('MEDIAWIKI')) {
 }
 
 # set the version
-define('mwcalendar_version','0.0.8'); //do not modify format
+define('mwcalendar_version','0.1.0'); //do not modify format
+define('mwcalendar_version_label',' (beta)'); //do not modify format
 
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
@@ -20,7 +21,7 @@ $wgExtensionCredits['parserhook'][] = array(
     'author'=>'Eric Fortin',
     'url'=>'',
     'description'=>'MediaWiki Calendar',
-    'version'=> mwcalendar_version
+    'version'=> mwcalendar_version . mwcalendar_version_label
 );
 
 $wgExtensionFunctions[] = "mwCalendar";
@@ -41,7 +42,7 @@ function launchCalendar($paramstring, $params = array()) {
 
 	$calendar = new mwCalendar($params);
 
-	$ret = $calendar->display() . '<small>v.'.mwcalendar_version.'</small><br>';
+	$ret = $calendar->display() . '<small>v.'.mwcalendar_version.mwcalendar_version_label.'</small><br>';
 	
 	if( $params['debugger'] ) $ret .=  mwcDebugger::get();
 	
