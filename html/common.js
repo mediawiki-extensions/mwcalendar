@@ -2,8 +2,8 @@ var pickerDivID = "eventsummary";
 function EventSummary(ctrl,event,comment){
 	var element = document.getElementsByName (ctrl).item(0);
 
-	x = window.event.clientX +15;
-	y = window.event.clientY;
+	 x = window.event.clientX;
+	 y = window.event.clientY + document.documentElement.scrollTop;//window.event.clientY;
 	
 	if (!document.getElementById(pickerDivID)) {
 		var newNode = document.createElement("div");
@@ -33,4 +33,17 @@ function ClearEventSummary(){
 	var pickerDiv = document.getElementById(pickerDivID);
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
+}
+
+//window.onload = init;
+function init() {
+	if (window.Event) {
+	document.captureEvents(Event.MOUSEMOVE);
+	}
+	document.onmousemove = getCursorXY;
+}
+
+function getCursorXY(e) {
+	document.getElementById('cursorX').value = (window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
+	document.getElementById('cursorY').value = (window.Event) ? e.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
 }
