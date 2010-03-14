@@ -87,8 +87,10 @@ class update{
 			$dbr->ignoreErrors(false);
 			
 			//$wgOut->addHtml("...adding table: $table <br>");
-			if( !$res ) {
-				if($table == $header) $new_install = true;
+			if( !$res ) {	
+				if($table == $header) {
+					$new_install = true; ## flag to determine if we want to run all db "updates" 
+				}
 				
 				$wgOut->addHtml("...inserting table: $table <br>");
 				$dbw->query($sqldata);						
