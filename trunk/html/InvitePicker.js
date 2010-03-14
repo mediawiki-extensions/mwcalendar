@@ -1,4 +1,4 @@
-var pickerDivID = "notifypicker";
+var inviteDivID = "notifypicker";
 var mainFieldName;
 
 function displayInviteList(field, selectlist){
@@ -17,15 +17,15 @@ function displayInviteList(field, selectlist){
 		y += parent.offsetTop;
 	}
 
-	if (!document.getElementById(pickerDivID)) {
+	if (!document.getElementById(inviteDivID)) {
 		var newNode = document.createElement("div");
-		newNode.setAttribute("id", pickerDivID);
+		newNode.setAttribute("id", inviteDivID);
 		newNode.setAttribute("class", "dpDiv");
 		newNode.setAttribute("style", "visibility: hidden;");
 		document.body.appendChild(newNode);
 	}
 
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(inviteDivID);
 	pickerDiv.style.position = "absolute";
 	pickerDiv.style.left = x + "px";
 	pickerDiv.style.top = y + "px";
@@ -35,13 +35,13 @@ function displayInviteList(field, selectlist){
 	
 	html = "<table border=1 cellpadding=0 cellspacing=0 ><th bgcolor=gray align=left >&nbsp;Email notify to:</th><tr><td>" + selectlist + "</td></tr></table>";
 	
-	document.getElementById(pickerDivID).innerHTML = html;
+	document.getElementById(inviteDivID).innerHTML = html;
 }
 
 function selectedListItem(){
 	main = document.getElementsByName (mainFieldName).item(0);
 
-	var pickerDiv = document.getElementById(pickerDivID);
+	var pickerDiv = document.getElementById(inviteDivID);
 	
 	pickerDiv.style.visibility = "hidden";
 	pickerDiv.style.display = "none";
@@ -54,10 +54,12 @@ function selectedListItem(){
 	main.focus();
 }
 
-function hidePicker(){
-	var pickerDiv = document.getElementById(pickerDivID);
-	pickerDiv.style.visibility = "hidden";
-	pickerDiv.style.display = "none";
+function hideInvitePicker(){
+	var pickerDiv = document.getElementById(inviteDivID);
+	if(pickerDiv){
+		pickerDiv.style.visibility = "hidden";
+		pickerDiv.style.display = "none";
+	}
 }
 
 
