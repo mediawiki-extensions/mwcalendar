@@ -66,8 +66,7 @@ class mwCalendar{
 			$list .= "<option>$user($realname)</option>";
 		}
 		
-		$list =  "<SELECT id=selectNotify name=selectNotify size=8 onClick=selectedListItem()>" . $list . "</SELECT>";
-			
+		$list =  "<SELECT class=notifyselect id=selectNotify name=selectNotify size=8 onClick=selectedListItem()>" . $list . "</SELECT>";
 		## pull in all the html template forms we have
 		$addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");

@@ -38,7 +38,13 @@ function selectTime(main, ref){
 	pickerDiv.style.display = (pickerDiv.style.display == "block" ? "none" : "block");
 	pickerDiv.style.zIndex = 10000;	
 	
-	document.getElementById(timeDivID).innerHTML = buildTimeSelect();
+
+	html = "<table border=0 cellpadding=0 cellspacing=0 >"
+	+ "<tr><td colspan=2>" + buildTimeSelect() + "</td></tr>"
+	+ "<tr><td align=right><a href='#' onclick=\"hideTimePicker()\">(close)&nbsp;</a></td></tr>"
+	+ "</table>";
+	
+	document.getElementById(timeDivID).innerHTML = html ;
 }
 
 function buildTimeSelect(){
@@ -132,14 +138,14 @@ function setTimeFields(allDayChk,time1,time2){
 	allday = document.getElementsByName (allDayChk).item(0);
 	field1 = document.getElementsByName (time1).item(0);
 	field2 = document.getElementsByName (time2).item(0);
-//debugger;	
+
 	if(allday.checked){
-		field1.disabled=false;
-		field2.disabled=false;	
+		field1.disabled=true;
+		field2.disabled=true;	
 	}
 	else{
-		field1.disabled=true;
-		field2.disabled=true;		
+		field1.disabled=false;
+		field2.disabled=false;		
 	}
 }
 
