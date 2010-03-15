@@ -72,6 +72,7 @@ class mwCalendar{
 		$addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");
 		$this->htmlData = file_get_contents( mwcalendar_base_path . "/html/default.html");
+		$this->htmlOption = file_get_contents( mwcalendar_base_path . "/html/Options.html");
 		
 		$addEventHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addEventHtml);	
 		
@@ -130,7 +131,7 @@ class mwCalendar{
 	
 	public function display(){
 		global $wgOut;
-	
+	//return $this->htmlOption;
 		$html = $this->stylesheet;
 		$html .= $this->javascript;
 
