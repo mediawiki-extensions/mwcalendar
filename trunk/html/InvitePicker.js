@@ -47,9 +47,10 @@ function selectedListItem(){
 	pickerDiv.style.display = "none";
 	
 	var dropdownIndex = document.getElementById('selectNotify').selectedIndex;
-	var dropdownValue = document.getElementById('selectNotify')[dropdownIndex].text;
-
-	main.value += dropdownValue + "\n";
+	if(dropdownIndex > -1){
+		var dropdownValue = document.getElementById('selectNotify')[dropdownIndex].text;
+		main.value += dropdownValue + "\n";
+	}
 	
 	main.focus();
 }
