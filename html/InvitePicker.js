@@ -33,7 +33,11 @@ function displayInviteList(field, selectlist){
 	pickerDiv.style.display = (pickerDiv.style.display == "block" ? "none" : "block");
 	pickerDiv.style.zIndex = 10000;	
 	
-	html = "<table border=1 cellpadding=0 cellspacing=0 ><th bgcolor=gray align=left >&nbsp;Email notify to:</th><tr><td>" + selectlist + "</td></tr></table>";
+	html = "<table border=0 cellpadding=0 cellspacing=0 >"
+	+ "<th bgcolor=gray align=left >&nbsp;Email notify to:</th>"
+	+ "<tr><td colspan=2>" + selectlist + "</td></tr>"
+	+ "<tr><td bgcolorx=gray align=right><a href='#' onclick=\"hideInvitePicker()\">(close)&nbsp;</a></td></tr>"
+	+ "</table>";
 	
 	document.getElementById(inviteDivID).innerHTML = html;
 }
@@ -62,10 +66,6 @@ function hideInvitePicker(){
 		pickerDiv.style.display = "none";
 	}
 }
-
-
-
-
 
 
 
