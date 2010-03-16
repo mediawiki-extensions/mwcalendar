@@ -36,7 +36,8 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
-
+	global $wgVersion;
+	
 	// conversion option; no need to do any normal calendar initializations
 	if($ret = run_conversion($params)) {return $ret;}	
 
@@ -46,7 +47,11 @@ function launchCalendar($paramstring, $params = array()) {
 	
 	if( $params['debugger'] ) $ret .=  mwcDebugger::get();
 	
-	return $ret;
+	##version check!
+	if(version_compare($wgVersion, '1.14.0', '>=')) 
+		return $ret;
+	else
+		return "You must be running MediaWiki version (1.14.0) or higher. Sorry, your version is ($wgVersion).";
 }
 
 // this will query any wiki-page calendar previous used and port that 

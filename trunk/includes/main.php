@@ -27,9 +27,10 @@ class mwCalendar{
 	var $event_list = 0;
 
 	public function mwCalendar($params){
-		global $wgOut,$wgTitle, $wgScript, $wgScriptPath;	
+		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
 		
 		$list = '';	
+		$useRTE ='';
 		
 		$this->setDefaults($params); ## RUN FIRST ##
 		
@@ -75,9 +76,21 @@ class mwCalendar{
 		
 		$addEventHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addEventHtml);	
 		
+		
 		## building my own sytlesheets and javascript links...
+		$stdJSArray = array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js','rte.js');
+
+		$rteExists = file_exists( $IP . "/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js");
+		if( !isset($params['disablerte']) && $rteExists ){
+			$useRTE .= $this->buildJavascript( array('/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js'),true);		
+			$useRTE .= $this->buildJavascript( array('rte.js') );		
+		}
+		
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
 		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js') );
+		
+		$this->javascript .= $useRTE;
+		
 		## build the addEvent and batch tabs		
 		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
 		$tab2 = $this->buildTab( helpers::translate('mwc_batch'),$batchHtml);
@@ -97,12 +110,16 @@ class mwCalendar{
 		return $ret;
 	}
 	
-	private function buildJavascript($arrJavaScripts){
+	private function buildJavascript($arrJavaScripts, $path=false){
 		global $wgScriptPath;
 		$ret = chr(13) . "<!-- BEGIN CALENDAR JS -->".chr(13);
 		
 		foreach($arrJavaScripts as $javascript){
-			$ret .= '<script type="text/javascript" src="'.$wgScriptPath.'/extensions/mwcalendar/html/'.$javascript.'"></script>'.chr(13);		
+			if($path){
+				$ret .= '<script type="text/javascript" src="'.$wgScriptPath . $javascript.'"></script>'.chr(13);		
+			}else{				
+				$ret .= '<script type="text/javascript" src="'.$wgScriptPath.'/extensions/mwcalendar/html/'.$javascript.'"></script>'.chr(13);		
+			}
 		}
 		
 		$ret .= "<!-- END CALENDAR JS -->".chr(13);
