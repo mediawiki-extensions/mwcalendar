@@ -1,13 +1,12 @@
 <?php
 
-require_once( mwcalendar_base_path . '/includes/debugger.php');
-
 # this should be static only functions
 class helpers{
 
 	private static $date_format = 'n/j/Y'; //used in email, addevent, etc
 	private static $time_format = 'g:i A'; //used in email, addevent, etc
 	private static $time_format_event = '(g:ia) '; //used for the time prefix in the calendar eventlist
+	private static $debug = false;
 	
 	## date functions
 	public static function getDateFormat(){ return self::$date_format; }
@@ -15,6 +14,8 @@ class helpers{
 	public static function date($timestamp){ return date(self::$date_format, $timestamp); }
 	public static function time($timestamp){ return date(self::$time_format, $timestamp); }
 	public static function event_time($timestamp){ return date(self::$time_format_event, $timestamp); }
+	
+	public static function enableDebug(){ self::$debug = true; }
 	
 	## cookie stuff
 	public static function cookie_name($calendar_name){
@@ -103,6 +104,14 @@ class helpers{
 		}
 		return "";
 	}
+	
+	public static function debug($data){
+		if(!mwcalendar_debugger) return;
+		
+		$path = mwcalendar_base_path . "/calendar.log";		
+		$log = date('[j-M-Y H:i:s]') . " $data\r\n";
+		error_log($log, 3, $path);	
+	}	
 }
 
 

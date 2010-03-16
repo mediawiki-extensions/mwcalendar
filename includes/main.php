@@ -25,11 +25,12 @@ class mwCalendar{
 	
 	var $subject_max_length;
 	var $event_list = 0;
+	
 
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
 		
-		mwcDebugger::set("******** Calendar Init() ******** ");
+		helpers::debug("******** Calendar Init() ******** ");
 		
 		$list = '';	
 		$useRTE ='';
@@ -49,7 +50,7 @@ class mwCalendar{
 			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
 			$this->month = $date['mon'];
 			$this->year = $date['year'];
-			mwcDebugger::set("Coookie found, CHANGED calendar date/time: cookie_name: $cookie_name, cookie_value: $this->month/$this->year");			
+			helpers::debug("Coookie found, CHANGED calendar date/time: cookie_name: $cookie_name, cookie_value: $this->month/$this->year");			
 		}		
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
@@ -183,7 +184,7 @@ class mwCalendar{
 	}
 	
 	private function url_AddEvent($safeUrl, $timestamp){
-		mwcDebugger::set('url_AddEvent');
+		helpers::debug('url_AddEvent');
 		
 		$html = $this->tabHtml;
 
@@ -211,7 +212,7 @@ class mwCalendar{
 	}
 	
 	private function url_EditEvent($safeUrl, $eventID){
-		mwcDebugger::set('url_EditEvent');
+		helpers::debug('url_EditEvent');
 		
 		global $wgUser;
 		$currentUser = $wgUser->getName();

@@ -16,7 +16,7 @@ class EventHandler{
 	public static function CheckForEvents($can_update_db){
 		global $wgUser,$wgOut;
 		
-		mwcDebugger::set('Checking for POST events');
+		helpers::debug('Checking for POST events');
 		
 		$db = new CalendarDatabase();
 		
@@ -28,7 +28,7 @@ class EventHandler{
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) && $can_update_db){
-			mwcDebugger::set("Event Saved");
+			helpers::debug("Event Saved");
 			
 			$arrEvent = self::buildEventArray();
 					
@@ -85,7 +85,7 @@ class EventHandler{
 			$cookie_name = helpers::cookie_name( $_POST['name'] );
 			setcookie($cookie_name, $timestamp);
 			
-			mwcDebugger::set("Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
+			helpers::debug("Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
 			header("Location: " . $url);
 		}
 	}

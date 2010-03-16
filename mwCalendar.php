@@ -5,11 +5,16 @@ if (!defined('MEDIAWIKI')) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
 
+
+
 # set the version
-define('mwcalendar_version','0.2.0'); //do not modify format
+define('mwcalendar_version','0.2.1'); //do not modify format
 define('mwcalendar_version_label',' (beta)'); //do not modify format
 
 define( 'mwcalendar_base_path', dirname(__FILE__) );
+
+## DEBUGGER ##
+define( 'mwcalendar_debugger', false );
 
 require_once( mwcalendar_base_path . '/includes/main.php' );
 require_once( mwcalendar_base_path . '/includes/conversion.php' );
@@ -36,8 +41,8 @@ function mwCalendar() {
 }
 
 function launchCalendar($paramstring, $params = array()) {
-	global $wgVersion,$wgParser;
-	
+	global $wgVersion,$wgParser, $mwcDebugger;
+
 	$wgParser->disableCache();
 	
 	// conversion option; no need to do any normal calendar initializations
@@ -45,9 +50,13 @@ function launchCalendar($paramstring, $params = array()) {
 
 	$calendar = new mwCalendar($params);
 
-	$ret = $calendar->display() . '<small>v.'.mwcalendar_version.mwcalendar_version_label.'</small><br>';
+	$ret = $calendar->display();
 	
-	if( $params['debugger'] ) $ret .=  mwcDebugger::get();
+	if(mwcalendar_debugger){
+		$ret .= "<center><b><font color=red>*** DEBUG MODE ACTIVATED ***</font></b></center>";
+	}
+	
+	$ret .= '<small>v.'.mwcalendar_version.mwcalendar_version_label.'</small><br>';
 	
 	##version check!
 	if(version_compare($wgVersion, '1.14.0', '>=')) 
