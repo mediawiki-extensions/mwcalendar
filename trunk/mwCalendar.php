@@ -5,16 +5,13 @@ if (!defined('MEDIAWIKI')) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
 
-
+########## DEBUGGER ################
+define( 'mwcalendar_debugger', false );
 
 # set the version
 define('mwcalendar_version','0.2.1'); //do not modify format
 define('mwcalendar_version_label',' (beta)'); //do not modify format
-
 define( 'mwcalendar_base_path', dirname(__FILE__) );
-
-## DEBUGGER ##
-define( 'mwcalendar_debugger', false );
 
 require_once( mwcalendar_base_path . '/includes/main.php' );
 require_once( mwcalendar_base_path . '/includes/conversion.php' );
