@@ -50,8 +50,9 @@ class CalendarEmail{
 				$to_address[] = new MailAddress( $user->getEmail() );
 			}
 		}
-
-		UserMailer::send( $to_address, $from_address, $subject, $body, $from_address, $contentType ) ;
+		if($to_address){
+			UserMailer::send( $to_address, $from_address, $subject, $body, $from_address, $contentType ) ;
+		}
 
 	}
 	
