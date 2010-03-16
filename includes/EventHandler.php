@@ -16,7 +16,7 @@ class EventHandler{
 	public static function CheckForEvents($can_update_db){
 		global $wgUser,$wgOut;
 		
-		mwcDebugger::set('CheckForEvents');
+		mwcDebugger::set('Checking for POST events');
 		
 		$db = new CalendarDatabase();
 		
@@ -28,7 +28,8 @@ class EventHandler{
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) && $can_update_db){
-
+			mwcDebugger::set("Event Saved");
+			
 			$arrEvent = self::buildEventArray();
 					
 			// are we updating or creating new?
@@ -64,10 +65,9 @@ class EventHandler{
 		if ( isset($_POST["cancel"]) ){	
 			header("Location: " . $url);
 		}
-		
+	
 		// timestamp will be populated only if any nav butten is clicked
 		if ( isset($_POST["timestamp"]) ){
-
 			$month = $_POST['monthSelect'];
 			$year = $_POST['yearSelect'];
 		
@@ -82,10 +82,10 @@ class EventHandler{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
 			
-			$session_name = helpers::session_name( $_POST['name'] );
-			//setcookie($cookie_name, $timestamp);
-			$_SESSION[$session_name] = $timestamp;
+			$cookie_name = helpers::cookie_name( $_POST['name'] );
+			setcookie($cookie_name, $timestamp);
 			
+			mwcDebugger::set("Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
 			header("Location: " . $url);
 		}
 	}

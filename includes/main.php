@@ -29,6 +29,8 @@ class mwCalendar{
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
 		
+		mwcDebugger::set("******** Calendar Init() ******** ");
+		
 		$list = '';	
 		$useRTE ='';
 		
@@ -42,13 +44,12 @@ class mwCalendar{
 		$this->day = $now['mday'];		
 		
 		## load normal calendar
-		$session_name = helpers::session_name( $this->calendarName ); 
-		//mwcDebugger::set('session_name: ' . $session_name);
-		if( isset($_SESSION[$session_name]) ){
-			$date = getdate($_SESSION[$session_name]); //timestamp value
+		$cookie_name = helpers::cookie_name( $this->calendarName ); 
+		if( isset($_COOKIE[$cookie_name]) ){
+			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
 			$this->month = $date['mon'];
 			$this->year = $date['year'];
-			mwcDebugger::set('session_name: ' . $this->month . '/' . $this->year);			
+			mwcDebugger::set("Coookie found, CHANGED calendar date/time: cookie_name: $cookie_name, cookie_value: $this->month/$this->year");			
 		}		
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
@@ -147,7 +148,7 @@ class mwCalendar{
 	
 	public function display(){
 		global $wgOut;
-	//return $this->htmlOption;
+
 		$html = $this->stylesheet;
 		$html .= $this->javascript;
 
@@ -625,7 +626,6 @@ class mwCalendar{
 	}
 	
 	private function buildBatchTemplate(){
-		mwcDebugger::set('buildBatchTemplate');
 		
 		$day = 1;
 		$list = '';
