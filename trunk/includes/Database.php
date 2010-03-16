@@ -49,16 +49,13 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );	
 			
 		$calendar = $arrEvent['calendar'];	
-		$subject = trim( strip_tags($arrEvent['subject']) );
 		
-		// min data we need to file a good event...
-		if(strlen($subject) == 0) return; 
-		if(strlen($arrEvent['start']) == 0) return; 
-		if(strlen($arrEvent['end']) == 0) return; 
-		
+		## protect db data...
+		if( !$this->validateEvent($arrEvent)) return;
+			
 		$dbw->insert('calendar_events', array(
 			'calendarid' 		=> $this->getCalendarID($calendar),
-			'subject'        	=> $subject,
+			'subject'        	=> $arrEvent['subject'],
 			'location'        	=> $arrEvent['location'],
 			'start'        		=> $arrEvent['start'],
 			'end'        		=> $arrEvent['end'],
@@ -70,6 +67,16 @@ class CalendarDatabase{
 			'editedby'       	=> '',
 			'editeddate'       	=> null
 		));
+	}
+	
+	private function validateEvent(&$arrEvent){
+	
+		// min data we need to file a good event...
+		if( strlen(trim($arrEvent['subject'])) == 0 ) return false; 
+		if( strlen($arrEvent['start']) == 0 ) return false; 
+		if( strlen($arrEvent['end']) == 0 ) return false; 	
+		
+		return true;
 	}
 
 	public function deleteEvent($eventid){	
@@ -89,6 +96,9 @@ class CalendarDatabase{
 		$dbr = wfGetDB( DB_SLAVE );	
 			
 		$calendar = $arrEvent['calendar'];	
+		
+		## protect db data...
+		if( !$this->validateEvent($arrEvent)) return;
 
 		$dbw->update( 'calendar_events', 
 			array(

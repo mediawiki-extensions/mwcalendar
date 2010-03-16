@@ -102,7 +102,10 @@ class EventHandler{
 		$start = strtotime( $_POST["start"] . ' ' . $startTime);
 		$end = strtotime($_POST["end"] . ' ' . $endTime);
 								
-		$subject = strip_tags ( $_POST["subject"] );
+		$subject = strip_tags ( $_POST["subject"], '<b><i><s><u>' );
+		//$subject = $_POST["subject"];
+		
+		//if($subject == '') $subject ='INVALID Event';
 		
 		$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
 		

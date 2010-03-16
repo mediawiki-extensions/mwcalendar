@@ -26,6 +26,8 @@ class mwCalendar{
 	var $subject_max_length;
 	var $event_list = 0;
 	
+	var $useRTE=true;
+	
 
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
@@ -33,7 +35,6 @@ class mwCalendar{
 		helpers::debug("******** Calendar Init() ******** ");
 		
 		$list = '';	
-		$useRTE ='';
 		
 		$this->setDefaults($params); ## RUN FIRST ##
 		
@@ -83,7 +84,7 @@ class mwCalendar{
 		$stdJSArray = array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js','rte.js');
 
 		$rteExists = file_exists( $IP . "/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js");
-		if( !isset($params['disablerte']) && $rteExists ){
+		if( $this->useRTE && $rteExists ){
 			$useRTE .= $this->buildJavascript( array('/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js'),true);		
 			$useRTE .= $this->buildJavascript( array('rte.js') );		
 		}
@@ -141,10 +142,11 @@ class mwCalendar{
 	
 	## SET DEFAULTS ##
 	private function setDefaults($params){
-
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
 		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 20;	
-		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;		
+		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;	
+
+		$this->useRTE = isset( $params['disablerte'] ) ? false : true;
 	}
 	
 	public function display(){
@@ -262,7 +264,15 @@ class mwCalendar{
 		
 		## funky display as the text is saves as \r\n.. so I'm removing the \n and leaving the \r
 		## caused textarea to add html tags (<p><br/>) etc
-		$text = str_replace("\n", "", $event['text']);
+		$text =  $event['text'];
+		if(!$this->useRTE){
+			$text = str_replace("\n", "", $text);
+			$text = strip_tags($text);
+		}	
+		if($this->useRTE) {
+			$text = str_replace("\n", "<br />", $event['text']);
+			//$text = strip_tags($text);
+		}		
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
