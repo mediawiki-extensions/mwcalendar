@@ -216,7 +216,7 @@ class mwCalendar{
 	private function url_EditEvent($safeUrl, $eventID){
 		helpers::debug('url_EditEvent');
 		
-		global $wgUser;
+		global $wgUser,$wgParser;
 		$currentUser = $wgUser->getName();
 		
 		$html = $this->tabHtml;
@@ -265,13 +265,14 @@ class mwCalendar{
 		## funky display as the text is saves as \r\n.. so I'm removing the \n and leaving the \r
 		## caused textarea to add html tags (<p><br/>) etc
 		$text =  $event['text'];
+		//$text = $wgParser->recursiveTagParse($text);
 		if(!$this->useRTE){
-			$text = str_replace("\n", "", $text);
+			$text = str_replace("\r\n", "\r", $text);
 			$text = strip_tags($text);
 		}	
 		if($this->useRTE) {
-			$text = str_replace("\n", "<br />", $event['text']);
-			//$text = strip_tags($text);
+			//$text = str_replace("\n", "x", $event['text']);
+			//$text = str_replace("\r", "x", $event['text']);
 		}		
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
@@ -588,12 +589,27 @@ class mwCalendar{
 		
 		$title =  $event['subject'];//dont cut this text
 		$subject = $time . $event['subject'];
+		
+		$endTag = '';
+		$pos = strrpos($subject, '</');	
+		if($pos !== false){	
+			## if we're here, then we need to remove the end html tag and re-add it after the $limit trim
+			
+			$limit += 3; // add 3 to the set lengh limit since "<b><s>...tags" arent displayed
+			$endTag = substr($subject,$pos,strlen($subject));
+			$subject = substr($subject,0,$pos);
+			
+			//helpers::debug($removed . "-" . $subject);
+		}
 
 		$len = strlen($subject);
 		if($len > $limit){
 			$subject = trim(substr($subject, 0, $limit)) . "...";	
 		}
-
+		
+		## re-add any removed html tags
+		$subject = $beginTag . $subject . $endTag; 
+		
 		$tag = 'eventtag' . $event['id'];
 		$text = $event['text'] . '&nbsp;';
 		
