@@ -36,7 +36,8 @@ class CalendarDatabase{
 		}else{
 			$r = $dbr->fetchObject( $res );
 
-			if($r->ver < mwcalendar_version) { 
+			//if($r->ver < mwcalendar_version) { 
+			if(version_compare($r->ver, mwcalendar_version, '<')) {
 				$update->validate($r->ver); 
 			}				
 		}
