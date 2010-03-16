@@ -19,7 +19,7 @@ class CalendarEmail{
 		$end = helpers::date($event['end']) . ' ' . helpers::time($event['end']);
 		
 		//$subject = "($start) " . $event['subject'];
-		$subject = $event['subject'];
+		$subject = strip_tags($event['subject']);
 		
 		$arrUrl = explode( '&', $_SERVER['REQUEST_URI'] );
 		$urlPath = $arrUrl[0]; //clear any previous parameters	
