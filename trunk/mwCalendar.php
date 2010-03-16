@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 ########## DEBUGGER ################
-define( 'mwcalendar_debugger', false );
+define( 'mwcalendar_debugger', 0 ); //0=no debug, 1=debug
 
 # set the version
 define('mwcalendar_version','0.2.1'); //do not modify format
