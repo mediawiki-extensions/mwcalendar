@@ -15,7 +15,7 @@ class CalendarEmail{
 		$from = new MailAddress( $wgUser->getEmail() );
 		$from_address = ( $wgUser->getEmail() != '') ? $from : new MailAddress( $wgPasswordSender );
 
-		$arr = explode(',',$users);
+		$arr = explode("\n", $users);
 		$arr = array_unique($arr); //remove duplicates
 			
 		$start = helpers::date($event['start']) . ' ' . helpers::time($event['start']);
@@ -49,6 +49,7 @@ class CalendarEmail{
 			$user = User::newFromName(trim($username[0]));
 			
 			if($user){
+				//helpers::debug($user->getEmail(),2);
 				$to_address[] = new MailAddress( $user->getEmail() );
 			}
 		}
