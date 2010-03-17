@@ -10,7 +10,7 @@ define( 'mwcalendar_debugger', 0 ); // 0=off, 1=standard, 2=custom, 3=all
 ########## DEBUGGER ################
 
 # set the version
-define('mwcalendar_version','0.2.1'); //do not modify format
+define('mwcalendar_version','0.2.2'); //do not modify format
 define('mwcalendar_version_label',' (beta)'); //do not modify format
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
