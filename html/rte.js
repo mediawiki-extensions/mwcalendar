@@ -9,7 +9,7 @@ tinyMCE.init({
 	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,separator,"
 	+ "justifyleft,justifycenter,justifyright,separator,"
 	+ "bullist,numlist,separator,"
-	+ "link,unlink,image,separator,"
+	+ "forecolor,backcolor,|,image,separator,"
 	+ "code,separator,charmap",
 	theme_advanced_buttons2 : "",
 	height:"130px",
