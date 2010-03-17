@@ -18,7 +18,7 @@ class conversion{
 		$day = $date['mday'];
 		$year = $date['year'];
 		
-		$date = "$month-$day-$year";
+		//$date = "$month-$day-$year";
 		
 		$search = $source;
 		$pages = PrefixSearch::titleSearch( $search, '10000');
