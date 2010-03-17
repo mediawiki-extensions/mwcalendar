@@ -28,7 +28,7 @@ class EventHandler{
 
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) && $can_update_db){
-			helpers::debug("Event Saved");
+			helpers::debug("POST: Event Saved");
 			
 			$arrEvent = self::buildEventArray();
 					
@@ -47,11 +47,13 @@ class EventHandler{
 		}
 
 		if ( isset($_POST["savebatch"]) && $can_update_db ){
+			helpers::debug("POST: Batch Saved");
 			self::addFromBatch($db, $whodidit);
 			header("Location: " . $url);
 		}	
 		
 		if ( isset($_POST["delete"]) && $can_update_db  ){
+			helpers::debug("POST: Event Deleted");
 			$db->deleteEvent($_POST['eventid']);
 			
 			$arrEvent = self::buildEventArray();
@@ -63,6 +65,7 @@ class EventHandler{
 		}		
 
 		if ( isset($_POST["cancel"]) ){	
+			helpers::debug("POST: Event Cancelled");
 			header("Location: " . $url);
 		}
 	
@@ -83,9 +86,10 @@ class EventHandler{
 			}
 			
 			$cookie_name = helpers::cookie_name( $_POST['name'] );
+			helpers::debug('Setting cookie: '.$cookie_name);
 			setcookie($cookie_name, $timestamp);
 			
-			helpers::debug("Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
+			helpers::debug("POST: Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
 			header("Location: " . $url);
 		}
 	}

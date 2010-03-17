@@ -105,8 +105,11 @@ class helpers{
 		return "";
 	}
 	
-	public static function debug($data){
+	public static function debug($data, $mode=1){
 		if(!mwcalendar_debugger) return;
+		
+		if( ($mode != mwcalendar_debugger) 
+			&& (mwcalendar_debugger != 3) ) return;
 		
 		$path = mwcalendar_base_path . "/calendar.log";		
 		$log = date('[j-M-Y H:i:s]') . " $data\r\n";

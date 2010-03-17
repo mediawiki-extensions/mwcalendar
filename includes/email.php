@@ -7,8 +7,11 @@ class CalendarEmail{
 	public static function send($users, $event, $action='save'){
 		global $wgUser,$wgVersion,$wgOutputEncoding,$wgPasswordSender;
 		
-		#todo: might filter out users without an email...
-		
+		$to_address = array();
+			
+		# dont send email if current user doesnt have one...?
+		//if( $wgUser->getEmail() == '') return;
+	
 		$from = new MailAddress( $wgUser->getEmail() );
 		$from_address = ( $wgUser->getEmail() != '') ? $from : new MailAddress( $wgPasswordSender );
 
@@ -33,7 +36,7 @@ class CalendarEmail{
 			"Location: " . $event['location'] .
 			"<hr>" .
 			"Comments: <br>" . $event['text'] . 
-			"<hr><br>" .
+			"<hr><br>";
 
 		$body = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body>$body</body></html>";		
 
@@ -41,7 +44,6 @@ class CalendarEmail{
 			$subject = '{deleted} ' . $subject;
 		}
 		
-		$arrAddress = array();
 		foreach($arr as $u){
 			$username = explode('(',$u);
 			$user = User::newFromName(trim($username[0]));
@@ -53,7 +55,6 @@ class CalendarEmail{
 		if($to_address){
 			UserMailer::send( $to_address, $from_address, $subject, $body, $from_address, $contentType ) ;
 		}
-
 	}
 	
 	public static function curPageURL() {

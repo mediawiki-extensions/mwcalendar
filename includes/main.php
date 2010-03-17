@@ -35,6 +35,7 @@ class mwCalendar{
 		helpers::debug("******** Calendar Init() ******** ");
 		
 		$list = '';	
+		$rteJS = '';
 		
 		$this->setDefaults($params); ## RUN FIRST ##
 		
@@ -46,8 +47,9 @@ class mwCalendar{
 		$this->day = $now['mday'];		
 		
 		## load normal calendar
-		$cookie_name = helpers::cookie_name( $this->calendarName ); 
-		if( isset($_COOKIE[$cookie_name]) ){
+		$cookie_name = helpers::cookie_name($this->calendarName ); 
+		helpers::debug('Checking for cookie: '.$cookie_name);
+		if( isset($_COOKIE[$cookie_name]) ){	
 			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
 			$this->month = $date['mon'];
 			$this->year = $date['year'];
@@ -85,14 +87,14 @@ class mwCalendar{
 
 		$rteExists = file_exists( $IP . "/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js");
 		if( $this->useRTE && $rteExists ){
-			$useRTE .= $this->buildJavascript( array('/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js'),true);		
-			$useRTE .= $this->buildJavascript( array('rte.js') );		
+			$rteJS .= $this->buildJavascript( array('/extensions/tinymce/jscripts/tiny_mce/tiny_mce.js'),true);		
+			$rteJS .= $this->buildJavascript( array('rte.js') );		
 		}
 		
 		$this->stylesheet = $this->buildStylesheet( array('DatePicker.css','tabber.css','default.css') );
 		$this->javascript = $this->buildJavascript( array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js') );
 		
-		$this->javascript .= $useRTE;
+		$this->javascript .= $rteJS;
 		
 		## build the addEvent and batch tabs		
 		$tab1 = $this->buildTab( helpers::translate('mwc_event'), $addEventHtml);
@@ -143,6 +145,12 @@ class mwCalendar{
 	## SET DEFAULTS ##
 	private function setDefaults($params){
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
+		
+		## slashes.... bad....
+		if( strpos($params['name'], "\\") ){
+			$this->calendarName =  helpers::translate('mwc_default_name');
+		}
+		
 		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 20;	
 		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;	
 
@@ -465,11 +473,10 @@ class mwCalendar{
 	private function buildAddEventLink($month, $day, $year){
 		
 		$timestamp = mktime(0,0,0,$month,$day,$year);
+
+		$url = $this->cleanLink( $this->title ) . '&Name='.($this->calendarName).'&AddEvent=' . $timestamp;
 		
-		//$url = $this->cleanLink( $_SERVER['REQUEST_URI'] ) . '&AddEvent=' . $timestamp;
-		$url = $this->cleanLink( $this->title ) . '&Name='.$this->calendarName.'&AddEvent=' . $timestamp;
-		
-		$link = '<a href="' . $url . '">'.helpers::translate('mwc_new').'</a>';		
+		$link = "<a href=\"$url\">".helpers::translate('mwc_new').'</a>';		
 		return $link;
 	}
 	
@@ -496,7 +503,11 @@ class mwCalendar{
 		$navHTML = str_replace('[[YEAR_CONTROL]]', $this->buildYearSelect(), $navHTML);
 		$navHTML = str_replace('[[CALENDAR_NAME]]', $title, $navHTML);
 	
-		return $navHTML;
+		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
+		$hidden = "<input name=timestamp type=hidden value='$timestamp' size=10>"
+			. "<input name=name type=hidden value=\"".$this->calendarName."\" size=10>";
+	
+		return $navHTML.$hidden;
 	}
 
 	function buildMonthSelect(){
@@ -506,26 +517,22 @@ class mwCalendar{
 		$todayBtn = "&nbsp;<input class='btn' name='today' type='submit' value='$today'>";		
 		$backBtn = "<input class='btn' name='monthBack' type='submit' value='<<'>&nbsp;";
 		$forwardBtn = "&nbsp;<input class='btn' name='monthForward' type='submit' value='>>'>";		
-		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
 		
 	    // build the month select box
 	    $monthSelect = "<select name='monthSelect' method='post' onChange='javascript:this.form.submit()'>";
 		for ($i = 1; $i <= 12; $i++) {
     		if ($i == $this->month) {
-				$monthSelect .= "<option class='lst' value='" . ($i) . "' selected='true'>" . 
+				$monthSelect .= "<option class='lst' value=\"" . ($i) . "\" selected='true'>" . 
 				$wgLang->getMonthName($i) . "</option>\n";
     		}
     		else {
-				$monthSelect .= "<option class='lst' value='" . ($i) . "'>" . 
+				$monthSelect .= "<option class='lst' value=\"" . ($i) . "\">" . 
 				$wgLang->getMonthName($i) . "</option>\n";
     		}
 	    }
-	    $monthSelect .= "</select>";
-		
-		$hidden = "<input name=timestamp type=hidden value='$timestamp' size=10>"
-			. "<input name=name type=hidden value='$this->calendarName' size=10>";
+	    $monthSelect .= "</select>";	
 	
-		return $backBtn . $monthSelect . $forwardBtn . $todayBtn . $hidden;
+		return $backBtn . $monthSelect . $forwardBtn . $todayBtn;
 	}
 	
 	private function buildYearSelect(){
@@ -608,7 +615,7 @@ class mwCalendar{
 		}
 		
 		## re-add any removed html tags
-		$subject = $beginTag . $subject . $endTag; 
+		$subject = $subject . $endTag; 
 		
 		$tag = 'eventtag' . $event['id'];
 		$text = $event['text'] . '&nbsp;';
@@ -621,8 +628,8 @@ class mwCalendar{
 		$title = $this->fixJavascriptSpecialChars($title);
 		$text = $this->fixJavascriptSpecialChars($text);
 		
-		$url = $this->cleanLink($this->title) . '&Name='.$this->calendarName.'&EditEvent=' . $event['id'];
-		$link = "<a href='$url' title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
+		$url = $this->cleanLink($this->title) . '&Name='.($this->calendarName).'&EditEvent=' . $event['id'];
+		$link = "<a href=\"$url\" title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
 		
 		return $link;
 	}
@@ -649,7 +656,7 @@ class mwCalendar{
 		
 		$arr = explode('&', $url);
 		
-		return $arr[0];
+		return ($arr[0]);
 	}
 	
 	private function buildBatchTemplate(){

@@ -75,7 +75,7 @@ class CalendarDatabase{
 		if( strlen(trim($arrEvent['subject'])) == 0 ) return false; 
 		if( strlen($arrEvent['start']) == 0 ) return false; 
 		if( strlen($arrEvent['end']) == 0 ) return false; 	
-		
+
 		return true;
 	}
 
@@ -194,10 +194,12 @@ class CalendarDatabase{
 	
 	public function getCalendarID($calendar){
 	
+		//$calendar = addslashes($calendar);
+	
 		$id = 0;
 		$table = $this->dbPrefix . 'calendar_header';
 		$dbr = wfGetDB( DB_SLAVE );	
-		$sql = "SELECT id FROM $table WHERE name = '$calendar'";		
+		$sql = "SELECT id FROM $table WHERE name = \"$calendar\"; ";		
 					
 		$res = $dbr->query($sql);	
 		if($r = $dbr->fetchObject($res)) {
@@ -212,11 +214,15 @@ class CalendarDatabase{
 	// we're auto creating calendars as needed in the database
 	private function createCalendar($name, $description){
 		$dbw = wfGetDB( DB_MASTER );
+	
+		//$name = addslashes($name);
 		
 		$dbw->insert( 'calendar_header', array(
-			'name' 			=> $name,
-			'description' 	=> $description
+			'name' 			=> "$name",
+			'description' 	=> "$description"
 		) );	
+		
+		helpers::debug($name);
 		
 		return $dbw->insertid();
 	}	
