@@ -37,8 +37,9 @@ class mwCalendar{
 		$list = '';	
 		$rteJS = '';
 		
-		$this->setDefaults($params); ## RUN FIRST ##
-		
+		 ## RUN FIRST ##
+		$this->setDefaults($params);
+			
 		// set the calendar's initial date
 		$now = $this->now = getdate();
 		
@@ -146,15 +147,19 @@ class mwCalendar{
 	private function setDefaults($params){
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
 		
-		## slashes.... bad....
-		if( strpos($params['name'], "\\") ){
-			$this->calendarName =  helpers::translate('mwc_default_name');
+		## dont allow the following: '&' '\'
+		$bInvaid = preg_match('/(&)|(\\\)/',$params['name']);
+		if( $bInvaid ){
+			$this->calendarName = "{{ INVALID NAME }}";//helpers::translate('mwc_default_name');		
+			return false;
 		}
 		
 		$this->subject_max_length = isset( $params['sublength'] ) ? $params['sublength'] : 20;	
 		$this->event_list = isset( $params['eventlist'] ) ? $params['eventlist'] : 0;	
 
 		$this->useRTE = isset( $params['disablerte'] ) ? false : true;
+		
+		return true;
 	}
 	
 	public function display(){
