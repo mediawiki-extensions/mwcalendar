@@ -9,7 +9,8 @@ class CalendarEmail{
 			
 		# dont send email if current user doesnt have one...?
 		//if( $wgUser->getEmail() == '') return;
-		$from = ( $wgUser->getEmail() != '') ? new MailAddress($wgUser->getEmail()) : new MailAddress($wgPasswordSender);
+		//$from = ( $wgUser->getEmail() != '') ? new MailAddress($wgUser->getEmail()) : new MailAddress($wgPasswordSender);
+		$from = ( $wgUser->getEmail() != '') ? $wgUser->getEmail() :$wgPasswordSender->getEmail();
 		
 		self::sendIcalAttachement($from,$to,$event);
 		//self::sendIcalEmail($from, $to, $event);
@@ -43,7 +44,7 @@ class CalendarEmail{
 		
 		## icalendar
 		$message .= "--$mime_boundary\n";	
- 		$message .= "Content-Type: text/calendar;name=\"meeting.ics\";method=REQUEST\n";
+ 		$message .= "Content-Type: text/calendar;name=\"event.ics\";method=REQUEST\n";
 		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 		
 		$message .= self::build_ical($from, $event);   
 		$message .= "--$mime_boundary\n";
@@ -54,15 +55,16 @@ class CalendarEmail{
 	}
 	
 	private static function sendIcalAttachement($from,$to,$event){
-	
-		$headers = "MIME-Version: 1.0\n";			
+		
+		$headers = "MIME-Version: 1.0\n";	
+		$headers .= "From:$from\n";
+		$headers .= "Reply-To:$from\n"; 		
 		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
 		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
-		$headers .= "Content-Disposition: attachment; filename=\"meeting.ics\"\n";
+		$headers .= "Content-Disposition: attachment; filename=\"event.ics\"\n";
 		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
 		
-		$message = "testing\n\n";
-		$message .= self::build_ical($from, $event);
+		$message = self::build_ical($from, $event);
 		
 		$subject = strip_tags($event['subject']);
 		self::sendmail($to, $subject, $message, $headers);
