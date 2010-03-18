@@ -24,7 +24,6 @@ function EventSummary(ctrl,event,comment){
 	
 	html = "<table border=1 bordercolor=#808080 cellpadding=0 cellspacing=0><td><table width=125px border=0 cellpadding=2 cellspacing=0><th nowrapx bgcolor=#C0C0C0 align=left >" + event + "</th><tr><td>" + comment + "</td></tr>";
 	html += "</table></td></table>";
-
 	
 	document.getElementById(summaryDivID).innerHTML = html;
 }
