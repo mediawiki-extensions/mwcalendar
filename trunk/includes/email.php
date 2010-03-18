@@ -13,7 +13,7 @@ class CalendarEmail{
 		$from = ( $wgUser->getEmail() != '') ? $wgUser->getEmail() :$wgPasswordSender->getEmail();
 		
 		self::sendIcalAttachement($from,$to,$event);
-		self::sendIcalEmail($from, $to, $event);
+		//self::sendIcalEmail($from, $to, $event);
 		
 		return;
 	}
@@ -88,8 +88,8 @@ class CalendarEmail{
 	
 	private static function build_ical($from,$event){
 			
-		$start = date('Ymd',$event['start']).'T'.date('His',$event['start']);
-		$end = date('Ymd',$event['end']).'T'.date('His',$event['end']);
+		$start = date('Ymd',$event['start']);//.'T'.date('His',$event['start']);
+		$end = date('Ymd',$event['end']);//.'T'.date('His',$event['end']);
 		$location = $event['location'];
 		$subject = $event['subject'];
 		$description = $event['text'];
