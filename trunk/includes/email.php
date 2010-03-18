@@ -13,7 +13,9 @@ class CalendarEmail{
 		$from = ( $wgUser->getEmail() != '') ? $wgUser->getEmail() :$wgPasswordSender->getEmail();
 		
 		self::sendIcalAttachement($from,$to,$event);
-		//self::sendIcalEmail($from, $to, $event);
+		self::sendIcalEmail($from, $to, $event);
+		
+		return;
 	}
 	
 	private static function sendIcalEmail($from, $to, $event) {

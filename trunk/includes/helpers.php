@@ -1,5 +1,5 @@
 <?php
-
+require_once( mwcalendar_base_path . '/includes/options.php');
 # this should be static only functions
 class helpers{
 
