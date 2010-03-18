@@ -87,37 +87,39 @@ class CalendarEmail{
 	private static function build_ical($event){
 		$from_name = "My Name";
 		$from_address = $from;
-		
-		
+				
 		$start = date('Ymd',$event['start']).'T'.date('His',$event['start']);
 		$end = date('Ymd',$event['end']).'T'.date('His',$event['end']);
+		$location = $event['location'];
+		$subject = $event['subject'];
+		$description = $event['text'];
+		
 		$todaystamp = date('Ymd').'T'.date('His');
 		
 		//Create unique identifier
 		$cal_uid = date('Ymd').'T'.date('His')."-".rand()."@mydomain.com";
-		
+			
+		$ical =    
+			"BEGIN:VCALENDAR\n".
+			"PRODID:-//Microsoft Corporation//Outlook 11.0 MIMEDIR//EN\n".
+			"VERSION:2.0\n".
+			"METHOD:PUBLISH\n".
+			"BEGIN:VEVENT\n".
+			//"ORGANIZER:MAILTO:$from_address\n".
+			"DTSTART:$start\n".
+			"DTEND:$end\n".
+			"LOCATION:$location\n".
+			"TRANSP:OPAQUE\n".
+			"SEQUENCE:0\n".
+			"UID:$cal_uid\n".
+			"DTSTAMP:$todaystamp\n".
+			"DESCRIPTION:$description\n".
+			"SUMMARY:$subject\n".
+			"PRIORITY:5\n".
+			"CLASS:PUBLIC\n".
+			"END:VEVENT\n".
+			"END:VCALENDAR\n";
 	
-$ical =    
-'BEGIN:VCALENDAR
-PRODID:-//Microsoft Corporation//Outlook 11.0 MIMEDIR//EN
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-//ORGANIZER:MAILTO:'.$from_address.'
-DTSTART:'.$start.'
-DTEND:'.$end.'
-LOCATION:'.$event['location'].'
-TRANSP:OPAQUE
-SEQUENCE:0
-UID:'.$cal_uid.'
-DTSTAMP:'.$todaystamp.'
-DESCRIPTION:'."".'
-SUMMARY:'.$event['subject'].'
-PRIORITY:5
-CLASS:PUBLIC
-END:VEVENT
-END:VCALENDAR';   	
-	
-	return $ical;
+		return $ical;
 	}
 }
