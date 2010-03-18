@@ -119,7 +119,15 @@ function selectedTime(){
 	main.value = dropdownValue;
 	
 	if(ref){
-		ref.value = dropdownValue;	
+/* 		arr = dropdownValue.split(":");
+		d1 = new Date (2000,1,1,parseInt(arr[0]),parseInt(arr[1]),0,0);
+		d2 = new Date();
+		d2.setTime(d1.getTime() + (30 * 60 * 1000)); 
+	
+		am_pm = d2.getHours() < 12 ? 'AM' : 'PM';
+		min = (d2.getMinutes() < 10 ? '0' : '') + d2.getMinutes();
+		ref.value = d2.getHours() + ":" + min+ " " + am_pm;	 */
+		ref.value = dropdownValue;
 	}
 		
 	main.focus();
