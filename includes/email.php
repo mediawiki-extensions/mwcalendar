@@ -4,63 +4,71 @@ require_once( mwcalendar_base_path . '/includes/helpers.php');
 
 class CalendarEmail{
 	
-	public static function send($to, $event, $action='save'){
+	public static function send($to, $event){
 		global $wgUser,$wgVersion,$wgOutputEncoding,$wgPasswordSender;
 			
 		# dont send email if current user doesnt have one...?
 		//if( $wgUser->getEmail() == '') return;
 		$from = ( $wgUser->getEmail() != '') ? new MailAddress($wgUser->getEmail()) : new MailAddress($wgPasswordSender);
-	
-		$subject = strip_tags($event['subject']);
 		
 		//self::sendIcalAttachement($from,$to,$event);
-		self::sendIcalEmail($from, $to, $subject, $event['location'], $event['text'], $event['start'], $event['end'], $event);
+		self::sendIcalEmail($from, $to, $event);
 	}
 	
-	private static function sendIcalEmail($from,$to,$subject,$location,$body,$start,$end,$event) {
+	private static function sendIcalEmail($from, $to, $event) {
 
 		$message = '';
+		$body = $event['text'];
 		
-		$start = date('Ymd',$start).'T'.date('His',$start);
-		$end = date('Ymd',$end).'T'.date('His',$end);
+		$start = date('Ymd',$event['start']).'T'.date('His',$event['start']);
+		$end = date('Ymd',$event['end']).'T'.date('His',$event['end']);
 		$todaystamp = date('Ymd').'T'.date('His');
-		
-		//Create unique identifier
-		$cal_uid = date('Ymd').'T'.date('His')."-".rand()."@mydomain.com";
-		
+				
 		//Create Mime Boundry
-		$mime_boundary = "----Meeting Booking----".md5(time());
+		$mime_boundary = "----mwcalendar----".md5(time());
 
 		//Create Email Headers
-		$headers = "Content-class: urn:content-classes:message\n";
-		$headers .= "MIME-Version: 1.0\n";
+		$headers = "MIME-Version: 1.0\n";
+		$headers .= "Content-class: urn:content-classes:message\n";		
 		$headers .= "From:$from\n";
 		$headers .= "Reply-To:$from\n";
 		$headers .= "Content-Type: multipart/alternative; boundary=\"$mime_boundary\"\n";
 		
-		//Create Email Body (HTML)
+		## html
 		$message .= "--$mime_boundary\n";
 		$message .= "Content-Type: text/html; charset=iso-8859-1\n"; 
-		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 
-	
+		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 	
 		$message .= "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n";		
-		$message .= "<html>\n";
-		$message .= "<head>\n";
-		$message .= "<META HTTP-EQUIV=3D\"Content-Type\" CONTENT=3D\"text/html; = charset=3Diso-8859-1\">\n";
-		$message .= "<META NAME=3D\"Generator\" CONTENT=3D\"MS Exchange Server version = 6.5.7655.7\">\n";
-		$message .= "</head>\n";
-		$message .= "<body>\n";
-		$message .= $body . "\n";
-		$message .= "</body>\n";
-		$message .= "</html>\n";
-		$message .= "--$mime_boundary\n";
-			
- 		$message .= "Content-Type: text/calendar;name=\"meeting.ics\";method=REQUEST\n";
-		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 
+		$message .= "<html><head></head><body>" . $body . "</body></html>\n";
 		
-		$message .= self::build_ical($from,$to,$event);   
+		## icalendar
+		$message .= "--$mime_boundary\n";	
+ 		$message .= "Content-Type: text/calendar;name=\"meeting.ics\";method=REQUEST\n";
+		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 		
+		$message .= self::build_ical($from, $event);   
 		$message .= "--$mime_boundary\n";
 
+		## send emails
+		$subject = strip_tags($event['subject']);
+		self::sendmail($to, $subject, $message, $headers);
+	}
+	
+	private static function sendIcalAttachement($from,$to,$event){
+	
+		$headers = "MIME-Version: 1.0\n";			
+		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
+		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
+		$headers .= "Content-Disposition: attachment; filename=\"meeting.ics\"\n";
+		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
+		
+		$message = self::build_ical($from, $event);
+		
+		$subject = strip_tags($event['subject']);
+		self::sendmail($to, $subject, $message, $headers);
+	}
+	
+	private static function sendmail($to, $subject, $message, $headers){
+		
 		$arr = explode("\n", $to);
 		$arr = array_unique($arr); //remove duplicates		
 		foreach($arr as $u){
@@ -70,49 +78,11 @@ class CalendarEmail{
 			if($user){
 				mail( $user->getEmail(), $subject, $message, $headers );
 			}
-		}
-		
-		//SEND MAIL
-		//$mail_sent = @mail( $email, $subject, $message, $headers );
-		
-		if($mail_sent)     {
-			return true;
-		} else {
-			return false;
-		}   
-
+		}		
 	}
 	
-	private static function sendIcalAttachement($from,$to,$event){
-	
-		$headers = "From: ".$from." <".$from.">\n";
-		$headers .= "Reply-To: ".$from." <".$from.">\n";
-		
-		$headers .= "MIME-Version: 1.0\n";			
-		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
-		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
-		$headers .= "Content-Disposition: attachment; filename=\"meeting.ics\"\n";
-
-		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
-		$message .= self::build_ical($from,$to,$event);
-		
-		$arr = explode("\n", $to);
-		$arr = array_unique($arr); //remove duplicates		
-		foreach($arr as $u){
-			$username = explode('(',$u);
-			$user = User::newFromName(trim($username[0]));
+	private static function build_ical($from,$event){
 			
-			if($user){
-				mail( $user->getEmail(), $event['subject'], $message, $headers );
-			}
-		}
-		
-		//return $headers;
-	}
-	
-	private static function build_ical($from,$to,$event){
-		$from_name = "My Name";
-				
 		$start = date('Ymd',$event['start']).'T'.date('His',$event['start']);
 		$end = date('Ymd',$event['end']).'T'.date('His',$event['end']);
 		$location = $event['location'];
@@ -124,6 +94,10 @@ class CalendarEmail{
 		//Create unique identifier
 		$cal_uid = date('Ymd').'T'.date('His')."-".rand();
 		
+		$description = str_replace("\r\n","\\n",$description);//make sure 1st char of 1st line is escaped or ical will error
+		$description = str_replace("\n","\\n",$description);
+		$description = strip_tags($description);
+	
 		$ical =    
 			"BEGIN:VCALENDAR\n".
 			"PRODID:-//Microsoft Corporation//Outlook 11.0 MIMEDIR//EN\n".
@@ -134,14 +108,14 @@ class CalendarEmail{
 			"DTSTART:$start\n".
 			"DTEND:$end\n".
 			"LOCATION:$location\n".
-//			"TRANSP:OPAQUE\n".
-//			"SEQUENCE:0\n".
+			"TRANSP:OPAQUE\n".
+			"SEQUENCE:0\n".
 			"UID:$cal_uid\n".
 			"DTSTAMP:$todaystamp\n".
 			"DESCRIPTION:$description\n".
 			"SUMMARY:$subject\n".
-//			"PRIORITY:5\n".
-//			"CLASS:PUBLIC\n".
+			"PRIORITY:5\n".
+			"CLASS:PUBLIC\n".
 			"END:VEVENT\n".
 			"END:VCALENDAR\n";
 	
