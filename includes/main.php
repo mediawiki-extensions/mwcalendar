@@ -29,6 +29,8 @@ class mwCalendar{
 	var $useRTE=true;
 	
 
+	
+
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
 		
