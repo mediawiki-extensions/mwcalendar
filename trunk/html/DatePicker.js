@@ -285,7 +285,8 @@ function refreshDatePicker(dateFieldName, year, month, day)
   var today = new Date();
   var todayString = "Today is " + dayArrayMed[today.getDay()] + ", " + monthArrayMed[ today.getMonth()] + " " + today.getDate();
   html += TR_todaybutton + TD_todaybutton;
-  html += "<button class='dpTodayButton' onClick='refreshDatePicker(\"" + dateFieldName + "\");'>today</button> ";
+  //html += "<button class='dpTodayButton' onClick='refreshDatePicker(\"" + dateFieldName + "\");'>today</button> ";
+  html += "<button class='dpTodayButton' onClick='todayClicked(\"" + dateFieldName + "\");'>today</button> ";
   html += "<button class='dpTodayButton' onClick='updateDateField(\"" + dateFieldName + "\");'>close</button>";
   html += xTD + xTR;
  
@@ -295,6 +296,12 @@ function refreshDatePicker(dateFieldName, year, month, day)
   document.getElementById(datePickerDivID).innerHTML = html;
   // add an "iFrame shim" to allow the datepicker to display above selection lists
   adjustiFrame();
+}
+
+function todayClicked(dateFieldName){
+	var thisDay = new Date();
+	refreshDatePicker(dateFieldName);
+	updateDateField(dateFieldName,getDateString(thisDay));
 }
 
 

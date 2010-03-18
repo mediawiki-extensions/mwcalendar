@@ -6,15 +6,22 @@ class CalendarEmail{
 	
 	public static function send($to, $event){
 		global $wgUser,$wgVersion,$wgOutputEncoding,$wgPasswordSender;
-			
-		# dont send email if current user doesnt have one...?
-		//if( $wgUser->getEmail() == '') return;
-		//$from = ( $wgUser->getEmail() != '') ? new MailAddress($wgUser->getEmail()) : new MailAddress($wgPasswordSender);
-		$from = ( $wgUser->getEmail() != '') ? $wgUser->getEmail() :$wgPasswordSender->getEmail();
+
+		$userEmail = $wgUser->getEmail();
+		$adminEmail = $wgPasswordSender;	
+		$from = ( $wgUser->getEmail() != '') ? $userEmail  : $adminEmail;
 		
-		self::sendIcalAttachement($from,$to,$event);
-		//self::sendIcalEmail($from, $to, $event);
-		
+		switch (mwcalendar_email_ical_mode){
+			case 0:
+				## disabled
+				break;
+			case 1:
+				self::sendIcalAttachement($from,$to,$event);
+				break;
+			case 2:
+				self::sendIcalEmail($from, $to, $event);
+				break;
+		}
 		return;
 	}
 	
@@ -63,6 +70,7 @@ class CalendarEmail{
 		$headers .= "Reply-To:$from\n"; 		
 		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
 		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
+//		$headers .= "Content-Type: text/plain; method=PUBLISH;\n";
 		$headers .= "Content-Disposition: attachment; filename=\"event.ics\"\n";
 		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
 		
@@ -87,9 +95,12 @@ class CalendarEmail{
 	}
 	
 	private static function build_ical($from,$event){
-			
-		$start = date('Ymd',$event['start']);//.'T'.date('His',$event['start']);
-		$end = date('Ymd',$event['end']);//.'T'.date('His',$event['end']);
+		
+		$startTime = $event['allday'] ? "" : "T".date('His',$event['start']);
+		$endTime = $event['allday'] ? "" : "T".date('His',$event['end']);
+		
+		$start = date('Ymd',$event['start']) . $startTime;
+		$end = date('Ymd',$event['end']) . $endTime;
 		$location = $event['location'];
 		$subject = $event['subject'];
 		$description = $event['text'];
@@ -108,6 +119,7 @@ class CalendarEmail{
 			"PRODID:-//Microsoft Corporation//Outlook 11.0 MIMEDIR//EN\n".
 			"VERSION:2.0\n".
 			"METHOD:REQUEST\n".
+//			"METHOD:PUBLISH\n".
 			"BEGIN:VEVENT\n".
 			"ORGANIZER:MAILTO:$from\n".
 			"DTSTART:$start\n".
