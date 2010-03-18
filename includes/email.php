@@ -11,8 +11,8 @@ class CalendarEmail{
 		//if( $wgUser->getEmail() == '') return;
 		$from = ( $wgUser->getEmail() != '') ? new MailAddress($wgUser->getEmail()) : new MailAddress($wgPasswordSender);
 		
-		//self::sendIcalAttachement($from,$to,$event);
-		self::sendIcalEmail($from, $to, $event);
+		self::sendIcalAttachement($from,$to,$event);
+		//self::sendIcalEmail($from, $to, $event);
 	}
 	
 	private static function sendIcalEmail($from, $to, $event) {
@@ -61,7 +61,8 @@ class CalendarEmail{
 		$headers .= "Content-Disposition: attachment; filename=\"meeting.ics\"\n";
 		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
 		
-		$message = self::build_ical($from, $event);
+		$message = "testing\n\n";
+		$message .= self::build_ical($from, $event);
 		
 		$subject = strip_tags($event['subject']);
 		self::sendmail($to, $subject, $message, $headers);
