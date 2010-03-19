@@ -21,6 +21,9 @@ class CalendarEmail{
 			case 2:
 				self::sendIcalEmail($from, $to, $event);
 				break;
+			case 3:
+				self::sendEmailOnly($from, $to, $event);
+				break;
 		}
 		return;
 	}
@@ -35,7 +38,7 @@ class CalendarEmail{
 		$todaystamp = date('Ymd').'T'.date('His');
 				
 		//Create Mime Boundry
-		$mime_boundary = "----mwcalendar----".md5(time());
+		$mime_boundary = "mwcalendar-".md5(time());
 
 		//Create Email Headers
 		$headers = "MIME-Version: 1.0\n";
@@ -56,7 +59,7 @@ class CalendarEmail{
  		$message .= "Content-Type: text/calendar;name=\"event.ics\";method=REQUEST\n";
 		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 		
 		$message .= self::build_ical($from, $event);   
-		$message .= "--$mime_boundary\n";
+		$message .= "--$mime_boundary--\n"; //last boundry must have "--" at the end
 
 		## send emails
 		$subject = strip_tags($event['subject']);
@@ -65,18 +68,84 @@ class CalendarEmail{
 	
 	private static function sendIcalAttachement($from,$to,$event){
 		
-		$headers = "MIME-Version: 1.0\n";	
+		$message = '';
+		$body = $event['text'];
+		
+		$start = date('Ymd',$event['start']).'T'.date('His',$event['start']);
+		$end = date('Ymd',$event['end']).'T'.date('His',$event['end']);
+		$todaystamp = date('Ymd').'T'.date('His');
+				
+		//Create Mime Boundry
+		$mime_boundary_mixed = "mwcalendar_mixed-".md5(time());
+		$mime_boundary_alternative = "mwcalendar_alternative-".md5(time());
+
+		//Create Email Headers
+		$headers = "MIME-Version: 1.0\n";
+		$headers .= "Content-class: urn:content-classes:message\n";		
 		$headers .= "From:$from\n";
-		$headers .= "Reply-To:$from\n"; 		
-		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
-		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
-		$headers .= "Content-Disposition: attachment; filename=\"event.ics\"\n";
-		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
+		$headers .= "Reply-To:$from\n";
+		$headers .= "Content-Type: multipart/mixed; boundary=\"$mime_boundary_mixed\"\n";
+		$headers .= "--$mime_boundary_mixed\n";	
+		$headers .= "Content-Type: multipart/alternative; boundary=\"$mime_boundary_alternative\"\n";
 		
-		$message = self::build_ical($from, $event);
+		## html
+		$message .= "--$mime_boundary_alternative\n";
+		$message .= "Content-Type: text/html; charset=iso-8859-1\n"; 
+		$message .= "Content-Transfer-Encoding: 8bit\n\n"; 	
+		$message .= self::buildHtmlBody($event);
+		$message .= "--$mime_boundary_alternative--\n";
 		
+		## icalendar
+		$message .= "--$mime_boundary_mixed\n";		
+		$message .= "Content-Type: text/plain; method=REQUEST;\n";
+		$message .= "Content-Disposition: attachment; filename=\"event.ics\"\n";
+		$message .= "Content-Transfer-Encoding:8bit\n\n";		
+		$message .= self::build_ical($from, $event);
+		$message .= "--$mime_boundary_mixed--\n"; //last boundry must have "--" at the end
+
+		## send emails
 		$subject = strip_tags($event['subject']);
-		self::sendmail($to, $subject, $message, $headers);
+		self::sendmail($to, $subject, $message, $headers);		
+		
+	}
+	
+	private static function sendEmailOnly($from,$to,$event){
+		
+		$body = $event['text'];
+	
+		//Create Email Headers
+		$headers = "MIME-Version: 1.0\n";
+		$headers .= "Content-class: urn:content-classes:message\n";		
+		$headers .= "From:$from\n";
+		$headers .= "Reply-To:$from\n";
+		$headers .= "Content-Type: text/html;charset=iso-8859-1\n";
+		$headers .= "Content-Transfer-Encoding: 8bit\n\n"; 		
+		
+		## html
+		$message = self::buildHtmlBody($event);
+		
+		## send emails
+		$subject = strip_tags($event['subject']);
+		self::sendmail($to, $subject, $message, $headers);			
+	}
+	
+	private static function buildHtmlBody($event){	
+		
+		$start = helpers::date($event['start']) ." ". helpers::time($event['start']);
+		$end = helpers::date($event['end']) ." ". helpers::time($event['end']);
+		$location = $event['location'];
+		$text = $event['text'];
+			
+		$html = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n";		
+		$html .= "<html><head></head><body>\n";
+		$html .= "<table>\n";
+		$html .= "<tr><td>From: </td><td>$start</td></tr>\n";
+		$html .= "<tr><td>End: </td><td>$end</td></tr>\n";
+		$html .= "</table>\n<br /><hr><br />";
+		$html .= "$text\n";
+		$html .=   "</body></html>\n";		
+	
+		return $html;
 	}
 	
 	private static function sendmail($to, $subject, $message, $headers){
