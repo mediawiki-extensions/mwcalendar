@@ -16,7 +16,7 @@ define( 'mwcalendar_email_allday_format',1 ); // 1=20101215-20101216 (Outlook?),
 ######### OPTIONS ###############
 
 # set the version
-define('mwcalendar_version','0.3.0'); //do not modify format
+define('mwcalendar_version','0.3.1'); //do not modify format
 define('mwcalendar_version_label',' (beta)'); //do not modify format
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
