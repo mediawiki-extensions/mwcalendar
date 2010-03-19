@@ -136,13 +136,17 @@ class CalendarEmail{
 		$location = $event['location'];
 		$text = $event['text'];
 			
+		$url = "<a href='" . helpers::curPageURL() . "'>" . $event['calendar'] . "</a><br />";
+			
 		$html = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n";		
 		$html .= "<html><head></head><body>\n";
 		$html .= "<table>\n";
-		$html .= "<tr><td>From: </td><td>$start</td></tr>\n";
-		$html .= "<tr><td>End: </td><td>$end</td></tr>\n";
-		$html .= "</table>\n<br /><hr><br />";
+		$html .= "<tr><td>Starts: </td><td>&nbsp;$start</td></tr>\n";
+		$html .= "<tr><td>Ends: </td><td>&nbsp;$end</td></tr>\n";
+		$html .= "</table><hr><br />\n";
 		$html .= "$text\n";
+		$html .= "<hr>";
+		$html .= "Calendar: $url";
 		$html .=   "</body></html>\n";		
 	
 		return $html;
