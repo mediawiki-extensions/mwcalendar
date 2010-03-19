@@ -70,7 +70,6 @@ class CalendarEmail{
 		$headers .= "Reply-To:$from\n"; 		
 		$headers .= "Content-class: urn:content-classes:calendarmessage\n";		
 		$headers .= "Content-Type: text/plain; method=REQUEST;\n";
-//		$headers .= "Content-Type: text/plain; method=PUBLISH;\n";
 		$headers .= "Content-Disposition: attachment; filename=\"event.ics\"\n";
 		$headers .= "Content-Transfer-Encoding: 8bit\n\n";
 		
@@ -96,11 +95,32 @@ class CalendarEmail{
 	
 	private static function build_ical($from,$event){
 		
-		$startTime = $event['allday'] ? "" : "T".date('His',$event['start']);
-		$endTime = $event['allday'] ? "" : "T".date('His',$event['end']);
-		
-		$start = date('Ymd',$event['start']) . $startTime;
-		$end = date('Ymd',$event['end']) . $endTime;
+		if(mwcalendar_email_allday_format ==1){
+			## - 20101215-20101216
+			## - standard format, but converts to UTC? timezone offset in both attachment and embedded)
+			$DTSTART = $event['allday'] ?
+				"DTSTART;VALUE=DATE:".date('Ymd',$event['start'])
+				:
+				"DTSTART:".date('Ymd',$event['start']) . "T" . date('His', $event['start']);
+			
+			$DTEND = $event['allday'] ?
+				"DTEND;VALUE=DATE:".date('Ymd',$event['end'] +86400)
+				:
+				"DTEND:".date('Ymd',$event['end']) . "T" . date('His', $event['end']);
+		}else{
+			## - 20101215T000000-20101215T235959
+			## - convert to destination timezone in embedded, but not attachment mode
+			$DTSTART = $event['allday'] ?
+				"DTSTART:".date('Ymd',$event['start']) . "T000000"
+				:
+				"DTSTART:".date('Ymd',$event['start']) . "T" . date('His', $event['start']);
+			
+			$DTEND = $event['allday'] ?
+				"DTEND:".date('Ymd',$event['end']) . "T235959"
+				:
+				"DTEND:".date('Ymd',$event['end']) . "T" . date('His', $event['end']);
+		}
+
 		$location = $event['location'];
 		$subject = $event['subject'];
 		$description = $event['text'];
@@ -118,14 +138,15 @@ class CalendarEmail{
 			"BEGIN:VCALENDAR\n".
 			"PRODID:-//Microsoft Corporation//Outlook 11.0 MIMEDIR//EN\n".
 			"VERSION:2.0\n".
-			"METHOD:REQUEST\n".
-//			"METHOD:PUBLISH\n".
+//			"METHOD:REQUEST\n".		/* MEETING (Accept, Decline, etc) */
+			"METHOD:PUBLISH\n".		/* APPT */
 			"BEGIN:VEVENT\n".
 			"ORGANIZER:MAILTO:$from\n".
-			"DTSTART:$start\n".
-			"DTEND:$end\n".
+			"$DTSTART\n".
+			"$DTEND\n".
 			"LOCATION:$location\n".
-			"TRANSP:OPAQUE\n".
+//			"TRANSP:OPAQUE\n". 		/* BUSY */
+			"TRANSP:TRANSPARENT\n". /* FREE */
 			"SEQUENCE:0\n".
 			"UID:$cal_uid\n".
 			"DTSTAMP:$todaystamp\n".
