@@ -11,7 +11,7 @@ define( 'mwcalendar_debugger', 0); // 0=off, 1=standard, 2=custom, 3=all
 
 ######### OPTIONS ###############
 define( 'mwcalendar_email_ical_mode', 1 ); // 0=off, 1=attachment, 2=embedded, 3=html email only
-define( 'mwcalendar_email_allday_format',1 ); // 1=20101215-20101216, 2=20101215T000000-20101215T325959
+define( 'mwcalendar_email_allday_format',1 ); // 1=20101215-20101216 (Outlook?), 2=20101215T000000-20101215T325959
 
 ######### OPTIONS ###############
 
