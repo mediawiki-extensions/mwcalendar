@@ -67,10 +67,11 @@ class mwCalendar{
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
-
+	
 		$arrParamsGrps = isset($params['groups']) ? explode(',',$params['groups']) : array();
 		foreach($arrParamsGrps as $grp){
-			$list .= "<option>#$grp</option>";
+			$grpCount = count($this->db->getGroupUsers($grp));
+			$list .= "<option>#$grp ($grpCount " . helpers::translate("mwc_members") . ")</option>";
 		} 
 		
 /* 		$arrGroups = $this->db->getDatabaseGroups();
@@ -274,8 +275,9 @@ class mwCalendar{
 		
 		if(is_array($arr_invites)){
 			foreach($arr_invites as $invite) {
-				if(strpos($invite,"#") ===0){
-					$strInvites .= $invite . "&#10;";
+				if(strpos($invite,"#") ===0){		
+					$grpCount = count($this->db->getGroupUsers(trim( str_replace("#","",$invite) )));
+					$strInvites .= "$invite ($grpCount " . helpers::translate("mwc_members") . ")" . "&#10;";
 				}else{			
 					$user = User::newFromName( trim($invite) );
 					if($user){

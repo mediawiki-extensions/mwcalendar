@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 ########## DEBUGGER ################
-define( 'mwcalendar_debugger', 1); // 0=off, 1=standard, 2=custom, 3=all
+define( 'mwcalendar_debugger', 3); // 0=off, 1=standard, 2=custom, 3=all
 ########## DEBUGGER ################
 
 ######### OPTIONS ###############
@@ -15,7 +15,7 @@ define( 'mwcalendar_email_allday_format',1 ); // 1=20101215-20101216 (Outlook?),
 ######### OPTIONS ###############
 
 # set the version
-define('mwcalendar_version','0.3.1'); //do not modify format
+define('mwcalendar_version','0.3.2'); //do not modify format
 define('mwcalendar_version_label',' (beta)'); //do not modify format
 define( 'mwcalendar_base_path', dirname(__FILE__) );
 
@@ -27,7 +27,7 @@ require_once( mwcalendar_base_path . '/includes/helpers.php');
 $wgExtensionCredits['parserhook'][] = array(
     'name'=>'mwCalendar',
     'author'=>'Eric Fortin',
-    'url'=>'',
+    'url'=>'http://www.mediawiki.org/wiki/Extension:MW_Calendar',
     'description'=>'MediaWiki Calendar',
     'version'=> mwcalendar_version . mwcalendar_version_label
 );

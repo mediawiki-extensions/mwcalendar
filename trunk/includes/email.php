@@ -163,18 +163,22 @@ class CalendarEmail{
 		
 		$arr = explode("\n", $to);	
 		foreach($arr as $invite){
+			
+			##clean off the (xyz) stuff
+			$temp = explode('(',$invite);
+			$invite = trim($temp[0]);
+			
  			if(strpos($invite,"#") === 0){	
 				$grpUserArr = $db->getGroupUsers( str_replace("#","",$invite));			
 				$arrUsers = array_merge($grpUserArr, $arrUsers);					
 			}else{
-				$temp = explode('(',$invite);
-				$arrUsers[] = trim($temp[0]);
+				$arrUsers[] = $invite;
 			}
 		}
 
 		$arrUsers = array_unique($arrUsers);
-		foreach($arrUsers as $username){
-			$user = User::newFromName($username);
+		foreach($arrUsers as $u){
+			$user = User::newFromName( $u );
 			if($user){
 				if(!$user->getEmail()==''){
 					$email_addresses .= $user->getEmail() . ",";

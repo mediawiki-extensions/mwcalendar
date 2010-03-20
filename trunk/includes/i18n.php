@@ -27,6 +27,7 @@
 		"mwc_event_add" => "add",
 		"mwc_batch_delimiter_text" => "delimiter",
 		"mwc_batch_delimiter_title" => "custom delimiter including 'tab'",
+		"mwc_members" => "members",
 		"" => ""
 	);
 	

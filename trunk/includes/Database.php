@@ -36,7 +36,6 @@ class CalendarDatabase{
 		}else{
 			$r = $dbr->fetchObject( $res );
 
-			//if($r->ver < mwcalendar_version) { 
 			if(version_compare($r->ver, mwcalendar_version, '<')) {
 				$update->validate($r->ver); 
 			}				
@@ -241,6 +240,7 @@ class CalendarDatabase{
 		return $arr;
 	}
 	
+	## get wiki user groups
 	public function getDatabaseGroups(){
 		$table = $this->dbPrefix . 'user_groups';
 		$dbr = wfGetDB( DB_SLAVE );		
