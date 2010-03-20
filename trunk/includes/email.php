@@ -1,6 +1,7 @@
 <?php
 
 require_once( mwcalendar_base_path . '/includes/helpers.php');
+require_once( mwcalendar_base_path . '/includes/Database.php');
 
 class CalendarEmail{
 	
@@ -10,7 +11,7 @@ class CalendarEmail{
 		$userEmail = $wgUser->getEmail();
 		$adminEmail = $wgPasswordSender;	
 		$from = ( $wgUser->getEmail() != '') ? $userEmail  : $adminEmail;
-		
+			
 		switch (mwcalendar_email_ical_mode){
 			case 0:
 				## disabled
@@ -153,17 +154,37 @@ class CalendarEmail{
 	}
 	
 	private static function sendmail($to, $subject, $message, $headers){
+		helpers::debug("Email event triggered");
 		
-		$arr = explode("\n", $to);
-		$arr = array_unique($arr); //remove duplicates		
-		foreach($arr as $u){
-			$username = explode('(',$u);
-			$user = User::newFromName(trim($username[0]));
-			
-			if($user){
-				mail( $user->getEmail(), $subject, $message, $headers );
+		$db = new CalendarDatabase();
+		$arrUsers= array();
+		$grpUserArr=array();
+		$email_addresses = '';
+		
+		$arr = explode("\n", $to);	
+		foreach($arr as $invite){
+ 			if(strpos($invite,"#") === 0){	
+				$grpUserArr = $db->getGroupUsers( str_replace("#","",$invite));			
+				$arrUsers = array_merge($grpUserArr, $arrUsers);					
+			}else{
+				$temp = explode('(',$invite);
+				$arrUsers[] = trim($temp[0]);
 			}
-		}		
+		}
+
+		$arrUsers = array_unique($arrUsers);
+		foreach($arrUsers as $username){
+			$user = User::newFromName($username);
+			if($user){
+				if(!$user->getEmail()==''){
+					$email_addresses .= $user->getEmail() . ",";
+				}
+			}	
+		}
+		if($email_addresses != ""){
+			helpers::debug("Emails sent to: $email_addresses");
+			//mail( $email_addresses, $subject, $message, $headers );
+		}
 	}
 	
 	private static function build_ical($from,$event){

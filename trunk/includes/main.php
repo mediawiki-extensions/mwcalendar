@@ -67,12 +67,23 @@ class mwCalendar{
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
 		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
-			
+
+		$arrParamsGrps = isset($params['groups']) ? explode(',',$params['groups']) : array();
+		foreach($arrParamsGrps as $grp){
+			$list .= "<option>#$grp</option>";
+		} 
+		
+/* 		$arrGroups = $this->db->getDatabaseGroups();
+		foreach($arrGroups as $grp){
+			$list .= "<option>#$grp</option>";
+		} 
+*/			
+		
 		## build the mw user-list which should only be users with active email
 		$arrUsers = $this->db->getDatabaseUsers();
 		while(list($user,$realname) = each($arrUsers)){
 			$realname = htmlentities($realname, ENT_QUOTES);
-			$list .= "<option>$user($realname)</option>";
+			$list .= "<option>$user ($realname)</option>";
 		}
 		
 		$list =  "<SELECT class=notifyselect id=selectNotify name=selectNotify size=8 onClick=selectedListItem()>" . $list . "</SELECT>";
@@ -263,9 +274,13 @@ class mwCalendar{
 		
 		if(is_array($arr_invites)){
 			foreach($arr_invites as $invite) {
-				$user = User::newFromName( trim($invite) );
-				if($user){
-					$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+				if(strpos($invite,"#") ===0){
+					$strInvites .= $invite . "&#10;";
+				}else{			
+					$user = User::newFromName( trim($invite) );
+					if($user){
+						$strInvites .= $invite . "(".$user->getRealName().")&#10;";
+					}
 				}
 			}
 		}

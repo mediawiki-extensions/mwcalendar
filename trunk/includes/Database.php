@@ -214,16 +214,12 @@ class CalendarDatabase{
 	// we're auto creating calendars as needed in the database
 	private function createCalendar($name, $description){
 		$dbw = wfGetDB( DB_MASTER );
-	
-		//$name = addslashes($name);
 		
 		$dbw->insert( 'calendar_header', array(
 			'name' 			=> "$name",
 			'description' 	=> "$description"
 		) );	
-		
-		helpers::debug($name);
-		
+				
 		return $dbw->insertid();
 	}	
 	
@@ -231,9 +227,11 @@ class CalendarDatabase{
 		$table = $this->dbPrefix . 'user';
 		$dbr = wfGetDB( DB_SLAVE );		
 
+		$orderby = "ORDER BY user_real_name; ";
+		
 		$sql = "SELECT *
 					FROM $table
-					WHERE user_email <> ''  LIMIT 0,100;";	
+					WHERE user_email <> '' $orderby";// LIMIT 0,100;";	
 
 		$res = $dbr->query($sql);    
 		while ($r = $dbr->fetchObject( $res )) {					
@@ -242,6 +240,65 @@ class CalendarDatabase{
 		}
 		return $arr;
 	}
+	
+	public function getDatabaseGroups(){
+		$table = $this->dbPrefix . 'user_groups';
+		$dbr = wfGetDB( DB_SLAVE );		
+
+		$orderby = "ORDER BY ug_group;";
+		$where = "WHERE ug_group <>'sysop_x' AND ug_group <> 'bureaucrat' AND ug_group <>'bot'";
+		
+		$sql = "SELECT distinct ug_group FROM $table $where $orderby ";// LIMIT 0,100;";	
+
+		$res = $dbr->query($sql);    
+		while ($r = $dbr->fetchObject( $res )) {							
+			$arr[] = $r->ug_group;
+		}
+		return $arr;
+	}
+	
+	public function getGroupUsers($group, &$usersLF=''){
+		$arr = array();
+		
+		if($group == '') return $arr;
+	
+		$group = str_replace("\r","",$group);
+		$group = str_replace("\n","",$group);
+		$group = trim($group);
+	
+		$temp = '';
+		
+		$table_grp = $this->dbPrefix . 'user_groups ug';
+		$table_usr = $this->dbPrefix . 'user u';
+		$where = "WHERE ug.ug_user=u.user_id AND ug.ug_group='$group'";
+		$dbr = wfGetDB( DB_SLAVE );	
+	
+		$sql = "SELECT u.user_name,u.user_real_name FROM $table_grp, $table_usr $where; ";
+		$res = $dbr->query($sql);    
+		while ($r = $dbr->fetchObject( $res )) {	
+			$usersLF .= "$r->user_name\n";
+			$arr[] = $r->user_name;			
+		}
+
+		return $arr;	
+	}
 
 } //end class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
