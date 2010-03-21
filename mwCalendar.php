@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 ########## DEBUGGER ################
-define( 'mwcalendar_debugger', 3); // 0=off, 1=standard, 2=custom, 3=all
+define( 'mwcalendar_debugger', 2); // 0=off, 1=standard, 2=custom, 3=all
 ########## DEBUGGER ################
 
 ######### OPTIONS ###############

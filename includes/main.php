@@ -34,14 +34,14 @@ class mwCalendar{
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
 		
-		helpers::debug("******** Calendar Init() ******** ");
+		$this->setDefaults($params);	## RUN FIRST ##	
+		
+		$initName = "Name:$this->calendarName; Key:$this->key";
+		helpers::debug("******** Calendar Init()-$initName ******** ");
 		
 		$list = '';	
 		$rteJS = '';
 		
-		 ## RUN FIRST ##
-		$this->setDefaults($params);
-			
 		// set the calendar's initial date
 		$now = $this->now = getdate();
 		
@@ -56,7 +56,7 @@ class mwCalendar{
 			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
 			$this->month = $date['mon'];
 			$this->year = $date['year'];
-			helpers::debug("Coookie found, CHANGED calendar date/time: cookie_name: $cookie_name, cookie_value: $this->month/$this->year");			
+			helpers::debug("Coookie found ($cookie_name), SETTING calendar date/time: $this->month/$this->year");			
 		}		
 		
 		$this->title = $wgScript . '?title=' . $wgTitle->getPrefixedText();
@@ -65,9 +65,10 @@ class mwCalendar{
 		$this->db->validateVersion(); //make sure db and files match		
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
-		## no need to do anything else in the calendar until any db updates have completed
-//		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName,$this->key) );	
-		EventHandler::CheckForEvents($this->key);	
+		## no need to do anything else in the calendar until any db updates have completed		
+		if( helpers::is_my_calendar($this->calendarName, $this->key) ){
+			EventHandler::CheckForEvents();	
+		}
 	
 		$arrParamsGrps = isset($params['groups']) ? explode(',',$params['groups']) : array();
 		foreach($arrParamsGrps as $grp){
@@ -222,7 +223,7 @@ class mwCalendar{
 		$startDate = $endDate = helpers::date($timestamp);
 
 		// update the 'hidden' input field so we retain the calendar name for the db update
-		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[calendar]]', $this->calendarName, $html);
 		$html = str_replace('[[CalendarKey]]', $this->key, $html);
 		$html = str_replace('[[EventID]]', null, $html);
 		$html = str_replace('[[Start]]', $startDate, $html);
@@ -311,7 +312,7 @@ class mwCalendar{
 		}		
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
-		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[calendar]]', $this->calendarName, $html);
 		$html = str_replace('[[CalendarKey]]', $this->key, $html);
 		$html = str_replace('[[EventID]]', $event['id'], $html);	
 		$html = str_replace('[[Subject]]', $event['subject'], $html);	
@@ -356,7 +357,8 @@ class mwCalendar{
 	
 	// this function removes or defaults any HTML tags that havent been overwritten
 	private function setHtmlTags($html){
-		$html = str_replace('[[CalendarName]]', '', $html);
+		$html = str_replace('[[calendar]]', '', $html);
+		$html = str_replace('[[CalendarKey]]', '', $html);
 		$html = str_replace('[[EventID]]', '', $html);	
 		$html = str_replace('[[Subject]]', '', $html);	
 		$html = str_replace('[[Location]]', '', $html);			
@@ -454,8 +456,8 @@ class mwCalendar{
 		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
 		$hidden = 
 			  "<input name=timestamp type=hidden value='$timestamp'/>"
-			. "<input name=name type=hidden value=\"$this->calendarName\"/>"
-			. "<input name=key type=hidden value=\"$this->key\" />";
+			. "<input name=calendar type=hidden value=\"$this->calendarName\"/>"
+			. "<input name=CalendarKey type=hidden value=\"$this->key\" />";
 		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
 		

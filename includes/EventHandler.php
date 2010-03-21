@@ -13,13 +13,10 @@ class EventHandler{
 
 	public function EventHandler(){}
 	
-	public static function CheckForEvents($key){
+	public static function CheckForEvents(){
 		global $wgUser,$wgOut;
 		
-		if( !isset($_POST['key']) ) return;
-		if($key != $_POST['key']) return;
-		
-		helpers::debug('Checking for POST events - key: ' . $_POST['key']);
+		helpers::debug('Checking for POST events');
 		
 		$db = new CalendarDatabase();
 		
@@ -87,10 +84,10 @@ class EventHandler{
 			}else{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
-			
-			$cookie_name = helpers::cookie_name( $_POST['name']."_".$_POST['key'] );
-			helpers::debug('Setting cookie: '.$cookie_name);
+						
+			$cookie_name = helpers::cookie_name( $_POST['calendar']."_".$_POST['CalendarKey'] );
 			setcookie($cookie_name, $timestamp);
+			helpers::debug('Setting cookie: '.$cookie_name);
 			
 			helpers::debug("POST: Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
 			header("Location: " . $url);
