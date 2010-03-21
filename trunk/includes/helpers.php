@@ -62,20 +62,21 @@ class helpers{
 		return $arr;
 	}
 	
-	static function is_my_calendar($calendarName){
+	static function is_my_calendar($calendarName,$key){
 
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 
 		if(isset($arr[1])){
 			$name = urldecode($arr[1]);
 		
-			if( stripos($name, $calendarName) > 0)
+			if( stripos($name, $calendarName."-".$key) > 0)
 				return true;
 		}
 	
 		if( isset($_POST['calendar'])){
 			if($_POST['calendar'] == $calendarName)
-				return true;
+				if($_POST['key'] == $key)
+					return true;
 		}
 
 		return false;	
