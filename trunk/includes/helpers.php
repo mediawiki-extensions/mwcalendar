@@ -62,25 +62,26 @@ class helpers{
 		return $arr;
 	}
 	
-	static function is_my_calendar($calendarName,$key){
-
+ 	static function is_my_calendar($name,$key){
+		
 		$arr = explode( '&', $_SERVER['REQUEST_URI'] );
 
 		if(isset($arr[1])){
-			$name = urldecode($arr[1]);
+			$url_name = urldecode($arr[1]);
 		
-			if( stripos($name, $calendarName."-".$key) > 0)
+			if( stripos($url_name, $name."-".$key) > 0)
 				return true;
 		}
 	
 		if( isset($_POST['calendar'])){
-			if($_POST['calendar'] == $calendarName)
-				if($_POST['key'] == $key)
+			helpers::debug("is_my_calendar-\$_POST: ". $_POST['calendar'].$_POST['CalendarKey']);	
+			if($_POST['calendar'] == $name)
+				if($_POST['CalendarKey'] == $key)
 					return true;
 		}
 
 		return false;	
-	}
+	} 
 	
 	static function translate($value, $key=""){
 		global $wgLang;
