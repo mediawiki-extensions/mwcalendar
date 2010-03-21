@@ -36,8 +36,7 @@ class mwCalendar{
 		
 		$this->setDefaults($params);	## RUN FIRST ##	
 		
-		$initName = "Name:$this->calendarName; Key:$this->key";
-		helpers::debug("******** Calendar Init()-$initName ******** ");
+		helpers::debug("******** Calendar Init()-$this->key ******** ");
 		
 		$list = '';	
 		$rteJS = '';
@@ -50,7 +49,7 @@ class mwCalendar{
 		$this->day = $now['mday'];		
 		
 		## load normal calendar
-		$cookie_name = helpers::cookie_name($this->calendarName."_".$this->key ); 
+		$cookie_name = helpers::cookie_name( $this->key ); 
 		helpers::debug('Checking for cookie: '.$cookie_name);
 		if( isset($_COOKIE[$cookie_name]) ){	
 			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
@@ -66,7 +65,7 @@ class mwCalendar{
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed		
-		if( helpers::is_my_calendar($this->calendarName, $this->key) ){
+		if( helpers::is_my_calendar($this->key) ){
 			EventHandler::CheckForEvents();	
 		}
 	
@@ -162,7 +161,10 @@ class mwCalendar{
 	## SET DEFAULTS ##
 	private function setDefaults($params){
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
-		$this->key = isset( $params['key'] ) ? $params['key'] : "defaultkey";
+		//$this->key = isset( $params['key'] ) ? $params['key'] : "a7t9dp9z"; ## keys makes the calendar unique
+		
+		$key = $this->calendarName . "-" . (isset( $params['key'] ) ? $params['key'] : "a7t9dp9z"); ## keys makes the calendar unique
+		$this->key = $key;
 		
 		## dont allow the following: '&' '\'
 		$bInvaid = preg_match('/(&)|(\\\)/',$params['name']);
@@ -193,7 +195,7 @@ class mwCalendar{
 			$urlEvent = explode( '=', $arrUrl[2] ); #ex: EditEvent=45
 		}
 
-		if( helpers::is_my_calendar($this->calendarName,$this->key) ){
+		if( helpers::is_my_calendar($this->key) ){
 			if($urlEvent[0] == 'AddEvent' ){
 				return $html . $this->url_AddEvent($arrUrl[0],$urlEvent[1]);			
 			}
@@ -512,7 +514,7 @@ class mwCalendar{
 		
 		$timestamp = mktime(0,0,0,$month,$day,$year);
 
-		$url = $this->cleanLink( $this->title ) . '&Name='.($this->calendarName."-".$this->key).'&AddEvent=' . $timestamp;
+		$url = $this->cleanLink( $this->title ) . '&Name='.($this->key).'&AddEvent=' . $timestamp;
 		
 		$link = "<a href=\"$url\">".helpers::translate('mwc_new').'</a>';		
 		return $link;
@@ -664,7 +666,7 @@ class mwCalendar{
 		$title = $this->fixJavascriptSpecialChars($title);
 		$text = $this->fixJavascriptSpecialChars($text);
 		
-		$url = $this->cleanLink($this->title) . '&Name='.($this->calendarName."-".$this->key).'&EditEvent=' . $event['id'];
+		$url = $this->cleanLink($this->title) . '&Name='.($this->key).'&EditEvent=' . $event['id'];
 		$link = "<a href=\"$url\" title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
 		
 		return $link;

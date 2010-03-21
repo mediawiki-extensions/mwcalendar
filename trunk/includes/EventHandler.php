@@ -85,7 +85,7 @@ class EventHandler{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
 						
-			$cookie_name = helpers::cookie_name( $_POST['calendar']."_".$_POST['CalendarKey'] );
+			$cookie_name = helpers::cookie_name( $_POST['CalendarKey'] );
 			setcookie($cookie_name, $timestamp);
 			helpers::debug('Setting cookie: '.$cookie_name);
 			
