@@ -50,7 +50,7 @@ class mwCalendar{
 		$this->day = $now['mday'];		
 		
 		## load normal calendar
-		$cookie_name = helpers::cookie_name($this->calendarName ); 
+		$cookie_name = helpers::cookie_name($this->calendarName."_".$this->key ); 
 		helpers::debug('Checking for cookie: '.$cookie_name);
 		if( isset($_COOKIE[$cookie_name]) ){	
 			$date = getdate($_COOKIE[$cookie_name]); //timestamp value
@@ -66,7 +66,8 @@ class mwCalendar{
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed
-		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName) );	
+//		EventHandler::CheckForEvents(helpers::is_my_calendar($this->calendarName,$this->key) );	
+		EventHandler::CheckForEvents($this->key);	
 	
 		$arrParamsGrps = isset($params['groups']) ? explode(',',$params['groups']) : array();
 		foreach($arrParamsGrps as $grp){
@@ -160,6 +161,7 @@ class mwCalendar{
 	## SET DEFAULTS ##
 	private function setDefaults($params){
 		$this->calendarName = isset( $params['name'] ) ? $params['name'] :  helpers::translate('mwc_default_name');
+		$this->key = isset( $params['key'] ) ? $params['key'] : "defaultkey";
 		
 		## dont allow the following: '&' '\'
 		$bInvaid = preg_match('/(&)|(\\\)/',$params['name']);
@@ -190,7 +192,7 @@ class mwCalendar{
 			$urlEvent = explode( '=', $arrUrl[2] ); #ex: EditEvent=45
 		}
 
-		if( helpers::is_my_calendar($this->calendarName) ){
+		if( helpers::is_my_calendar($this->calendarName,$this->key) ){
 			if($urlEvent[0] == 'AddEvent' ){
 				return $html . $this->url_AddEvent($arrUrl[0],$urlEvent[1]);			
 			}
@@ -221,6 +223,7 @@ class mwCalendar{
 
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[CalendarKey]]', $this->key, $html);
 		$html = str_replace('[[EventID]]', null, $html);
 		$html = str_replace('[[Start]]', $startDate, $html);
 		$html = str_replace('[[End]]', $endDate, $html);
@@ -309,6 +312,7 @@ class mwCalendar{
 			
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[CalendarName]]', $this->calendarName, $html);
+		$html = str_replace('[[CalendarKey]]', $this->key, $html);
 		$html = str_replace('[[EventID]]', $event['id'], $html);	
 		$html = str_replace('[[Subject]]', $event['subject'], $html);	
 		$html = str_replace('[[Location]]', $event['location'], $html);			
@@ -446,10 +450,18 @@ class mwCalendar{
 			$ret .= '</tr>';
 		}
 		
+		//hidden fields for multiple calendars per page...
+		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
+		$hidden = 
+			  "<input name=timestamp type=hidden value='$timestamp'/>"
+			. "<input name=name type=hidden value=\"$this->calendarName\"/>"
+			. "<input name=key type=hidden value=\"$this->key\" />";
+		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
 		
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
+		$calendarHTML = str_replace('[[HIDDEN]]', $hidden, $calendarHTML);
 		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
 		
 		return $calendarHTML;
@@ -498,7 +510,7 @@ class mwCalendar{
 		
 		$timestamp = mktime(0,0,0,$month,$day,$year);
 
-		$url = $this->cleanLink( $this->title ) . '&Name='.($this->calendarName).'&AddEvent=' . $timestamp;
+		$url = $this->cleanLink( $this->title ) . '&Name='.($this->calendarName."-".$this->key).'&AddEvent=' . $timestamp;
 		
 		$link = "<a href=\"$url\">".helpers::translate('mwc_new').'</a>';		
 		return $link;
@@ -528,10 +540,8 @@ class mwCalendar{
 		$navHTML = str_replace('[[CALENDAR_NAME]]', $title, $navHTML);
 	
 		$timestamp = mktime(12,0,0,$this->month,1,$this->year);
-		$hidden = "<input name=timestamp type=hidden value='$timestamp' size=10>"
-			. "<input name=name type=hidden value=\"".$this->calendarName."\" size=10>";
 	
-		return $navHTML.$hidden;
+		return $navHTML;
 	}
 
 	function buildMonthSelect(){
@@ -652,7 +662,7 @@ class mwCalendar{
 		$title = $this->fixJavascriptSpecialChars($title);
 		$text = $this->fixJavascriptSpecialChars($text);
 		
-		$url = $this->cleanLink($this->title) . '&Name='.($this->calendarName).'&EditEvent=' . $event['id'];
+		$url = $this->cleanLink($this->title) . '&Name='.($this->calendarName."-".$this->key).'&EditEvent=' . $event['id'];
 		$link = "<a href=\"$url\" title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
 		
 		return $link;

@@ -13,10 +13,13 @@ class EventHandler{
 
 	public function EventHandler(){}
 	
-	public static function CheckForEvents($can_update_db){
+	public static function CheckForEvents($key){
 		global $wgUser,$wgOut;
 		
-		helpers::debug('Checking for POST events');
+		if( !isset($_POST['key']) ) return;
+		if($key != $_POST['key']) return;
+		
+		helpers::debug('Checking for POST events - key: ' . $_POST['key']);
 		
 		$db = new CalendarDatabase();
 		
@@ -27,7 +30,7 @@ class EventHandler{
 		$whodidit = $wgUser->getName();
 
 		// see if a new event was saved and apply changes to database
-		if ( isset($_POST["save"]) && $can_update_db){
+		if ( isset($_POST["save"]) ){
 			helpers::debug("POST: Event Saved");
 			
 			$arrEvent = self::buildEventArray();
@@ -46,13 +49,13 @@ class EventHandler{
 			header("Location: " . $url);
 		}
 
-		if ( isset($_POST["savebatch"]) && $can_update_db ){
+		if ( isset($_POST["savebatch"]) ){
 			helpers::debug("POST: Batch Saved");
 			self::addFromBatch($db, $whodidit);
 			header("Location: " . $url);
 		}	
 		
-		if ( isset($_POST["delete"]) && $can_update_db  ){
+		if ( isset($_POST["delete"])  ){
 			helpers::debug("POST: Event Deleted");
 			$db->deleteEvent($_POST['eventid']);
 			
@@ -85,7 +88,7 @@ class EventHandler{
 				$timestamp = mktime(0,0,0,$month,1,$year); //modified date
 			}
 			
-			$cookie_name = helpers::cookie_name( $_POST['name'] );
+			$cookie_name = helpers::cookie_name( $_POST['name']."_".$_POST['key'] );
 			helpers::debug('Setting cookie: '.$cookie_name);
 			setcookie($cookie_name, $timestamp);
 			
