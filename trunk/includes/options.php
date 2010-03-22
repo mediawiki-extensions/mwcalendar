@@ -11,7 +11,7 @@ class Options{
 		$html .= "<h2>Options</h2>";
 		$html .= $this->buildOptionList($calendar);
 		
-		$html .= "<br><br><input type=submit name='SaveOptions' value='Save' />";
+		$html .= "<br><hr><input type=submit name='SaveOptions' value='Save' />";
 		$html .= "<input type=hidden name='calendar' value='$calendar' />";
 		$html .= "</form>";
 		

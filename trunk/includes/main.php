@@ -71,7 +71,8 @@ class mwCalendar{
 		if( helpers::is_my_calendar($this->key)){
 			EventHandler::CheckForEvents();	
 		}
-	
+		
+		## add any custom groups
 		$arrParamsGrps = isset($params['groups']) ? explode(',',$params['groups']) : array();
 		foreach($arrParamsGrps as $grp){
 			$grpCount = count($this->db->getGroupUsers($grp));
@@ -92,6 +93,7 @@ class mwCalendar{
 		}
 		
 		$list =  "<SELECT class=notifyselect id=selectNotify name=selectNotify size=8 onClick=selectedListItem()>" . $list . "</SELECT>";
+		
 		## pull in all the html template forms we have
 		$addEventHtml = file_get_contents( mwcalendar_base_path . "/html/AddEvent.html");	
 		$batchHtml = file_get_contents( mwcalendar_base_path . "/html/batchadd.html");
@@ -172,7 +174,7 @@ class mwCalendar{
 		## dont allow the following: '&' '\'
 		$bInvaid = preg_match('/(&)|(\\\)/',$params['name']);
 		if( $bInvaid ){
-			$this->calendarName = "{{ INVALID NAME }}";//helpers::translate('mwc_default_name');		
+			$this->calendarName = "{{ INVALID NAME }}";	
 			return false;
 		}
 		
@@ -341,9 +343,7 @@ class mwCalendar{
 		$html = str_replace('[[ALL_DAY_CHECKED]]', $allDayChecked, $html);			
 
 		$html = str_replace('[[URL]]',$safeUrl,$html);
-		
-		//$arrEvent = $this->db->getEvent( $event['id'] );
-		
+			
 		// disable delete for users that didnt create the event... only creator or admin can delete
 		//$isValid = User::newFromName( $event['createdby'] )->getID();
 		$isValid = User::newFromName( $event['createdby'] );
@@ -360,32 +360,17 @@ class mwCalendar{
 	private function makeSafeHtml(&$arrEvent){
 		
 		$arrEvent['subject'] = htmlentities($arrEvent['subject'], ENT_QUOTES);
-		//$arrEvent['invites'] = htmlentities($arrEvent['invites'], ENT_QUOTES); //not needed in a <textarea>
 		$arrEvent['location'] = htmlentities($arrEvent['location'], ENT_QUOTES);
 
 	}
 	
 	// this function removes or defaults any HTML tags that havent been overwritten
 	private function setHtmlTags($html){
-		$html = str_replace('[[calendar]]', '', $html);
-		$html = str_replace('[[CalendarKey]]', '', $html);
-		$html = str_replace('[[EventID]]', '', $html);	
-		$html = str_replace('[[Subject]]', '', $html);	
-		$html = str_replace('[[Location]]', '', $html);			
-		$html = str_replace('[[Invites]]', '', $html);	
-		$html = str_replace('[[Start]]', '', $html);	
-		$html = str_replace('[[End]]', '', $html);				
-		$html = str_replace('[[Text]]', '', $html);	
-		$html = str_replace('[[Disabled]]', '', $html);		
-		$html = str_replace('[[FOOTER]]', '', $html);	
-		$html = str_replace('[[LastEdited]]', '', $html);
-		$html = str_replace('[[CreatedBy]]', '', $html);	
-		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);		
-		$html = str_replace('[[Today_CSS]]', '', $html);	
-
-		## defaults
-		$html = str_replace('[[BatchTemplate]]', $this->buildBatchTemplate(), $html);
 		
+		## defaults		
+		$html = str_replace('[[JSDateFormat]]', helpers::getDateFormat(), $html);				
+		$html = str_replace('[[BatchTemplate]]', $this->buildBatchTemplate(), $html);		
+	
 		## tranlated text labels
 		$html = str_replace('[[SubjectText]]', helpers::translate('mwc_event_subject'), $html);
 		$html = str_replace('[[LocationText]]', helpers::translate('mwc_event_location'), $html);
@@ -399,6 +384,9 @@ class mwCalendar{
 		$html = str_replace('[[CloseText]]', helpers::translate('mwc_event_close'), $html);
 		$html = str_replace('[[DelimiterTitle]]', helpers::translate('mwc_batch_delimiter_title'), $html);
 		$html = str_replace('[[DelimiterText]]', helpers::translate('mwc_batch_delimiter_text'), $html);
+		
+		## remove any missed labels
+		$html = preg_replace('[(\[\[)+.+(\]\])]', '', $html); 
 		
 		return $html;
 	}
