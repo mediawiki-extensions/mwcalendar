@@ -8,6 +8,7 @@ if (!defined('MEDIAWIKI')) {
 require_once( mwcalendar_base_path . '/includes/EventHandler.php');
 require_once( mwcalendar_base_path . '/includes/Database.php');
 require_once( mwcalendar_base_path . '/includes/helpers.php');
+require_once( mwcalendar_base_path . '/includes/Options.php');
 
 class mwCalendar{
 	
@@ -28,12 +29,12 @@ class mwCalendar{
 	
 	var $useRTE=true;
 	
-
+	var $options=array();
 	
 
 	public function mwCalendar($params){
 		global $wgOut,$wgTitle, $wgScript, $wgScriptPath, $IP;	
-		
+
 		$this->setDefaults($params);	## RUN FIRST ##	
 		
 		helpers::debug("******** Calendar Init()-$this->key ******** ");
@@ -62,10 +63,12 @@ class mwCalendar{
 		
 		$this->db = new CalendarDatabase;
 		$this->db->validateVersion(); //make sure db and files match		
+
+		$this->options = $this->db->getOptions($this->calendarName);
 		
 		## this basically calls a function that evaluates $_POST[] events (new, delete, cancel, etc)
 		## no need to do anything else in the calendar until any db updates have completed		
-		if( helpers::is_my_calendar($this->key) ){
+		if( helpers::is_my_calendar($this->key)){
 			EventHandler::CheckForEvents();	
 		}
 	
@@ -203,6 +206,11 @@ class mwCalendar{
 			if($urlEvent[0] == 'EditEvent' ){
 				return $html . $this->url_EditEvent($arrUrl[0],$urlEvent[1]);
 			}
+			
+			if($urlEvent[0] == 'Options' ){
+				$options = new Options;
+				return $html . $options->showOptions($this->calendarName);
+			}			
 		}
 		
 		if($this->event_list > 0){
@@ -462,11 +470,13 @@ class mwCalendar{
 			. "<input name=CalendarKey type=hidden value=\"$this->key\" />";
 		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
+
+		$footerHTML = "<input name='options' type=submit value='Options' />";
 		
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
 		$calendarHTML = str_replace('[[HIDDEN]]', $hidden, $calendarHTML);
-		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
+		$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
 		
 		return $calendarHTML;
 	}
@@ -667,7 +677,12 @@ class mwCalendar{
 		$text = $this->fixJavascriptSpecialChars($text);
 		
 		$url = $this->cleanLink($this->title) . '&Name='.($this->key).'&EditEvent=' . $event['id'];
-		$link = "<a href=\"$url\" title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
+		
+		if($this->options['summary_js']){
+			$link = "<a href=\"$url\" title='' name='$tag' onmouseover=\"EventSummary('$tag','$title','$text')\" onmouseout=\"ClearEventSummary()\" >$subject</a>";
+		}else{
+			$link = "<a href=\"$url\" title='$title' name='$tag' >$subject</a>";
+		}
 		
 		return $link;
 	}

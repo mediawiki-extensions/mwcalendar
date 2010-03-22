@@ -30,6 +30,7 @@ class update{
 		
 		require_once( mwcalendar_base_path . '/includes/updates/update_003.php');
 		require_once( mwcalendar_base_path . '/includes/updates/update_007.php');
+		require_once( mwcalendar_base_path . '/includes/updates/update_033.php');
 	}		
 	
 	// create new tables for new installs and updates
@@ -51,6 +52,7 @@ class update{
 				`id` integer NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL default '',
 				`description` varchar(255) default '',
+				`options' mediumtext default '',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";
 

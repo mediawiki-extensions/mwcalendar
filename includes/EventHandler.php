@@ -26,6 +26,22 @@ class EventHandler{
 		// this is the active user (can be the creator... or the editor)
 		$whodidit = $wgUser->getName();
 
+		if( isset($_POST["options"]) ){
+			$optionURL = $url  . "&Name=". $_POST['CalendarKey']."&Options=true";
+			header("Location: " . $optionURL);
+			return;
+		}
+
+		if( isset($_POST["SaveOptions"]) ){
+			helpers::debug("POST: SaveOptions");
+			
+			$arrOptions = self::saveOptions();
+			
+			$db->setOptions($_POST['calendar'], $arrOptions);
+
+			return;
+		}
+		
 		// see if a new event was saved and apply changes to database
 		if ( isset($_POST["save"]) ){
 			helpers::debug("POST: Event Saved");
@@ -127,6 +143,16 @@ class EventHandler{
 					);
 					
 		return $arrEvent;
+	}
+	
+	private static function saveOptions(){
+	
+		$arrOptions=array(	'summary_js' => 	(isset($_POST["summary_js"])) ? 1:0
+					);	
+	
+		
+		return $arrOptions;
+	
 	}
 	
 	private static function addFromBatch($db, $whodidit){
