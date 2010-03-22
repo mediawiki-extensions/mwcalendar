@@ -293,7 +293,6 @@ class CalendarDatabase{
 		
 		if ($r = $dbr->fetchObject( $res )) {
 			if($r->options){
-				helpers::debug($r->options,2);
 				return unserialize($r->options);
 			}
 			else
@@ -303,19 +302,13 @@ class CalendarDatabase{
 	
 	public function setOptions($calendar, $arrOptions){
 		$dbw = wfGetDB( DB_MASTER );
-		//$table = $this->dbPrefix . 'calendar_header';
-		
+	
 		$options = serialize($arrOptions);
 	
 		$dbw->update( 'calendar_header', 
 			array('options'  	=> $options),
 			array('name' => $calendar)
-		);			
-	
-		//$sql = "UPDATE $table SET options ='$options' WHERE name=\"$calendar\"; ";
-		helpers::debug($sql,2);
-		//$dbw->query($sql); 
-	
+		);				
 	}
 } //end class
 
