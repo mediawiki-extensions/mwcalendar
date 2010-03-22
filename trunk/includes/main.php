@@ -219,7 +219,7 @@ class mwCalendar{
 			$html .= $this->createCalendar();
 		}
 		
-		$html = str_replace('[[SafeURL]]',$arrUrl[0],$html);
+		$html = str_replace('[[URL]]',$arrUrl[0],$html);
 		$html = $this->setHtmlTags($html);
 		
 		return $html;
@@ -248,7 +248,7 @@ class mwCalendar{
 		
 		$html = str_replace('[[ALL_DAY_CHECKED]]', 'checked', $html);	
 		
-		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
+		$html = str_replace('[[URL]]',$safeUrl,$html);
 		$html = $this->setHtmlTags($html);
 		
 		return $html;	
@@ -340,7 +340,7 @@ class mwCalendar{
 		$html = str_replace('[[END_TIME_DISABLED]]', $disableTimeFields, $html);	
 		$html = str_replace('[[ALL_DAY_CHECKED]]', $allDayChecked, $html);			
 
-		$html = str_replace('[[SafeURL]]',$safeUrl,$html);
+		$html = str_replace('[[URL]]',$safeUrl,$html);
 		
 		//$arrEvent = $this->db->getEvent( $event['id'] );
 		

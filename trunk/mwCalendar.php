@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 ########## DEBUGGER ################
-define( 'mwcalendar_debugger', 2); // 0=off, 1=standard, 2=custom, 3=all
+define( 'mwcalendar_debugger', 3); // 0=off, 1=standard, 2=custom, 3=all
 ########## DEBUGGER ################
 
 ######### OPTIONS ###############
@@ -46,6 +46,11 @@ function mwCalendar() {
 function launchCalendar($paramstring, $params = array()) {
 	global $wgVersion,$wgParser, $mwcDebugger;
 
+	##version check!
+	if(version_compare($wgVersion, '1.14.0', '<')){
+		return "You must be running MediaWiki version (1.14.0) or higher. Sorry, your version is ($wgVersion).";
+	}
+	
 	$wgParser->disableCache();
 	
 	// conversion option; no need to do any normal calendar initializations
@@ -59,13 +64,9 @@ function launchCalendar($paramstring, $params = array()) {
 		$ret .= "<center><b><font color=red>*** DEBUG MODE ACTIVATED ***</font></b></center>";
 	}
 	
-	$ret .= '<small>v.'.mwcalendar_version.mwcalendar_version_label.'</small><br>';
-	
-	##version check!
-	if(version_compare($wgVersion, '1.14.0', '>=')) 
-		return $ret;
-	else
-		return "You must be running MediaWiki version (1.14.0) or higher. Sorry, your version is ($wgVersion).";
+	$ret .= '<small>v.'.mwcalendar_version . mwcalendar_version_label.'</small><br>';
+
+	return $ret;
 }
 
 // this will query any wiki-page calendar previous used and port that 

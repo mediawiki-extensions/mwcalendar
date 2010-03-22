@@ -68,6 +68,7 @@ class CalendarDatabase{
 		));
 	}
 	
+	## clean and validate data
 	private function validateEvent(&$arrEvent){
 	
 		// min data we need to file a good event...
@@ -75,6 +76,9 @@ class CalendarDatabase{
 		if( strlen($arrEvent['start']) == 0 ) return false; 
 		if( strlen($arrEvent['end']) == 0 ) return false; 	
 
+		$arrEvent['subject'] = str_replace("\n","",$arrEvent['subject']);
+		$arrEvent['subject'] = str_replace("\r","",$arrEvent['subject']);
+		
 		return true;
 	}
 
