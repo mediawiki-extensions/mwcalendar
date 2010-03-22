@@ -1,10 +1,16 @@
 var summaryDivID = "eventsummary";
+var _posX;
+var _posY;
+
 function EventSummary(ctrl,event,comment){
 	var element = document.getElementsByName (ctrl).item(0);
 
-	 x = window.event.clientX + document.documentElement.scrollLeft +15;
-	 y = window.event.clientY + document.documentElement.scrollTop;
-	
+/* 	 x = event.clientX + document.documentElement.scrollLeft +15;
+	 y = event.clientY + document.documentElement.scrollTop; */
+
+	 x = _posX + document.documentElement.scrollLeft +15;
+	 y = _posY + document.documentElement.scrollTop;	 
+	 
 	if (!document.getElementById(summaryDivID)) {
 		var newNode = document.createElement("div");
 		newNode.setAttribute("id", summaryDivID);
@@ -34,15 +40,12 @@ function ClearEventSummary(){
 	pickerDiv.style.display = "none";
 }
 
-//window.onload = init;
-function init() {
-	if (window.Event) {
-	document.captureEvents(Event.MOUSEMOVE);
-	}
-	document.onmousemove = getCursorXY;
-}
-
-function getCursorXY(e) {
-	document.getElementById('cursorX').value = (window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
-	document.getElementById('cursorY').value = (window.Event) ? e.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
+document.onmousemove = function(evt) {
+	if (typeof evt == 'undefined') { 
+		myEvent = window.event; 
+	} else {
+		myEvent = evt;
+	} 
+	_posX = myEvent.clientX;
+	_posY = myEvent.clientY;
 }
