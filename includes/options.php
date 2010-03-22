@@ -5,6 +5,8 @@ require_once( mwcalendar_base_path . '/includes/Database.php');
 class Options{
 
 	function showOptions($calendar){
+		helpers::debug('showOptions()');
+	
 		$html = "<form name=frmOptions method=POST>";
 		$html .= "<h2>Options</h2>";
 		$html .= $this->buildOptionList($calendar);
