@@ -35,8 +35,7 @@ class EventHandler{
 		if( isset($_POST["SaveOptions"]) ){
 			helpers::debug("POST: SaveOptions");
 			
-			$arrOptions = self::saveOptions();
-			
+			$arrOptions = self::saveOptions();			
 			$db->setOptions($_POST['calendar'], $arrOptions);
 		}
 		
@@ -56,12 +55,13 @@ class EventHandler{
 			if( isset($_POST["invites"]) ){
 				CalendarEmail::send($_POST["invites"], $arrEvent, 'save');
 			}
+			header("Location: " . $url);
 		}
 
 		if ( isset($_POST["savebatch"]) ){
 			helpers::debug("POST: Batch Saved");
 			self::addFromBatch($db, $whodidit);
-			//header("Location: " . $url);
+			header("Location: " . $url);
 		}	
 		
 		if ( isset($_POST["delete"])  ){
@@ -72,11 +72,13 @@ class EventHandler{
 			
 			if( isset($_POST["invites"]) ){
 				CalendarEmail::send($_POST["invites"], $arrEvent, 'delete');
-			}			
+			}	
+			header("Location: " . $url);
 		}		
 
 		if ( isset($_POST["cancel"]) ){	
 			helpers::debug("POST: Event Cancelled");
+			header("Location: " . $url);
 		}
 	
 		// timestamp will be populated only if any nav butten is clicked
@@ -100,6 +102,7 @@ class EventHandler{
 			helpers::debug('Setting cookie: '.$cookie_name);
 			
 			helpers::debug("POST: Navigation Activated: $cookie_name, TIMESTAMP: $timestamp");
+			header("Location: " . $url);
 		}
 	}
 	
