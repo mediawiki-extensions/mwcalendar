@@ -108,7 +108,7 @@ class EventHandler{
 	
 	## build events based on $_POST
 	private static function buildEventArray(){
-		global $wgUser;
+		global $wgUser,$wgParser;
 		
 		$whodidit = $wgUser->getName();
 		
@@ -125,6 +125,8 @@ class EventHandler{
 		
 		$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
 		
+		$text = self::wikiPageParse($_POST['text']);
+			
 		$arrEvent = array(	'id' => 			$_POST["eventid"],
 							'calendar' => 		$_POST["calendar"],
 							'subject' => 		$subject,
@@ -132,7 +134,7 @@ class EventHandler{
 							'start' => 			$start,
 							'end' => 			$end,
 							'allday' => 		(isset($_POST["allday"])) ? 1:0,
-							'text' => 			$_POST["text"],
+							'text' => 			$text,
 							'createdby' => 		$whodidit,
 							'editedby' => 		$whodidit,
 							'invites' => 		serialize($arrInvites)
@@ -149,6 +151,30 @@ class EventHandler{
 		
 		return $arrOptions;
 	
+	}
+	
+	private static function wikiPageParse($text){
+		global $wgScript,$wgServer;
+		
+		$pos1 = strpos($text,"[[");
+		$pos2 = strpos($text,"]]");
+		
+		## these cancels the recursive loop
+		if($pos1 === false) return $text;
+		if($pos2 === false) return $text;
+		
+		$tag = substr( $text, $pos1, ($pos2-$pos1)+2 );
+		$title = preg_replace('/\[|\]/', '', $tag); 
+				
+		$url = "<a href=\"".$wgServer.$wgScript."?title=$title\">$title</a>";
+		$text = str_replace($tag,$url,$text);
+		
+		helpers::debug($url,2);		
+	
+		## recursive replace logic
+		self::wikiPageParse($text); 
+		
+		return $text;
 	}
 	
 	private static function addFromBatch($db, $whodidit){

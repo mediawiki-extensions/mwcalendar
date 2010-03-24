@@ -101,8 +101,7 @@ class mwCalendar{
 		$this->htmlOption = file_get_contents( mwcalendar_base_path . "/html/Options.html");
 		
 		$addEventHtml = str_replace('[[SELECT_OPTIONS]]',$list,$addEventHtml);	
-		
-		
+				
 		## building my own sytlesheets and javascript links...
 		$stdJSArray = array('DatePicker.js','tabber.js','InvitePicker.js','TimePicker.js','common.js','rte.js');
 
@@ -259,7 +258,7 @@ class mwCalendar{
 	private function url_EditEvent($safeUrl, $eventID){
 		helpers::debug('url_EditEvent');
 		
-		global $wgUser,$wgParser;
+		global $wgUser,$wgParser,$wgScript;
 		$currentUser = $wgUser->getName();
 		
 		$html = $this->tabHtml;
@@ -313,6 +312,7 @@ class mwCalendar{
 		## funky display as the text is saves as \r\n.. so I'm removing the \n and leaving the \r
 		## caused textarea to add html tags (<p><br/>) etc
 		$text =  $event['text'];
+
 		//$text = $wgParser->recursiveTagParse($text);
 		if(!$this->useRTE){
 			$text = str_replace("\r\n", "\r", $text);
@@ -321,8 +321,9 @@ class mwCalendar{
 		if($this->useRTE) {
 			//$text = str_replace("\n", "x", $event['text']);
 			//$text = str_replace("\r", "x", $event['text']);
-		}		
-			
+		}	
+		helpers::debug($text,2);
+	
 		// update the 'hidden' input field so we retain the calendar name for the db update
 		$html = str_replace('[[calendar]]', $this->calendarName, $html);
 		$html = str_replace('[[CalendarKey]]', $this->key, $html);
@@ -407,9 +408,10 @@ class mwCalendar{
 		$last = mktime(23,59,59,$this->month,$daysInMonth,$this->year);
 		
 		$arrMonthEvents = $this->db->getEvents($this->calendarName, $first, $last);
-			
-		$day = (-$dayOfWeek) +1;
 		
+		$day = (-$dayOfWeek) +1;
+		if(mwc_week_start_monday){ $day++; }
+			
 		$ret = $this->buildWeekHeader();
 		
 		for($week=0; $week < $weeksInMonth; $week++){
@@ -420,6 +422,8 @@ class mwCalendar{
 				for($i=0; $i < 7; $i++){	
 					
 					if( ($day > $daysInMonth) || ($day < 1) ){
+						//helpers::debug($weeksInMonth,2);
+						//helpers::debug($day,2);
 						$temp = $emptyHTML;
 					}
 					elseif( $i==0 || $i==6 ){
@@ -459,7 +463,7 @@ class mwCalendar{
 		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
 
-		$footerHTML = "<input name='options' type=submit value='Options' />";
+		//$footerHTML = "<input name='options' type=submit value='Options' />";
 		
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
@@ -521,12 +525,25 @@ class mwCalendar{
 	private function buildWeekHeader(){
 		
 		$header = '';
-	
-		$i= 1;
-		while( $i <= 7 ){
-			$header .= '<td>' . helpers::translate($i++, 'weekday') . '</td>';
+
+		if(mwc_week_start_monday){
+			$header .= '<td>' . helpers::translate(2, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(3, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(4, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(5, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(6, 'weekday') . '</td>';		
+			$header .= '<td>' . helpers::translate(7, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(1, 'weekday') . '</td>';
+		}else{
+			$header .= '<td>' . helpers::translate(1, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(2, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(3, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(4, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(5, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(6, 'weekday') . '</td>';
+			$header .= '<td>' . helpers::translate(7, 'weekday') . '</td>';			
 		}
-	
+		
 		return '<tr class="calendar_header">' . $header . '</tr>';
 	}
 	
