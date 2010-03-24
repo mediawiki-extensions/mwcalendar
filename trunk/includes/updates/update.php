@@ -52,7 +52,7 @@ class update{
 				`id` integer NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL default '',
 				`description` varchar(255) default '',
-				`options' mediumtext default '',
+				`options` mediumtext default '',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1; ";
 
