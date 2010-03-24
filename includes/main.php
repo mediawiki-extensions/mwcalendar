@@ -422,8 +422,6 @@ class mwCalendar{
 				for($i=0; $i < 7; $i++){	
 					
 					if( ($day > $daysInMonth) || ($day < 1) ){
-						//helpers::debug($weeksInMonth,2);
-						//helpers::debug($day,2);
 						$temp = $emptyHTML;
 					}
 					elseif( $i==0 || $i==6 ){
@@ -463,7 +461,7 @@ class mwCalendar{
 		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
 
-		//$footerHTML = "<input name='options' type=submit value='Options' />";
+		$footerHTML = "<input name='options' type=submit value='Options' />";
 		
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
@@ -696,6 +694,8 @@ class mwCalendar{
 		$string = str_replace("'","",$string);
 		$string = str_replace('"','',$string);
 		$string = str_replace("\\","",$string);
+		$string = str_replace("\n","",$string);
+		$string = str_replace("\r","",$string);
 
 		return $string;
 	}
