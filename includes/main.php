@@ -461,12 +461,12 @@ class mwCalendar{
 		
 		$weeksHTML = str_replace("[[WEEKS]]", $ret, $weekHTML);
 
-		$footerHTML = "<input name='options' type=submit value='Options' />";
+		//$footerHTML = "<input name='options' type=submit value='Options' />";
 		
 		$calendarHTML = str_replace('[[HEADER]]', $this->buildNavControls(), $calendarHTML);
 		$calendarHTML = str_replace('[[BODY]]', $weeksHTML, $calendarHTML);
 		$calendarHTML = str_replace('[[HIDDEN]]', $hidden, $calendarHTML);
-		$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
+		//$calendarHTML = str_replace('[[FOOTER]]', $footerHTML, $calendarHTML);
 		
 		return $calendarHTML;
 	}
