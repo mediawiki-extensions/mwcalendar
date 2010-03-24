@@ -119,13 +119,10 @@ class EventHandler{
 		$end = strtotime($_POST["end"] . ' ' . $endTime);
 								
 		$subject = strip_tags ( $_POST["subject"], '<b><i><s><u>' );
-		//$subject = $_POST["subject"];
-		
-		//if($subject == '') $subject ='INVALID Event';
-		
 		$arrInvites = helpers::invites_str_to_arr($_POST["invites"]);
 		
-		$text = self::wikiPageParse($_POST['text']);
+		$text = $_POST['text'];
+		//$text = self::wikiPageParse($_POST['text']);
 			
 		$arrEvent = array(	'id' => 			$_POST["eventid"],
 							'calendar' => 		$_POST["calendar"],
@@ -168,9 +165,7 @@ class EventHandler{
 				
 		$url = "<a href=\"".$wgServer.$wgScript."?title=$title\">$title</a>";
 		$text = str_replace($tag,$url,$text);
-		
-		helpers::debug($url,2);		
-	
+			
 		## recursive replace logic
 		self::wikiPageParse($text); 
 		
