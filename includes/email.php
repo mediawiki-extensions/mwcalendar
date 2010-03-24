@@ -187,7 +187,7 @@ class CalendarEmail{
 		}
 		if($email_addresses != ""){
 			helpers::debug("Emails sent to: $email_addresses");
-			//mail( $email_addresses, $subject, $message, $headers );
+			mail( $email_addresses, $subject, $message, $headers );
 		}
 	}
 	
