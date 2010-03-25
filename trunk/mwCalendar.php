@@ -1,4 +1,8 @@
 <?php
+ //error_reporting(E_ALL);
+ ini_set("display_errors", 0);
+ //include("file_with_errors.php");
+ //error_log( "c:\Inetpub\wwwroot\mediawiki\extensions\calendar\trunk\php.log");
 
 # Confirm MW environment
 if (!defined('MEDIAWIKI')) {

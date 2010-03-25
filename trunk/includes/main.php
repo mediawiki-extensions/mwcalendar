@@ -8,7 +8,7 @@ if (!defined('MEDIAWIKI')) {
 require_once( mwcalendar_base_path . '/includes/EventHandler.php');
 require_once( mwcalendar_base_path . '/includes/Database.php');
 require_once( mwcalendar_base_path . '/includes/helpers.php');
-require_once( mwcalendar_base_path . '/includes/Options.php');
+require_once( mwcalendar_base_path . '/includes/options.php');
 
 class mwCalendar{
 	
