@@ -290,6 +290,7 @@ class CalendarDatabase{
 	public function getOptions($calendar){
 		$dbr = wfGetDB( DB_SLAVE );	
 		$table = $this->dbPrefix . 'calendar_header';
+		$arr = array();
 		
 		$sql = "SELECT * FROM $table WHERE name=\"$calendar\"; ";
 		
@@ -299,8 +300,11 @@ class CalendarDatabase{
 			if($r->options){
 				return unserialize($r->options);
 			}
-			else
-				return array();
+			else{
+				##defaults...
+				$arr['summary_js'] = true;
+				return $arr;
+			}
 		}
 	}
 	
